@@ -1,0 +1,579 @@
+name: Buildx¹ Official Firmware
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_branch:
+        description: "Select the release branch:"
+        required: true
+        default: "openwrt:24.10.5"
+        type: choice
+        options:
+          - openwrt:25.12.0-rc4
+          - openwrt:24.10.5
+          - openwrt:23.05.6
+          - immortalwrt:24.10.4
+          - immortalwrt:23.05.7
+      target:
+        description: "Select device board"
+        required: true
+        default: "all-devices"
+        type: choice
+        options:
+          - all-devices
+          - opt-devices
+          - Nanopi-r2c
+          - Nanopi-r2c Plus
+          - Nanopi-r2s
+          - Nanopi-r2s Plus
+          - Nanopi-r3s
+          - Nanopi-r4s
+          - Nanopi-r5s
+          - Orangepi Pc 2
+          - Orangepi R1 Plus
+          - Orangepi R1 Plus LTS
+          - Raspberry Pi 1B
+          - Raspberry Pi 2B
+          - Raspberry Pi 3B
+          - Raspberry Pi 4B
+          - Raspberry Pi 5B
+          - X86-64
+          - X86-Generic
+      tunnel:
+        description: "Select Tunnel VPN"
+        required: true
+        default: "openclash"
+        type: choice
+        options:
+          - openclash
+          - openclash-nikki
+          - openclash-insomclash
+          - openclash-nikki-passwall
+          - no-tunnel
+      clean:
+        description: "Do 'make clean' for each run"
+        required: false
+        default: "true"
+        type: boolean
+
+env:
+  TZ: Asia/Jakarta
+  WORKING_DIR: imagebuilder
+  DEBIAN_FRONTEND: noninteractive
+  RELEASE_BRANCH: ${{ github.event.inputs.release_branch }}
+  TARGET: ${{ github.event.inputs.target }}
+  TUNNEL: ${{ github.event.inputs.tunnel }}
+  CLEAN: ${{ github.event.inputs.clean }}
+
+jobs:
+  prebuild:
+    runs-on: ubuntu-24.04
+    name: ${{ github.event.inputs.release_branch }}
+    outputs:
+      target: ${{ steps.set-matrix.outputs.target }}
+      type: ${{ steps.setupenv.outputs.type }}
+      base: ${{ steps.setupenv.outputs.base }}
+      branch: ${{ steps.setupenv.outputs.branch }}
+      verop: ${{ steps.setupenv.outputs.verop }}
+      download_base: ${{ steps.setupenv.outputs.download_base }}
+      date: ${{ steps.setupenv.outputs.date }}
+      datetime: ${{ steps.setupenv.outputs.datetime }}
+      datemonth: ${{ steps.setupenv.outputs.datemonth }}
+      release_name: ${{ steps.setupenv.outputs.release_name }}
+      release_tag: ${{ steps.setupenv.outputs.release_tag }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Set Matrix Run
+        id: set-matrix
+        run: |
+          echo "Selected target option: [ ${{ github.event.inputs.target }} ]"
+          
+          ALL_DEVICES_JSON=$(cat << 'EOJ'
+          {
+            "target": [
+              "Nanopi-r2c",
+              "Nanopi-r2c Plus",
+              "Nanopi-r2s",
+              "Nanopi-r2s Plus",
+              "Nanopi-r3s",
+              "Nanopi-r4s",
+              "Nanopi-r5s",
+              "Orangepi Pc 2",
+              "Orangepi R1 Plus",
+              "Orangepi R1 Plus LTS",
+              "Raspberry Pi 2B",
+              "Raspberry Pi 3B",
+              "Raspberry Pi 4B",
+              "X86-64"
+            ]
+          }
+          EOJ
+          )
+          
+          OPT_DEVICES_JSON=$(cat << 'EOJ'
+          {
+            "target": [
+              "Raspberry Pi 1B",
+              "Raspberry Pi 5B",
+              "X86-Generic"
+            ]
+          }
+          EOJ
+          )
+
+          if [ "${{ github.event.inputs.target }}" == "all-devices" ]; then
+            echo "target=$(echo "$ALL_DEVICES_JSON" | jq -c '.target')" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event.inputs.target }}" == "opt-devices" ]; then
+            echo "target=$(echo "$OPT_DEVICES_JSON" | jq -c '.target')" >> "$GITHUB_OUTPUT"
+          else
+            echo "target=$(jq -nc --arg d "${{ github.event.inputs.target }}" '[$d]')" >> "$GITHUB_OUTPUT"
+          fi
+
+          echo "Selected tunnel option: [ ${{ github.event.inputs.tunnel }} ]"
+
+      - name: Setup Environment
+        id: setupenv
+        run: |
+          sudo timedatectl set-timezone "${{ env.TZ }}"
+
+          TYPE="NON-AMLOGIC"
+          echo "type=$TYPE" >> "$GITHUB_OUTPUT"
+
+          BASE="${RELEASE_BRANCH%:*}"
+          BRANCH="${RELEASE_BRANCH#*:}"
+          VEROP="$(echo "${BRANCH}" | awk -F. '{print $1"."$2}')"
+
+          echo "base=$BASE" >> "$GITHUB_OUTPUT"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          echo "verop=$VEROP" >> "$GITHUB_OUTPUT"
+          echo "download_base=https://downloads.${BASE}.org" >> "$GITHUB_OUTPUT"
+
+          DATE=$(date +'%d%m%Y')
+          DATETIME=$(date +'%d.%m.%Y-%H:%M:%S')
+          DATEMONTH=$(date +"%B-%Y" | awk '{print tolower($0)}')
+
+          echo "date=$DATE" >> "$GITHUB_OUTPUT"
+          echo "datetime=$DATETIME" >> "$GITHUB_OUTPUT"
+          echo "datemonth=$DATEMONTH" >> "$GITHUB_OUTPUT"
+
+          if [ "${BASE}" == "openwrt" ]; then
+            RELEASE_NAME="OpenWRT-Buildx¹-${BRANCH}-${DATE}"
+            RELEASE_TAG="openwrt-buildx¹-${BRANCH}-${DATE}"
+            echo "release_name=$RELEASE_NAME" >> "$GITHUB_OUTPUT"
+            echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+          elif [ "${BASE}" == "immortalwrt" ]; then
+            RELEASE_NAME="ImmortalWRT-Buildx¹-${BRANCH}-${DATE}"
+            RELEASE_TAG="immortalwrt-buildx¹-${BRANCH}-${DATE}"
+            echo "release_name=$RELEASE_NAME" >> "$GITHUB_OUTPUT"
+            echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+          fi
+          echo "status=success" >> "$GITHUB_OUTPUT"
+
+      - name: Create Release
+        if: steps.setupenv.outputs.status == 'success'
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.XIDZs_KEY }}
+        with:
+          tag_name: ${{ steps.setupenv.outputs.release_tag }}
+          name: ${{ steps.setupenv.outputs.release_name }}
+          prerelease: ${{ github.ref_name == 'dev' }}
+          body: |
+
+  build-firmware:
+    name: Build ${{ matrix.target }} Firmware
+    needs: prebuild
+    runs-on: ubuntu-24.04
+    env:
+      TYPE: ${{ needs.prebuild.outputs.type }}
+      BASE: ${{ needs.prebuild.outputs.base }}
+      BRANCH: ${{ needs.prebuild.outputs.branch }}
+      VEROP: ${{ needs.prebuild.outputs.verop }}
+      DOWNLOAD_BASE: ${{ needs.prebuild.outputs.download_base }}
+      DATE: ${{ needs.prebuild.outputs.date }}
+      DATETIME: ${{ needs.prebuild.outputs.datetime }}
+      DATEMONTH: ${{ needs.prebuild.outputs.datemonth }}
+      RELEASE_NAME: ${{ needs.prebuild.outputs.release_name }}
+      RELEASE_TAG: ${{ needs.prebuild.outputs.release_tag }}
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        target: ${{ fromJSON(needs.prebuild.outputs.target) }}
+
+    steps:
+      - name: Initialization environment
+        id: init
+        run: |
+          docker rmi -f $(docker images -q) 2>/dev/null || true
+          [[ -n "${AGENT_TOOLSDIRECTORY}" ]] && sudo rm -rf "${AGENT_TOOLSDIRECTORY}"
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android 2>/dev/null
+          sudo swapoff -a
+          sudo rm -f /swapfile /mnt/swapfile
+          
+          sudo -E apt-get -y update
+          sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* powershell openjdk* mongodb* moby* || true
+          sudo -E apt-get -y install $(curl -fsSL https://ophub.org/ubuntu2404-make-openwrt-depends)
+          sudo -E systemctl daemon-reload
+          sudo -E apt-get -y autoremove --purge
+          sudo -E apt-get clean
+          
+          sudo sed -i '/NVM_DIR/d;/skel/d' /root/{.bashrc,.profile}
+          sudo rm -rf ~/{.cargo,.dotnet,.rustup}
+          sudo timedatectl set-timezone "${{ env.TZ }}"
+          echo "status=success" >> "$GITHUB_OUTPUT"
+
+      - name: Create simulated physical disk
+        id: disk
+        if: steps.init.outputs.status == 'success' && (github.event.inputs.target == 'all-devices' || github.event.inputs.target == 'opt-devices')
+        run: |
+          mnt_size=$(expr $(df -h /mnt | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\..*//') - 1)
+          root_size=$(expr $(df -h / | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\..*//') - 4)
+          sudo truncate -s "${mnt_size}"G /mnt/mnt.img
+          sudo truncate -s "${root_size}"G /root.img
+          sudo losetup /dev/loop6 /mnt/mnt.img
+          sudo losetup /dev/loop7 /root.img
+          sudo pvcreate /dev/loop6
+          sudo pvcreate /dev/loop7
+          sudo vgcreate github /dev/loop6 /dev/loop7
+          sudo lvcreate -n runner -l 100%FREE github
+          sudo mkfs.xfs -f -i sparse=0 -b size=4096 /dev/github/runner
+          sudo mkdir -p /builder
+          sudo mount /dev/github/runner /builder
+          sudo chown -R runner:runner /builder
+          df -Th
+          echo "status=success" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          path: origin
+          fetch-depth: 1
+
+      - name: Setup Build Variables
+        id: variables
+        run: |
+          MATRIXTARGET="${{ matrix.target }}"
+          echo "MATRIXTARGET=$MATRIXTARGET" >> $GITHUB_ENV
+
+          NAMA_MODIFIED=$(echo $MATRIXTARGET | sed 's/ /-/g')
+          echo "NAMA_MODIFIED=$NAMA_MODIFIED" >> $GITHUB_ENV
+
+          case $BASE in
+            openwrt)
+              OP_BASE="OpenWrt"
+              echo "OP_BASE=$OP_BASE" >> $GITHUB_ENV
+              ;;
+            immortalwrt)
+              OP_BASE="ImmortalWrt"
+              echo "OP_BASE=$OP_BASE" >> $GITHUB_ENV
+              ;;
+          esac
+
+          case "$MATRIXTARGET" in
+            "Nanopi-r2c")
+              echo "PROFILE=friendlyarm_nanopi-r2c" >> $GITHUB_ENV
+              echo "TARGET_SYSTEM=rockchip/armv8" >> $GITHUB_ENV
+              echo "TARGET_NAME=rockchip-armv8" >> $GITHUB_ENV
+              echo "ARCH_1=arm64" >> $GITHUB_ENV
+              echo "ARCH_2=aarch64" >> $GITHUB_ENV
+              echo "ARCH_3=aarch64_generic" >> $GITHUB_ENV
+              ;;
+            "Nanopi-r2c Plus")
+              echo "PROFILE=friendlyarm_nanopi-r2c-plus" >> $GITHUB_ENV
+              echo "TARGET_SYSTEM=rockchip/armv8" >> $GITHUB_ENV
+              echo "TARGET_NAME=rockchip-armv8" >> $GITHUB_ENV
+              echo "ARCH_1=arm64" >> $GITHUB_ENV
+              echo "ARCH_2=aarch64" >> $GITHUB_ENV
+              echo "ARCH_3=aarch64_generic" >> $GITHUB_ENV
+              ;;
+            "Nanopi-r2s")
+              echo "PROFILE=friendlyarm_nanopi-r2s" >> $GITHUB_ENV
+              echo "TARGET_SYSTEM=rockchip/armv8" >> $GITHUB_ENV
+              echo "TARGET_NAME=rockchip-armv8" >> $GITHUB_ENV
+              echo "ARCH_1=arm64" >> $GITHUB_ENV
+              echo "ARCH_2=aarch64" >> $GITHUB_ENV
+              echo "ARCH_3=aarch64_generic" >> $GITHUB_ENV
+              ;;
+            "Nanopi-r2s Plus")
+              echo "PROFILE=friendlyarm_nanopi-r2s-plus" >> $GITHUB_ENV
+              echo "TARGET_SYSTEM=rockchip/armv8" >> $GITHUB_ENV
+              echo "TARGET_NAME=rockchip-armv8" >> $GITHUB_ENV
+              echo "ARCH_1=arm64" >> $GITHUB_ENV
+              echo "ARCH_2=aarch64" >> $GITHUB_ENV
+              echo "ARCH_3=aarch64_generic" >> $GITHUB_ENV
+              ;;
+            "Nanopi-r3s")
+              echo "PROFILE=friendlyarm_nanopi-r3s" >> $GITHUB_ENV
+              echo "TARGET_SYSTEM=rockchip/armv8" >> $GITHUB_ENV
+              echo "TARGET_NAME=rockchip-armv8" >> $GITHUB_ENV
+              echo "ARCH_1=arm64" >> $GITHUB_ENV
+              echo "ARCH_2=aarch64" >> $GITHUB_ENV
+              echo "ARCH_3=aarch64_generic" >> $GITHUB_ENV
+              ;;
+            "Nanopi-r4s")
+              echo "PROFILE=friendlyarm_nanopi-r4s" >> $GITHUB_ENV
+              echo "TARGET_SYSTEM=rockchip/armv8" >> $GITHUB_ENV
+              echo "TARGET_NAME=rockchip-armv8" >> $GITHUB_ENV
+              echo "ARCH_1=arm64" >> $GITHUB_ENV
+              echo "ARCH_2=aarch64" >> $GITHUB_ENV
+              echo "ARCH_3=aarch64_generic" >> $GITHUB_ENV
+              ;;
+            "Nanopi-r5s")
+              echo "PROFILE=friendlyarm_nanopi-r5s" >> $GITHUB_ENV
+              echo "TARGET_SYSTEM=rockchip/armv8" >> $GITHUB_ENV
+              echo "TARGET_NAME=rockchip-armv8" >> $GITHUB_ENV
+              echo "ARCH_1=arm64" >> $GITHUB_ENV
+              echo "ARCH_2=aarch64" >> $GITHUB_ENV
+              echo "ARCH_3=aarch64_generic" >> $GITHUB_ENV
+              ;;
+            "Orangepi Pc 2")
+              echo "PROFILE=xunlong_orangepi-pc2" >> $GITHUB_ENV
+              echo "TARGET_SYSTEM=sunxi/cortexa53" >> $GITHUB_ENV
+              echo "TARGET_NAME=sunxi-cortexa53" >> $GITHUB_ENV
+              echo "ARCH_1=arm64" >> $GITHUB_ENV
+              echo "ARCH_2=aarch64" >> $GITHUB_ENV
+              echo "ARCH_3=aarch64_cortex-a53" >> $GITHUB_ENV
+              ;;
+            "Orangepi R1 Plus")
+              echo "PROFILE=xunlong_orangepi-r1-plus" >> $GITHUB_ENV
+              echo "TARGET_SYSTEM=rockchip/armv8" >> $GITHUB_ENV
+              echo "TARGET_NAME=rockchip-armv8" >> $GITHUB_ENV
+              echo "ARCH_1=arm64" >> $GITHUB_ENV
+              echo "ARCH_2=aarch64" >> $GITHUB_ENV
+              echo "ARCH_3=aarch64_generic" >> $GITHUB_ENV
+              ;;
+            "Orangepi R1 Plus LTS")
+              echo "PROFILE=xunlong_orangepi-r1-plus-lts" >> $GITHUB_ENV
+              echo "TARGET_SYSTEM=rockchip/armv8" >> $GITHUB_ENV
+              echo "TARGET_NAME=rockchip-armv8" >> $GITHUB_ENV
+              echo "ARCH_1=arm64" >> $GITHUB_ENV
+              echo "ARCH_2=aarch64" >> $GITHUB_ENV
+              echo "ARCH_3=aarch64_generic" >> $GITHUB_ENV
+              ;;
+            "Raspberry Pi 1B")
+              echo "PROFILE=rpi" >> $GITHUB_ENV
+              echo "TARGET_SYSTEM=bcm27xx/bcm2708" >> $GITHUB_ENV
+              echo "TARGET_NAME=bcm27xx-bcm2708" >> $GITHUB_ENV
+              echo "ARCH_1=armv6" >> $GITHUB_ENV
+              echo "ARCH_2=arm" >> $GITHUB_ENV
+              echo "ARCH_3=arm_arm1176jzf-s_vfp" >> $GITHUB_ENV
+              ;;
+            "Raspberry Pi 2B")
+              echo "PROFILE=rpi-2" >> $GITHUB_ENV
+              echo "TARGET_SYSTEM=bcm27xx/bcm2709" >> $GITHUB_ENV
+              echo "TARGET_NAME=bcm27xx-bcm2709" >> $GITHUB_ENV
+              echo "ARCH_1=armv7" >> $GITHUB_ENV
+              echo "ARCH_2=arm" >> $GITHUB_ENV
+              echo "ARCH_3=arm_cortex-a7_neon-vfpv4" >> $GITHUB_ENV
+              ;;
+            "Raspberry Pi 3B")
+              echo "PROFILE=rpi-3" >> $GITHUB_ENV
+              echo "TARGET_SYSTEM=bcm27xx/bcm2710" >> $GITHUB_ENV
+              echo "TARGET_NAME=bcm27xx-bcm2710" >> $GITHUB_ENV
+              echo "ARCH_1=arm64" >> $GITHUB_ENV
+              echo "ARCH_2=aarch64" >> $GITHUB_ENV
+              echo "ARCH_3=aarch64_cortex-a53" >> $GITHUB_ENV
+              ;;
+            "Raspberry Pi 4B")
+              echo "PROFILE=rpi-4" >> $GITHUB_ENV
+              echo "TARGET_SYSTEM=bcm27xx/bcm2711" >> $GITHUB_ENV
+              echo "TARGET_NAME=bcm27xx-bcm2711" >> $GITHUB_ENV
+              echo "ARCH_1=arm64" >> $GITHUB_ENV
+              echo "ARCH_2=aarch64" >> $GITHUB_ENV
+              echo "ARCH_3=aarch64_cortex-a72" >> $GITHUB_ENV
+              ;;
+            "Raspberry Pi 5B")
+              echo "PROFILE=rpi-5" >> $GITHUB_ENV
+              echo "TARGET_SYSTEM=bcm27xx/bcm2712" >> $GITHUB_ENV
+              echo "TARGET_NAME=bcm27xx-bcm2712" >> $GITHUB_ENV
+              echo "ARCH_1=arm64" >> $GITHUB_ENV
+              echo "ARCH_2=aarch64" >> $GITHUB_ENV
+              echo "ARCH_3=aarch64_cortex-a76" >> $GITHUB_ENV
+              ;;
+            "X86-64")
+              echo "PROFILE=generic" >> $GITHUB_ENV
+              echo "TARGET_SYSTEM=x86/64" >> $GITHUB_ENV
+              echo "TARGET_NAME=x86-64" >> $GITHUB_ENV
+              echo "ARCH_1=amd64" >> $GITHUB_ENV
+              echo "ARCH_2=x86_64" >> $GITHUB_ENV
+              echo "ARCH_3=x86_64" >> $GITHUB_ENV
+              ;;
+            "X86-Generic")
+              echo "PROFILE=generic" >> $GITHUB_ENV
+              echo "TARGET_SYSTEM=x86/generic" >> $GITHUB_ENV
+              echo "TARGET_NAME=x86-generic" >> $GITHUB_ENV
+              echo "ARCH_1=386" >> $GITHUB_ENV
+              echo "ARCH_2=i386" >> $GITHUB_ENV
+              echo "ARCH_3=i386_pentium4" >> $GITHUB_ENV
+              ;;
+          esac
+
+          echo "status=success" >> "$GITHUB_OUTPUT"
+
+      - name: Download and Prepare Image Builder
+        id: download
+        if: steps.variables.outputs.status == 'success'
+        run: |
+          CURVER=$(echo "${BRANCH}" | cut -d'.' -f1)
+          archive_ext=$([ "${CURVER}" -ge "24" ] && echo "tar.zst" || echo "tar.xz")
+
+          FILENAME="${BASE}-imagebuilder-${BRANCH}-${TARGET_NAME}.Linux-x86_64.${archive_ext}"
+          
+          PRIMARY_URL="${DOWNLOAD_BASE}/releases/${BRANCH}/targets/${TARGET_SYSTEM}/${FILENAME}"
+          
+          FALLBACK_URL=""
+          if [ "${BASE}" == "immortalwrt" ]; then
+            FALLBACK_URL="https://immortalwrt.kyarucloud.moe/releases/${BRANCH}/targets/${TARGET_SYSTEM}/${FILENAME}"
+          fi
+
+          download_success=false
+          
+          echo "Attempting download from: $PRIMARY_URL"
+          if wget --timeout=60 --tries=3 --progress=dot:giga "$PRIMARY_URL"; then
+            echo "Download successful from primary URL"
+            download_success=true
+          else
+            echo "Primary download failed, trying fallback"
+          fi
+          
+          if [ "$download_success" = false ] && [ -n "$FALLBACK_URL" ]; then
+            echo "Attempting download from fallback: $FALLBACK_URL"
+            if wget --timeout=60 --tries=3 --progress=dot:giga "$FALLBACK_URL"; then
+              echo "Download successful from fallback URL"
+              download_success=true
+            fi
+          fi
+          
+          if [ "$download_success" = false ]; then
+            echo "All download attempts failed!"
+            exit 1
+          fi
+
+          case "${archive_ext}" in
+            tar.xz)
+              tar -xJf *-imagebuilder-* && rm -f *-imagebuilder-*.tar.xz
+              ;;
+            tar.zst)
+              tar --use-compress-program=unzstd -xf *-imagebuilder-* && rm -f *-imagebuilder-*.tar.zst
+              ;;
+          esac
+
+          mv *-imagebuilder-* ${WORKING_DIR}
+          if [ -d "/builder" ]; then
+            mv ${WORKING_DIR} /builder/
+            ln -s /builder/${WORKING_DIR} ${WORKING_DIR}
+            echo "Using simulated disk at /builder"
+          fi
+          cp -r $GITHUB_WORKSPACE/origin/* $GITHUB_WORKSPACE/${WORKING_DIR}
+
+          echo "status=success" >> "$GITHUB_OUTPUT"
+
+      - name: Download External Packages
+        id: packages
+        if: steps.download.outputs.status == 'success'
+        run: |
+          cd ${{ env.WORKING_DIR }}
+          chmod +x scripts/PACKAGES.sh
+          ./scripts/PACKAGES.sh
+
+          echo "status=success" >> "$GITHUB_OUTPUT"
+
+      - name: Apply Patches and Customizations
+        id: customize
+        if: steps.packages.outputs.status == 'success'
+        run: |
+          cd ${{ env.WORKING_DIR }}
+
+          chmod +x scripts/PATCH.sh
+          ./scripts/PATCH.sh
+
+          chmod +x scripts/MISC.sh
+          ./scripts/MISC.sh
+
+          chmod +x scripts/TUNNEL.sh
+          ./scripts/TUNNEL.sh ${{ env.TUNNEL }}
+
+          df -hT ${PWD}
+          echo "status=success" >> "$GITHUB_OUTPUT"
+
+      - name: Build Firmware Images
+        id: build
+        if: steps.customize.outputs.status == 'success'
+        run: |
+          cd ${{ env.WORKING_DIR }}
+          mkdir -p compiled_images
+          chmod +x make-image.sh
+
+          if [ "${{ env.CLEAN }}" == "true" ]; then
+            make clean
+          fi
+            
+          time ./make-image.sh ${{ env.PROFILE }} ${{ env.TUNNEL }}
+            
+          for file in bin/targets/"${{ env.TARGET_SYSTEM }}"/*.img.gz; do
+            if [ -f "$file" ]; then
+              new_name="XIDZs_$(basename "$file" .img.gz)_${{ env.TUNNEL }}.img.gz"
+              mv "$file" compiled_images/$new_name
+            fi
+          done
+
+          echo "Build completed:"
+          ls -la compiled_images/
+          echo "status=success" >> "$GITHUB_OUTPUT"
+
+      - name: Before Upload
+        id: beforeupload
+        if: steps.build.outputs.status == 'success'
+        run: |
+          cd ${{ env.WORKING_DIR }}
+          chmod +x scripts/RENAMEFW.sh
+          ./scripts/RENAMEFW.sh
+          echo "status=success" >> "$GITHUB_OUTPUT"
+
+      - name: Create Release
+        if: steps.beforeupload.outputs.status == 'success'
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.XIDZs_KEY }}
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: ${{ env.RELEASE_NAME }}
+          files: ${{ env.WORKING_DIR }}/compiled_images/*.img.gz
+          prerelease: ${{ github.ref_name == 'dev' }}
+
+      - name: Cleanup Build Artifacts
+        id: cleanup_artifacts
+        if: always()
+        run: |
+          cd ${{ env.WORKING_DIR }} || cd $GITHUB_WORKSPACE/${{ env.WORKING_DIR }}
+          
+          sudo rm -rf bin/ build_dir/ dl/ feeds/ files/ package/ packages/ staging_dir/ tmp/
+          sudo rm -rf .config .env logs/
+          
+          sudo rm -rf /tmp/*
+          sudo apt-get clean
+          sudo journalctl --vacuum-time=1h
+          
+          if [ -d "/builder" ]; then
+            sudo rm -rf /builder/*
+          fi
+          
+          df -h
+          echo "status=success" >> "$GITHUB_OUTPUT"
+
+      - name: Cleanup simulated disk
+        if: always() && (github.event.inputs.target == 'all-devices' || github.event.inputs.target == 'opt-devices')
+        run: |
+          sudo umount /builder || true
+          sudo lvremove -f /dev/github/runner || true
+          sudo vgremove -f github || true
+          sudo pvremove -f /dev/loop6 /dev/loop7 || true
+          sudo losetup -d /dev/loop6 /dev/loop7 || true
+          sudo rm -f /mnt/mnt.img /root.img || true
+          sudo rmdir /builder || true
+          df -h
