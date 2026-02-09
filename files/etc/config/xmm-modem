@@ -1,0 +1,4 @@
+config xmm-modem
+    option device '/dev/ttyACM0'
+    option apn 'internet'
+    option enable '1'
