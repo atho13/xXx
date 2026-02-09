@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# Bash version check (require 4+ for associative arrays)
+# Check bash version (requires 4+)
 if (( BASH_VERSINFO[0] < 4 )); then
-    echo "Error: This script requires bash version 4 or higher." >&2
+    echo "Error: Bash 4+ required." >&2
     exit 1
 fi
 
-# Strict mode
+# Enable strict mode
 set -euo pipefail
 IFS=$'\n\t'
 
-# Setup colors and formatting
+# Setup colors
 setup_colors() {
     PURPLE="\033[95m"
     BLUE="\033[94m"
@@ -27,7 +27,7 @@ setup_colors() {
     WARNING="[${YELLOW} WARNING ${RESET}]"
     ERROR="[${RED} ERROR ${RESET}]"
 
-    # Format escapes
+    # Formatting escapes
     CL="\033[m"
     UL="\033[4m"
     BOLD="\033[1m"
@@ -36,10 +36,10 @@ setup_colors() {
     TAB="  "
 }
 
-# Initialize colors early
+# Init colors
 setup_colors
 
-# Global config
+# Config vars
 declare -A CONFIG=(
     ["MAX_RETRIES"]=5
     ["RETRY_DELAY"]=2
@@ -47,18 +47,17 @@ declare -A CONFIG=(
     ["DEBUG"]="false"
 )
 
-# Cleanup on exit
+# Cleanup trap
 cleanup() {
-    printf "\e[?25h"  # Show cursor
+    printf "\e[?25h"
     jobs -p 2>/dev/null | xargs -r kill 2>/dev/null || true
 }
 trap cleanup EXIT
 
-# Logging function
+# Log message
 log() {
     local level="$1"
     local message="$2"
-    local timestamp=$(date '+%d-%m-%Y %H:%M:%S')
 
     case "$level" in
         "ERROR")   echo -e "${ERROR} $message" >&2 ;;
@@ -70,12 +69,12 @@ log() {
     esac
 }
 
-# Error handler with stack trace
+# Error handler
 error_msg() {
     local msg="$1"
     local line_number=${2:-${BASH_LINENO[0]}}
     echo -e "${ERROR} ${msg} (Line: ${line_number})" >&2
-    echo "Call stack:" >&2
+    echo "Stack trace:" >&2
     local frame=0
     while caller $frame; do
         ((frame++))
@@ -83,22 +82,22 @@ error_msg() {
     exit 1
 }
 
-# Animated spinner
+# Spinner for background tasks
 spinner() {
     local pid=$1
     local frames=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
     local colors=("\033[31m" "\033[33m" "\033[32m" "\033[36m" "\033[34m" "\033[35m")
 
-    printf "\e[?25l"  # Hide cursor
+    printf "\e[?25l"
 
     while kill -0 "$pid" 2>/dev/null; do
         for ((i=0; i < ${#frames[@]}; i++)); do
-            printf "\r ${colors[i]}%s${RESET}" "${frames[i]}"
+            printf "\r ${colors[i % ${#colors[@]}]}%s${RESET}" "${frames[i]}"
             sleep "${CONFIG[SPINNER_INTERVAL]}"
         done
     done
 
-    printf "\e[?25h"  # Show cursor
+    printf "\e[?25h"
     wait "$pid"
     return $?
 }
@@ -116,15 +115,15 @@ cmdinstall() {
     local exit_code=$?
     
     if [[ $exit_code -eq 0 ]]; then
-        log "SUCCESS" "$desc installed successfully"
+        log "SUCCESS" "$desc installed"
         if [[ "${CONFIG[DEBUG]}" == "true" ]]; then set -x; fi
     else
-        error_msg "Failed to install $desc"
+        error_msg "Install failed: $desc"
         return 1
     fi
 }
 
-# Check system dependencies
+# Check dependencies
 check_dependencies() {
     local -A dependencies=(
         ["aria2"]="aria2c --version | head -n1 | grep -oE '[0-9]+(\.[0-9]+)+'"
@@ -137,21 +136,21 @@ check_dependencies() {
         ["jq"]="jq --version | grep -oE '[0-9]+(\.[0-9]+)+'"
     )
 
-    log "STEPS" "Checking system dependencies..."
+    log "STEPS" "Check deps..."
 
-    # Check apt-get availability
+    # Check apt
     if ! command -v apt-get >/dev/null 2>&1; then
-        error_msg "apt-get not found. Unsupported environment."
+        error_msg "apt-get not found"
         return 1
     fi
 
-    # Update package lists
+    # Update repos
     if ! sudo apt-get update -qq &>/dev/null; then
-        error_msg "Failed to update package lists"
+        error_msg "Update failed"
         return 1
     fi
 
-    # Check each dependency
+    # Check each dep
     for pkg in "${!dependencies[@]}"; do
         local version_cmd="${dependencies[$pkg]}"
         local installed_version=""
@@ -159,30 +158,30 @@ check_dependencies() {
         if command -v "$pkg" >/dev/null 2>&1; then
             installed_version=$(eval "$version_cmd" 2>/dev/null || echo "")
             if [[ -n "$installed_version" ]]; then
-                log "SUCCESS" "Found $pkg version $installed_version"
+                log "SUCCESS" "$pkg v$installed_version OK"
                 continue
             fi
         fi
 
-        log "WARNING" "Installing $pkg..."
+        log "WARNING" "Install $pkg"
         if ! sudo apt-get install -y "$pkg" &>/dev/null; then
-            error_msg "Failed to install $pkg"
+            error_msg "Install failed: $pkg"
             return 1
         fi
         
-        # Verify installation
+        # Verify install
         installed_version=$(eval "$version_cmd" 2>/dev/null || echo "")
         if [[ -n "$installed_version" ]]; then
-            log "SUCCESS" "Installed $pkg version $installed_version"
+            log "SUCCESS" "$pkg v$installed_version"
         else
-            log "WARNING" "Installed $pkg but version check failed"
+            log "WARNING" "$pkg version check failed"
         fi
     done
 
-    log "SUCCESS" "All dependencies are satisfied!"
+    log "SUCCESS" "Deps OK"
 }
 
-# Get package extension based on OpenWrt version
+# Get pkg extension for OpenWrt
 get_package_extension() {
     local version="$1"
     local major_version=$(echo "$version" | cut -d'.' -f1)
@@ -194,14 +193,14 @@ get_package_extension() {
     fi
 }
 
-# Download with aria2c and retries
+# Aria2 download with retries (MOD: auto-clean .aria2 cache)
 ariadl() {
     if [ "$#" -lt 1 ]; then
-        error_msg "Usage: ariadl <URL> [OUTPUT_FILE]"
+        error_msg "Usage: ariadl <URL> [OUTPUT]"
         return 1
     fi
 
-    log "STEPS" "Aria2 Downloader"
+    log "STEPS" "Aria2 download"
 
     local URL=$1
     local OUTPUT_FILE=""
@@ -210,7 +209,7 @@ ariadl() {
     local MAX_RETRIES=${CONFIG[MAX_RETRIES]}
     local RETRY_DELAY=${CONFIG[RETRY_DELAY]}
 
-    # Determine output file and directory
+    # Set output
     if [ "$#" -eq 1 ]; then
         OUTPUT_FILE=$(basename "$URL")
         OUTPUT_DIR="."
@@ -219,48 +218,53 @@ ariadl() {
         OUTPUT_DIR=$(dirname "$2")
     fi
 
-    # Create output directory
+    # Create dir
     if [ ! -d "$OUTPUT_DIR" ]; then
         mkdir -p "$OUTPUT_DIR"
     fi
 
-    # Retry download loop
+    # Retry loop
     while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-        log "INFO" "Downloading: $URL (Attempt $((RETRY_COUNT + 1))/$MAX_RETRIES)"
+        log "INFO" "Download: $URL (try $((RETRY_COUNT + 1)))"
 
-        # Remove existing file
+        # Clean files
         if [ -f "$OUTPUT_DIR/$OUTPUT_FILE" ]; then
             rm -f "$OUTPUT_DIR/$OUTPUT_FILE"
         fi
+        # Clean aria2 cache to prevent session errors
+        if [ -f "$OUTPUT_DIR/${OUTPUT_FILE}.aria2" ]; then
+            rm -f "$OUTPUT_DIR/${OUTPUT_FILE}.aria2"
+            log "INFO" "Cleaned .aria2 cache"
+        fi
 
-        # Download with aria2c
+        # Download
         aria2c -q -d "$OUTPUT_DIR" -o "$OUTPUT_FILE" "$URL"
 
         if [ $? -eq 0 ]; then
-            log "SUCCESS" "Downloaded: $OUTPUT_FILE"
+            log "SUCCESS" "Downloaded $OUTPUT_FILE"
             return 0
         else
             RETRY_COUNT=$((RETRY_COUNT + 1))
             if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
-                log "WARNING" "Download failed. Retrying..."
+                log "WARNING" "Retry in $RETRY_DELAYs"
                 sleep "$RETRY_DELAY"
             fi
         fi
     done
 
-    error_msg "Failed to download: $OUTPUT_FILE after $MAX_RETRIES attempts"
+    error_msg "Download failed: $OUTPUT_FILE"
     return 1
 }
 
-# Download multiple packages with version-specific extension
+# Download packages array
 download_packages() {
-    local -n package_list="$1"  # Array reference
+    local -n package_list="$1"
     local download_dir="packages"
-    local pkg_ext=$(get_package_extension "${VEROP}")
+    local pkg_ext=$(get_package_extension "${VEROP:-0.0.0}")
 
     mkdir -p "$download_dir"
 
-    # Internal download function
+    # Internal download helper
     download_file() {
         local url="$1"
         local output="$2"
@@ -272,42 +276,40 @@ download_packages() {
                 return 0
             fi
             retry=$((retry + 1))
-            log "WARNING" "Retry $retry/$max_retries for $output"
+            log "WARNING" "Retry $retry/$max_retries: $output"
             sleep 2
         done
         return 1
     }
 
-    # Process each package entry
+    # Process entries (format: filename|base_url)
     for entry in "${package_list[@]}"; do
         IFS="|" read -r filename base_url <<< "$entry"
         unset IFS
 
         if [[ -z "$filename" || -z "$base_url" ]]; then
-            log "ERROR" "Invalid entry format: $entry"
+            log "ERROR" "Invalid entry: $entry"
             continue
         fi
 
         local download_url=""
-        
-        # Handle GitHub API URLs
+
+        # GitHub API handling
         if [[ "$base_url" == *"api.github.com"* ]]; then
-            local file_urls=""
-            if ! file_urls=$(curl -sL "$base_url" | jq -r '.assets[].browser_download_url' 2>/dev/null); then
-                log "ERROR" "Failed to parse JSON from $base_url"
+            local file_urls=$(curl -sL "$base_url" | jq -r '.assets[].browser_download_url' 2>/dev/null || echo "")
+            if [[ -z "$file_urls" ]]; then
+                log "ERROR" "GitHub API failed: $base_url"
                 continue
             fi
-            # Match files with correct extension
             download_url=$(echo "$file_urls" | grep -E "\.${pkg_ext}$" | grep -i "$filename" | sort -V | tail -1)
         else
-            # Handle regular web pages
-            local page_content=""
-            if ! page_content=$(curl -sL --max-time 30 --retry 3 --retry-delay 2 "$base_url"); then
-                log "ERROR" "Failed to fetch page: $base_url"
+            # Web scrape handling
+            local page_content=$(curl -sL --max-time 30 --retry 3 "$base_url" || echo "")
+            if [[ -z "$page_content" ]]; then
+                log "ERROR" "Page fetch failed: $base_url"
                 continue
             fi
 
-            # Try different filename patterns with version-specific extension
             local patterns=(
                 "${filename}[^\"]*\\.${pkg_ext}"
                 "${filename}_.*\\.${pkg_ext}"
@@ -317,12 +319,8 @@ download_packages() {
             for pattern in "${patterns[@]}"; do
                 download_url=$(echo "$page_content" | grep -oE "\"${pattern}\"" | tr -d '"' | sort -V | tail -n 1 || true)
                 if [[ -n "$download_url" ]]; then
-                    # Convert relative URLs to absolute
-                    if [[ "$download_url" =~ ^https?:// ]]; then
-                        # Already absolute URL
-                        :
-                    else
-                        # Make absolute URL
+                    # Fix relative URL
+                    if [[ ! "$download_url" =~ ^https?:// ]]; then
                         download_url="${base_url%/}/$download_url"
                     fi
                     break
@@ -330,28 +328,28 @@ download_packages() {
             done
         fi
 
-        # Check if download URL was found
+        # No URL? Skip
         if [[ -z "$download_url" ]]; then
-            log "ERROR" "No matching package found for $filename with extension .$pkg_ext"
+            log "ERROR" "No URL for $filename (ext .$pkg_ext)"
             continue
         fi
 
-        # Download the file
+        # Run download
         local output_file="$download_dir/$(basename "$download_url")"
         if ! download_file "$download_url" "$output_file"; then
-            error_msg "Failed to download $filename"
+            error_msg "Download failed: $filename"
         fi
     done
 
     return 0
 }
 
-# Main function
+# Main entry
 main() {
     check_dependencies || exit 1
 }
 
-# Run main if script is executed directly
+# Run main if direct call
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     main "$@"
 fi
