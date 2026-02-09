@@ -46,7 +46,7 @@ patch_signature_check() {
 # Force installation options in Makefile
 patch_makefile() {
     log "INFO" "Applying force options to Makefile..."
-    sed -i "s|install \$(BUILD_PACKAGES)|install \$(BUILD_PACKAGES) --force-overwrite --force-downgrade --force-checksum --force-maintainer|" Makefile
+    sed -i "s|install \$(BUILD_PACKAGES)|install \$(BUILD_PACKAGES) --force-overwrite --force-downgrade --force-checksum|" Makefile
 }
 
 # Configure partition sizes
