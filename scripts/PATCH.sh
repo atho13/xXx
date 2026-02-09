@@ -1,80 +1,86 @@
 #!/bin/bash
 
-# Load include script
-[ -f "./scripts/INCLUDE.sh" ] && . ./scripts/INCLUDE.sh
+. ./scripts/INCLUDE.sh
 
-# Initialize build environment
+# Initialize environment
 init_environment() {
-    log "INFO" "Starting Builder Patch..."
-    cd "${GITHUB_WORKSPACE}/${WORKING_DIR}" || exit 1
-}
-
-# Apply patches based on distro
-apply_distro_patches() {
-    case "${BASE}" in
-        "immortalwrt")
-            log "INFO" "Patching ImmortalWrt..."
-            # Remove conflicting cpufreq
-            sed -i "\|luci-app-cpufreq|d" include/target.mk
-            ;;
-        "openwrt")
-            log "INFO" "Patching OpenWrt..."
-            ;;
-        *)
-            log "INFO" "Unknown distro: ${BASE}"
-            ;;
-    esac
-}
-
-# Disable signature verification
-patch_signature_check() {
-    log "INFO" "Disabling signature check..."
+    log "INFO" "Start Builder Patch!"
+    log "INFO" "Current Path: $PWD"
     
-    # Select config file based on version
-    local major_ver=$(echo "${BRANCH}" | cut -d'.' -f1)
+    cd "${GITHUB_WORKSPACE}/${WORKING_DIR}" || error "Failed to change directory"
+}
+
+# Apply specific patches
+apply_distro_patches() {
+    if [[ "${BASE}" == "openwrt" ]]; then
+        log "INFO" "Applying OpenWrt specific patches"
+    elif [[ "${BASE}" == "immortalwrt" ]]; then
+        log "INFO" "Applying ImmortalWrt specific patches"
+        # cpufreq
+        sed -i "\|luci-app-cpufreq|d" include/target.mk
+    else
+        log "INFO" "Unknown distribution: ${BASE}"
+    fi
+}
+
+# Patch package signature
+patch_signature_check() {
+    log "INFO" "Disabling package signature"
+    
+    local branch_major=$(echo "${BRANCH}" | cut -d'.' -f1)
     local repo_file="repositories"
     
-    # Use .conf for older versions (23/24)
-    [[ "$major_ver" =~ ^(23|24)$ ]] && repo_file="repositories.conf"
+    case "$branch_major" in
+        "24"|"23")
+            repo_file="repositories.conf"
+            ;;
+        "25"|*)
+            repo_file="repositories"
+            ;;
+    esac
     
-    # Comment out signature check option
+    log "INFO" "Using repository file: ${repo_file}"
     sed -i '\|option check_signature| s|^|#|' "${repo_file}"
 }
 
-# Force overwrite packages in Makefile
+# Force installation options in Makefile
 patch_makefile() {
-    log "INFO" "Patching Makefile force options..."
-    sed -i "s|install \$(BUILD_PACKAGES)|install \$(BUILD_PACKAGES) --force-overwrite --force-downgrade|" Makefile
+    log "INFO" "Applying force options to Makefile..."
+    sed -i "s|install \$(BUILD_PACKAGES)|install \$(BUILD_PACKAGES) --force-overwrite --force-downgrade --force-checksum --force-maintainer|" Makefile
 }
 
-# Resize partitions
+# Configure partition sizes
 configure_partitions() {
-    log "INFO" "Resizing partitions..."
+    log "INFO" "Configuring partition sizes"
+    # Set kernel and rootfs partition sizes
     sed -i "s|CONFIG_TARGET_KERNEL_PARTSIZE=.*|CONFIG_TARGET_KERNEL_PARTSIZE=128|" .config
     sed -i "s|CONFIG_TARGET_ROOTFS_PARTSIZE=.*|CONFIG_TARGET_ROOTFS_PARTSIZE=1280|" .config
 }
 
-# Amlogic: Disable unused image formats
+# Apply Amlogic-specific configurations
 configure_amlogic() {
     if [[ "${TYPE}" == "OPHUB" || "${TYPE}" == "ULO" ]]; then
-        log "INFO" "Optimizing for Amlogic..."
         sed -i "s|CONFIG_TARGET_ROOTFS_CPIOGZ=.*|# CONFIG_TARGET_ROOTFS_CPIOGZ is not set|g" .config
         sed -i "s|CONFIG_TARGET_ROOTFS_EXT4FS=.*|# CONFIG_TARGET_ROOTFS_EXT4FS is not set|g" .config
         sed -i "s|CONFIG_TARGET_ROOTFS_SQUASHFS=.*|# CONFIG_TARGET_ROOTFS_SQUASHFS is not set|g" .config
         sed -i "s|CONFIG_TARGET_IMAGES_GZIP=.*|# CONFIG_TARGET_IMAGES_GZIP is not set|g" .config
+    else
+        log "INFO" "System type: ${TYPE}"
     fi
 }
 
-# x86: Disable ISO and VHDX images
+# Apply x86_64 and i386 configurations
 configure_x86() {
-    if [[ "${ARCH_2}" =~ (x86_64|i386) ]]; then
-        log "INFO" "Optimizing for x86..."
+    if [[ "${ARCH_2}" == "x86_64" ]] || [[ "${ARCH_2}" == "i386" ]]; then
+        log "INFO" "Applying ${ARCH_2} configurations"
+        # disable iso
         sed -i "s|CONFIG_ISO_IMAGES=y|# CONFIG_ISO_IMAGES is not set|" .config
+        # disable vhdx
         sed -i "s|CONFIG_VHDX_IMAGES=y|# CONFIG_VHDX_IMAGES is not set|" .config  
     fi
 }
 
-# Main Execution
+# Main execution
 main() {
     init_environment
     apply_distro_patches
@@ -83,8 +89,8 @@ main() {
     configure_partitions
     configure_amlogic
     configure_x86
-    log "INFO" "Builder patch finished!"
+    log "INFO" "Builder patch completed successfully!"
 }
 
-# Run main
+# Execute main function
 main
