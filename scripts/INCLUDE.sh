@@ -106,24 +106,18 @@ check_dependencies() {
     log "SUCCESS" "All dependencies are ready!"
 }
 
-# Determine file priority (.apk or .ipk) based on version
+# Determine package priority (.apk vs .ipk)
 get_extension_priority() {
     local version="${1:-${CONFIG[DEFAULT_VER]}}"
     local major=$(echo "$version" | cut -d'.' -f1)
     
-    # SNAPSHOT / Master uses APK
-    if [[ "$version" =~ "SNAPSHOT" ]] || [[ "$version" == "master" ]]; then
+    # 25.12+ and SNAPSHOT use .apk
+    if [[ "$version" =~ "SNAPSHOT" ]] || [[ "$major" -ge 25 ]]; then
         echo "apk ipk"
         return
     fi
 
-    # Version 25.12) uses APK
-    if [[ "$major" -ge 25 ]]; then
-        echo "apk ipk"
-        return
-    fi
-
-    # versions (23.05, 24.10) use IPK
+    # 23.05 and 24.10 use .ipk
     echo "ipk apk"
 }
 
@@ -152,7 +146,7 @@ download_packages() {
     local ver="${VEROP:-${CONFIG[DEFAULT_VER]}}" # Get version from env
     local dir="packages"
     
-    # Get extension priority (e.g., "ipk apk" for v24, "apk ipk" for v25)
+    # Get priority: "apk ipk" (v25+) or "ipk apk" (v23/24)
     local exts=( $(get_extension_priority "$ver") )
     
     log "INFO" "OpenWrt Version: $ver. Priority: ${exts[*]}"
@@ -167,23 +161,39 @@ download_packages() {
         local dl_url=""
         local found_ext=""
 
-        # Loop through extension priority
+        # Loop through priorities (e.g., try apk first, then ipk)
         for ext in "${exts[@]}"; do
             
             # Case A: GitHub API URL
             if [[ "$url" == *"api.github.com"* ]]; then
-                local json=$(curl -sL "$url" || true)
+                local json=$(curl -sL --user-agent "Mozilla/5.0" "$url" || true)
                 dl_url=$(echo "$json" | jq -r '.assets[].browser_download_url' | grep -E "\.${ext}$" | grep -i "$name" | head -1)
             
-            # Case B: Regular Web URL
+            # Case B: Regular Web URL (Directory Listing)
             else
-                local html=$(curl -sL --max-time 10 "$url" || true)
-                # Regex to find .ipk/.apk file
-                local file_match=$(echo "$html" | grep -oE "${name}.*\.${ext}" | head -1 | tr -d '"')
+                # Use User-Agent to avoid blocking and follow redirects
+                local html=$(curl -sL --user-agent "Mozilla/5.0" --max-time 15 "$url" || true)
+                
+                # Enhanced Regex: Looks for href="package_name...ext" or just the filename
+                # Handles quotes, prefixes, and common web directory formats
+                local file_match=$(echo "$html" | grep -oE "href=[\"'][^\"']*${name}[^\"']*\.${ext}[\"']" | head -1 | sed -E 's/href=[\"'\'']//g; s/[\"'\'']//g')
+                
+                # Fallback: simple grep if href not found
+                if [[ -z "$file_match" ]]; then
+                    file_match=$(echo "$html" | grep -oE "${name}[-_][a-zA-Z0-9\._-]+\.${ext}" | head -1)
+                fi
                 
                 if [[ -n "$file_match" ]]; then
                     # Fix relative URLs
-                    [[ "$file_match" != http* ]] && dl_url="${url%/}/$file_match" || dl_url="$file_match"
+                    if [[ "$file_match" != http* ]]; then
+                        # Remove trailing slash from base URL if present
+                        local clean_base="${url%/}"
+                        # Remove leading slash from file match if present
+                        local clean_file="${file_match#/}"
+                        dl_url="${clean_base}/${clean_file}"
+                    else
+                        dl_url="$file_match"
+                    fi
                 fi
             fi
 
@@ -197,6 +207,7 @@ download_packages() {
         # If file not found in any format
         if [[ -z "$dl_url" ]]; then
             log "ERROR" "Package not found: $name"
+            log "WARNING" "Checked in: $url"
             continue
         fi
 
