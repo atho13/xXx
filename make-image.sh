@@ -17,7 +17,7 @@ EXCLUDED=""
 
 # CORE SYSTEM
 PACKAGES+=" dnsmasq-full libc block-mount zram-swap zoneinfo-core zoneinfo-asia bash screen \
-uhttpd uhttpd-mod-ubus luci luci-ssl openssh-sftp-server adb curl wget-ssl \
+uhttpd uhttpd-mod-ubus luci luci-ssl openssh-sftp-server adb curl wget-ssl irqbalance \
 httping htop jq tar unzip coreutils-base64 coreutils-sleep coreutils-stat"
 
 # ETHERNET & MODEM DRIVERS
@@ -90,7 +90,7 @@ PACKAGES+=" php8 php8-cli php8-fastcgi php8-fpm php8-mod-session php8-mod-ctype 
 PACKAGES+=" luci-theme-argon luci-theme-material"
 
 # MISC
-MISC+=" atc-fib-l8x0_gl atc-fib-fm350_gl luci-proto-atc luci-app-mmconfig luci-app-ttyd luci-app-tinyfm \
+MISC+=" atc-fib-l8x0_gl atc-fib-fm350_gl luci-proto-atc luci-app-ttyd luci-app-tinyfm \
 internet-detector internet-detector-mod-modem-restart luci-app-internet-detector"
 
 # PROFILE SPECIFIC
