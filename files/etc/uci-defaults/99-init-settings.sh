@@ -20,20 +20,19 @@ fi
 echo "Disabling OPKG signature checking..."
 sed -i 's/option check_signature/# option check_signature/g' /etc/opkg.conf
 
-echo "Adding custom repository..."
-echo "src/gz custom_packages https://dl.openwrt.ai/latest/packages/$(grep "OPENWRT_ARCH" /etc/os-release | awk -F '"' '{print $2}')/kiddin9" >> /etc/opkg/customfeeds.conf
+# echo "Adding custom repository..."
+# echo "src/gz custom_packages https://dl.openwrt.ai/latest/packages/$(grep "OPENWRT_ARCH" /etc/os-release | awk -F '"' '{print $2}')/kiddin9" >> /etc/opkg/customfeeds.conf
 
 # Basic system
 echo "Setting root password..."
-(echo "quenx"; sleep 1; echo "quenx") | passwd > /dev/null
+(echo "root"; sleep 1; echo "root") | passwd > /dev/null
 
 echo "Configuring hostname and timezone..."
 uci batch <<EOF
-set system.@system[0].hostname='XIDZsWRT'
+set system.@system[0].hostname='FRDM-X'
 set system.@system[0].timezone='WIB-7'
 set system.@system[0].zonename='Asia/Jakarta'
 delete system.ntp.server
-add_list system.ntp.server='pool.ntp.org'
 add_list system.ntp.server='id.pool.ntp.org'
 add_list system.ntp.server='time.google.com'
 commit system
@@ -80,14 +79,14 @@ if [ -d /sys/class/ieee80211 ] && [ -n "$(ls /sys/class/ieee80211 2>/dev/null)" 
     uci set wireless.@wifi-iface[0].disabled='0'
     uci set wireless.@wifi-iface[0].mode='ap'
     uci set wireless.@wifi-iface[0].encryption='psk2'
-    uci set wireless.@wifi-iface[0].key='XIDZs2025'
+    uci set wireless.@wifi-iface[0].key='root'
     uci set wireless.@wifi-device[0].country='ID'
     if grep -q "Raspberry Pi 5\|Raspberry Pi 4\|Raspberry Pi 3" /proc/cpuinfo; then
-        uci set wireless.@wifi-iface[0].ssid='XIDZs_5G'
+        uci set wireless.@wifi-iface[0].ssid='FRDMx_5G'
         uci set wireless.@wifi-device[0].channel='149'
         uci set wireless.@wifi-device[0].htmode='VHT80'
     else
-        uci set wireless.@wifi-iface[0].ssid='XIDZs'
+        uci set wireless.@wifi-iface[0].ssid='FREEDOM-X'
         uci set wireless.@wifi-device[0].channel='1'
         uci set wireless.@wifi-device[0].htmode='HT20'
     fi 
@@ -126,13 +125,13 @@ ln -sf / /www/tinyfm/rootfs
 
 # UI customizations
 echo "Modifying UI elements..."
-sed -i "s#_('Firmware Version'),(L.isObject(boardinfo.release)?boardinfo.release.description+' / ':'')+(luciversion||''),#_('Firmware Version'),(L.isObject(boardinfo.release)?boardinfo.release.description+' | xidz_x':''),#g" /www/luci-static/resources/view/status/include/10_system.js
+sed -i "s#_('Firmware Version'),(L.isObject(boardinfo.release)?boardinfo.release.description+' / ':'')+(luciversion||''),#_('Firmware Version'),(L.isObject(boardinfo.release)?boardinfo.release.description+' | FRDM-X':''),#g" /www/luci-static/resources/view/status/include/10_system.js
 sed -i -E 's/icons\/port_%s\.(svg|png)/icons\/port_%s.gif/g' /www/luci-static/resources/view/status/include/29_ports.js
 mv /www/luci-static/resources/view/status/include/29_ports.js /www/luci-static/resources/view/status/include/11_ports.js
 
 # System customizations
 echo "Applying system.."
-sed -i -e 's/\[ -f \/etc\/banner \] && cat \/etc\/banner/#&/' -e 's/\[ -n \"\$FAILSAFE\" \] && cat \/etc\/banner.failsafe/& || \/usr\/bin\/syntax/' /etc/profile
+sed -i -e 's/\[ -f \/etc\/banner \] && cat \/etc\/banner/#&/' -e 's/\[ -n \"\$FAILSAFE\" \] && cat \/etc\/banner.failsafe/& || \/usr\/bin\/chnrot/' /etc/profile
 bash /etc/init.d/xidzs disable
 
 # Execute scripts
