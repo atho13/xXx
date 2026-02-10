@@ -108,14 +108,22 @@ download_custom_scripts() {
     log "INFO" "Downloading custom scripts"
     
     local scripts=(
-        "https://raw.githubusercontent.com/frizkyiman/fix-read-only/main/install2.sh|files/root"
-        "https://raw.githubusercontent.com/syntax-xidz/contenx/main/xcli/xdev|files/usr/bin"
-        "https://raw.githubusercontent.com/syntax-xidz/contenx/main/xcli/syntax|files/usr/bin"
-        "https://raw.githubusercontent.com/syntax-xidz/contenx/main/xcli/xidz|files/usr/bin"
-        "https://raw.githubusercontent.com/syntax-xidz/contenx/main/xcli/x-gpio|files/usr/bin"
-        "https://raw.githubusercontent.com/syntax-xidz/contenx/main/xcli/x-gpioled|files/usr/bin"
-        "https://raw.githubusercontent.com/syntax-xidz/contenx/main/xcli/xidzs|files/etc/init.d"
-        "https://raw.githubusercontent.com/syntax-xidz/contenx/main/xcli/issue|files/etc/init.d"
+        #"https://raw.githubusercontent.com/frizkyiman/fix-read-only/main/install2.sh|files/root"
+        #"https://raw.githubusercontent.com/syntax-xidz/contenx/main/xcli/xdev|files/usr/bin"
+        #"https://raw.githubusercontent.com/syntax-xidz/contenx/main/xcli/syntax|files/usr/bin"
+        #"https://raw.githubusercontent.com/syntax-xidz/contenx/main/xcli/xidz|files/usr/bin"
+        #"https://raw.githubusercontent.com/syntax-xidz/contenx/main/xcli/x-gpio|files/usr/bin"
+        #"https://raw.githubusercontent.com/syntax-xidz/contenx/main/xcli/x-gpioled|files/usr/bin"
+        #"https://raw.githubusercontent.com/syntax-xidz/contenx/main/xcli/xidzs|files/etc/init.d"
+        #"https://raw.githubusercontent.com/syntax-xidz/contenx/main/xcli/issue|files/etc/init.d"
+        #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/install2.sh|files/root"
+        #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/xdev|files/usr/bin"
+        "https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/chnrot|files/usr/bin"
+        #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/xidz|files/usr/bin"
+        #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/x-gpio|files/usr/bin"
+        #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/x-gpioled|files/usr/bin"
+        #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/xidzs|files/etc/init.d"
+        "https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/issue|files/etc/init.d"
     )
     
     for script in "${scripts[@]}"; do
@@ -132,7 +140,7 @@ configure_file_permissions() {
     # file etc sett permission
     local initd_files=(
         "files/etc/init.d/issue"
-        "files/etc/init.d/xidzs"
+        #"files/etc/init.d/xidzs"
     )
     
     log "INFO" "Sett permissions for init.d files"
@@ -160,12 +168,12 @@ configure_file_permissions() {
     
     # Custom scripts and sett permission
     local custom_scripts=(
-        "files/root/install2.sh"
-        "files/usr/bin/xdev"
-        "files/usr/bin/syntax"
-        "files/usr/bin/xidz"
-        "files/usr/bin/x-gpio"
-        "files/usr/bin/x-gpioled"
+        #"files/root/install2.sh"
+        #"files/usr/bin/xdev"
+        "files/usr/bin/chnrot"
+        #"files/usr/bin/xidz"
+        #"files/usr/bin/x-gpio"
+        #"files/usr/bin/x-gpioled"
     )
     
     log "INFO" "Sett permissions for custom scripts"
