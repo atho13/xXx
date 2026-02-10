@@ -114,10 +114,10 @@ rename_firmware() {
         "-s905x4-|s905x4_AT01-Ax810"
         
         # Amlogic Ophub
-        "_s905x_|s905x_HG680P-WIFION"
-        "_s905x-b860h_|s905x_B860H-WIFION"
-        #"_s905x_|s905x_HG680P-WIFIOFF"
-        #"_s905x-b860h_|s905x_B860H-WIFIOFF"
+        #"_s905x_|s905x_HG680P-WIFION"
+        #"_s905x-b860h_|s905x_B860H-WIFION"
+        "_s905x_|s905x-WIFIOFF"
+        "_s905x-b860h_|s905x-WIFIOFF"
         "_s905d_|s905d_Phicomm-N1"
         "_s905l-mg101_|s905l_Mibox-4"
         "_s905l_|s905l_B860AV2"
@@ -204,9 +204,9 @@ rename_firmware() {
                 fi
                 local new_name
                 if [[ -n "$kernel" ]]; then
-                    new_name="XIDZs-${OP_BASE}-${BRANCH}-${replace}-${kernel}-${TUNNEL}-${DATE}.img.gz"
+                    new_name="FRDMx-${OP_BASE}-${BRANCH}-${replace}-${kernel}-${TUNNEL}-${DATE}.img.gz"
                 else
-                    new_name="XIDZs-${OP_BASE}-${BRANCH}-${replace}-${TUNNEL}-${DATE}.img.gz"
+                    new_name="FRDMx-${OP_BASE}-${BRANCH}-${replace}-${TUNNEL}-${DATE}.img.gz"
                 fi
                 echo -e "${INFO} Renaming: $file → $new_name"
                 mv "$file" "$new_name" || {
@@ -218,7 +218,7 @@ rename_firmware() {
         for file in *"${search}"*.tar.gz; do
             if [[ -f "$file" ]]; then
                 local new_name
-                new_name="XIDZs-${OP_BASE}-${BRANCH}-${replace}-${TUNNEL}-${DATE}.img.gz"
+                new_name="FRDMx-${OP_BASE}-${BRANCH}-${replace}-${TUNNEL}-${DATE}.img.gz"
                 echo -e "${INFO} Renaming: $file → $new_name"
                 mv "$file" "$new_name" || {
                     echo -e "${WARN} Failed to rename $file"
