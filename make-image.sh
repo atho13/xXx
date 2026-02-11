@@ -17,7 +17,7 @@ EXCLUDED=""
 
 # CORE SYSTEM
 PACKAGES+=" dnsmasq-full libc block-mount zram-swap zoneinfo-core zoneinfo-asia bash screen \
-uhttpd uhttpd-mod-ubus luci luci-ssl openssh-sftp-server adb curl wget-ssl irqbalance \
+uhttpd uhttpd-mod-ubus luci luci-ssl openssh-sftp-server adb curl wget-ssl irqbalance kmod-irqbypass \
 httping htop jq tar unzip coreutils-base64 coreutils-sleep coreutils-stat"
 
 # ETHERNET & MODEM DRIVERS
