@@ -40,7 +40,7 @@ on:
       tunnel:
         description: "Select Tunnel VPN"
         required: true
-        default: "openclash"
+        default: "no-tunnel"
         type: choice
         options:
           - openclash
@@ -160,7 +160,7 @@ jobs:
         if: steps.setupenv.outputs.status == 'success'
         uses: softprops/action-gh-release@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.XIDZs_KEY }}
+          GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
         with:
           tag_name: ${{ steps.setupenv.outputs.release_tag }}
           name: ${{ steps.setupenv.outputs.release_name }}
@@ -472,7 +472,7 @@ jobs:
             
           for file in bin/targets/"${{ env.TARGET_SYSTEM }}"/*-rootfs.tar.gz; do
             if [ -f "$file" ]; then
-              new_name="XIDZs_$(basename "$file" -rootfs.tar.gz)_${{ env.TUNNEL }}-rootfs.tar.gz"
+              new_name="FRDMX_$(basename "$file" -rootfs.tar.gz)_${{ env.TUNNEL }}-rootfs.tar.gz"
               mv "$file" compiled_images/$new_name
             fi
           done
@@ -512,7 +512,7 @@ jobs:
         if: steps.beforeupload.outputs.status == 'success'
         uses: softprops/action-gh-release@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.XIDZs_KEY }}
+          GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
         with:
           tag_name: ${{ env.RELEASE_TAG }}
           name: ${{ env.RELEASE_NAME }}
