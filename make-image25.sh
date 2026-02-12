@@ -15,7 +15,7 @@ PACKAGES=""
 MISC=""
 EXCLUDED=""
 
-CORE SYSTEM
+#CORE SYSTEM
 PACKAGES+=" dnsmasq-full libc block-mount zram-swap zoneinfo-core zoneinfo-asia bash screen \
 uhttpd uhttpd-mod-ubus luci luci-ssl openssh-sftp-server adb curl wget-ssl \
 httping htop jq tar unzip coreutils-base64 coreutils-sleep coreutils-stat"
