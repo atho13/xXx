@@ -26,15 +26,8 @@ packages_custom+=(
     "haproxy_|${REPOS[OPENWRT]}"
     "UDPspeeder_|${REPOS[OPENWRT]}"
     "tcpdump_|${REPOS[OPENWRT]}"
+    "luci-theme-argon_|${REPOS[OPENWRT]}"
 )
-
-# Add Amlogic packages for specific device types
-if [[ "${TYPE}" == "OPHUB" || "${TYPE}" == "ULO" ]]; then
-    log "INFO" "Add Packages Amlogic In ${TYPE}.."
-    packages_custom+=(
-        "luci-app-amlogic_|https://api.github.com/repos/ophub/luci-app-amlogic/releases/latest"
-    )
-fi
 
 # Verify downloaded packages
 verify_packages() {
