@@ -12,6 +12,8 @@ make info
 # VARIABEL
 PROFILE=""
 PACKAGES=""
+MISC=""
+EXCLUDED=""
 
 # CORE SYSTEM
 PACKAGES+=" base-files bash bc blkid block-mount btrfs-progs busybox bzip2 ip-full libc \
