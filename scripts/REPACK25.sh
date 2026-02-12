@@ -8,7 +8,7 @@ repackwrt() {
     local builder_type=""
     local target_board=""
     local target_kernel=""
-    local tunnel_type=""
+    #local tunnel_type=""
     
     # Parse command line arguments
     while [[ $# -gt 0 ]]; do
@@ -24,10 +24,6 @@ repackwrt() {
             -k|--kernel)
                 target_kernel="$2"
                 shift 2
-                ;;
-            *)
-                error_msg "Unknown option: $1"
-                exit 1
                 ;;
         esac
     done
