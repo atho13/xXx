@@ -23,14 +23,9 @@ REPOS+=(
 declare -a packages_custom
 packages_custom+=(
     # Modem info packages
-    "modeminfo_|${REPOS[KIDDIN9]}"
-    "luci-app-modeminfo_|${REPOS[KIDDIN9]}"
-    "modeminfo-serial-tw_|${REPOS[KIDDIN9]}"
-    "modeminfo-serial-dell_|${REPOS[KIDDIN9]}"
-    "modeminfo-serial-sierra_|${REPOS[KIDDIN9]}"
-    "modeminfo-serial-xmm_|${REPOS[KIDDIN9]}"
-    "modeminfo-serial-fibocom_|${REPOS[KIDDIN9]}"
-    "modeminfo-serial-sierra_|${REPOS[KIDDIN9]}"
+    "haproxy_|${REPOS[OPENWRT]}"
+    "UDPspeeder_|${REPOS[OPENWRT]}"
+    "tcpdump_|${REPOS[OPENWRT]}"
 )
 
 # Add Amlogic packages for specific device types
