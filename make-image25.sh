@@ -25,34 +25,32 @@ PACKAGES+=" base-files bash bc blkid block-mount btrfs-progs busybox bzip2 ip-fu
         rpcd-mod-iwinfo rpcd-mod-luci rpcd-mod-rrdns uhttpd uhttpd-mod-ubus openssh-sftp-server \
         ppp ppp-mod-pppoe pv ntfs-3g tar ttyd kmod-usb2 kmod-usb-net-rndis wwan httping \
         uclient-fetch unzip uqmi usb-modeswitch xz xz-utils zoneinfo-asia zoneinfo-core \
-        \
         luci luci-compat luci-lib-base kmod-usb-net-huawei-cdc-ncm kmod-usb-net \
         luci-lib-ip luci-lib-ipkg luci-lib-jsonc luci-lib-nixio luci-mod-admin-full luci-mod-network \
         luci-mod-status luci-mod-system luci-proto-3g luci-proto-mbim mbim-utils \
         luci-proto-ncm luci-proto-ppp luci-proto-qmi screen kmod-tun \
         kmod-usb-wdm kmod-usb-net-qmi-wwan luci-proto-qmi kmod-usb-net-cdc-ether \
         kmod-usb-serial-option kmod-usb-serial kmod-usb-serial-wwan qmi-utils kmod-usb-serial-qualcomm \
-        kmod-usb-net-cdc-ncm kmod-usb-net-cdc-mbim umbim modemmanager \
-        \
-        ${config_list} \
-        "
+        kmod-usb-net-cdc-ncm kmod-usb-net-cdc-mbim umbim modemmanager"
 
 # THEMES
-PACKAGES+=" luci-theme-argon luci-theme-material"
+PACKAGES+=" luci-theme-material"
 
 # MAIN BUILD
 build_firmware() {
     local target_profile="$1"
     local build_files="files"
-    
+
+    log "INFO" "Starting build for profile '$target_profile' [Tunnel: $tunnel_option]..."
+
     # Load Profile Specifics
-    configure_profile_packages "$target_profile" 
+    configure_profile_packages "$target_profile"
     
     # Load Base/Release Config
     configure_release_packages
 
-    # PACKAGES
-    make image PROFILE="$target_profile" PACKAGES="$PACKAGES" FILES="$build_files"
+    # PACKAGES + MISC + EXCLUDED    
+    make image PROFILE="$target_profile" PACKAGES="$PACKAGES $MISC $EXCLUDED" FILES="$build_files"
     
     local build_status=$?
     if [ "$build_status" -eq 0 ]; then
