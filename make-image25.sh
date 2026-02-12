@@ -15,26 +15,25 @@ PACKAGES=""
 MISC=""
 EXCLUDED=""
 
-# CORE SYSTEM
-PACKAGES+=" base-files bash bc blkid block-mount btrfs-progs busybox bzip2 ip-full libc \
-        cgi-io comgt comgt-ncm coreutils coreutils-stat coreutils-base64 coreutils-nohup \
-        curl dosfstools e2fsprogs exfat-mkfs f2fs-tools f2fsck fdisk gawk \
-        jq jshn nano htop liblucihttp-lua ca-bundle losetup lsblk lscpu mkf2fs mount-utils \
-        openssl-util parted iconv gzip perlbase-file perlbase-unicode perlbase-utf8 \
-        perlbase-essential perlbase-time perlbase-xsloader rpcd rpcd-mod-file ziptool uuidgen \
-        rpcd-mod-iwinfo rpcd-mod-luci rpcd-mod-rrdns uhttpd uhttpd-mod-ubus openssh-sftp-server \
-        ppp ppp-mod-pppoe pv ntfs-3g tar ttyd kmod-usb2 kmod-usb-net-rndis wwan httping \
-        uclient-fetch unzip uqmi usb-modeswitch xz xz-utils zoneinfo-asia zoneinfo-core \
-        luci luci-compat luci-lib-base kmod-usb-net-huawei-cdc-ncm kmod-usb-net \
-        luci-lib-ip luci-lib-ipkg luci-lib-jsonc luci-lib-nixio luci-mod-admin-full luci-mod-network \
-        luci-mod-status luci-mod-system luci-proto-3g luci-proto-mbim mbim-utils \
-        luci-proto-ncm luci-proto-ppp luci-proto-qmi screen kmod-tun \
-        kmod-usb-wdm kmod-usb-net-qmi-wwan luci-proto-qmi kmod-usb-net-cdc-ether \
-        kmod-usb-serial-option kmod-usb-serial kmod-usb-serial-wwan qmi-utils kmod-usb-serial-qualcomm \
-        kmod-usb-net-cdc-ncm kmod-usb-net-cdc-mbim umbim modemmanager"
+CORE SYSTEM
+PACKAGES+=" dnsmasq-full libc block-mount zram-swap zoneinfo-core zoneinfo-asia bash screen \
+uhttpd uhttpd-mod-ubus luci luci-ssl openssh-sftp-server adb curl wget-ssl \
+httping htop jq tar unzip coreutils-base64 coreutils-sleep coreutils-stat"
+
+# ETHERNET & MODEM DRIVERS
+PACKAGES+=" kmod-usb-net-rtl8150 kmod-usb-net-rtl8152 kmod-usb-net-asix kmod-usb-net-asix-ax88179"
+PACKAGES+=" kmod-mii kmod-usb-net kmod-usb-wdm kmod-usb-net-rndis kmod-usb-net-cdc-ether kmod-usb-net-cdc-ncm kmod-usb-net-sierrawireless \
+kmod-usb-net-qmi-wwan uqmi luci-proto-qmi kmod-usb-acm kmod-usb-net-huawei-cdc-ncm kmod-usb-net-cdc-mbim umbim \
+kmod-usb-serial kmod-usb-serial-option kmod-usb-serial-wwan kmod-usb-serial-qualcomm kmod-usb-serial-sierrawireless \
+modemmanager luci-proto-modemmanager libqmi libmbim glib2 dbus dbus-utils ppp chat \
+qmi-utils mbim-utils usbutils luci-proto-ncm kmod-usb-ohci kmod-usb-uhci kmod-usb2 kmod-usb-ehci kmod-usb3 \
+kmod-nls-utf8 kmod-macvlan usb-modeswitch xmm-modem luci-proto-xmm"
+
+# STORAGE
+PACKAGES+=" kmod-usb-storage luci-app-diskman"
 
 # THEMES
-PACKAGES+=" luci-theme-material"
+PACKAGES+=" luci-theme-argon luci-theme-material"
 
 # MISC
 MISC+=" internet-detector internet-detector-mod-modem-restart luci-app-internet-detector luci-app-ttyd luci-app-tinyfm"
