@@ -23,12 +23,12 @@ REPOS+=(
 declare -a packages_custom
 packages_custom+=(
     # Modem info packages
-    "luci-app-internet-detector_|${REPOS[GSPOTX2F]}"
-    "internet-detector_|${REPOS[GSPOTX2F]}"
-    "internet-detector-mod-modem-restart_|${REPOS[GSPOTX2F]}"
-    "luci-app-diskman_|${REPOS[FANTASTIC]}"
-    "luci-theme-argon_|${REPOS[FANTASTIC]}"
-    "luci-app-tinyfilemanager_|${REPOS[FANTASTIC]}"
+    "luci-app-internet-detector|${REPOS[GSPOTX2F]}"
+    "internet-detector|${REPOS[GSPOTX2F]}"
+    "internet-detector-mod-modem-restart|${REPOS[GSPOTX2F]}"
+    "luci-app-diskman|${REPOS[FANTASTIC]}"
+    "luci-theme-argon|${REPOS[FANTASTIC]}"
+    "luci-app-tinyfilemanager|${REPOS[FANTASTIC]}"
 )
 
 # Verify downloaded packages
