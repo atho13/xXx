@@ -380,13 +380,13 @@ jobs:
           #echo "status=success" >> "$GITHUB_OUTPUT"
           
       #- name: Before Upload
-        #id: beforeupload
-        #if: steps.modsdcard.outputs.status == 'success'
-        #run: |
-          #cd ${{ env.WORKING_DIR }}
-          #chmod +x scripts/RENAMEFW.sh
-          #./scripts/RENAMEFW.sh
-          #echo "status=success" >> "$GITHUB_OUTPUT"
+        id: beforeupload
+        if: steps.modsdcard.outputs.status == 'success'
+        run: |
+          cd ${{ env.WORKING_DIR }}
+          chmod +x scripts/RENAMEFW.sh
+          ./scripts/RENAMEFW.sh
+          echo "status=success" >> "$GITHUB_OUTPUT"
 
       - name: Create Release
         if: steps.beforeupload.outputs.status == 'success'
