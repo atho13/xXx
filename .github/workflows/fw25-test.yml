@@ -339,9 +339,6 @@ jobs:
         run: |
           cd ${{ env.WORKING_DIR }}
 
-          chmod +x scripts/PACTH25.sh
-          ./scripts/PACTH25.sh
-
           chmod +x scripts/MISCH25.sh
           ./scripts/MISCH25.sh
 
