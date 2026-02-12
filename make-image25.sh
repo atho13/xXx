@@ -13,7 +13,7 @@ make info
 PROFILE=""
 PACKAGES=""
 MISC=""
-#EXCLUDED=""
+EXCLUDED=""
 
 # CORE SYSTEM
 PACKAGES+=" base-files bash bc blkid block-mount btrfs-progs busybox bzip2 ip-full libc \
