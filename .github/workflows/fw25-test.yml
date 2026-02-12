@@ -379,7 +379,7 @@ jobs:
           #./scripts/REPACK25.sh "ophub" "${{ env.TARGET_BUILD }}" "${{ env.KERNEL }}" "${{ env.TUNNEL }}"
           #echo "status=success" >> "$GITHUB_OUTPUT"
           
-      #- name: Before Upload
+      - name: Before Upload
         id: beforeupload
         #if: steps.modsdcard.outputs.status == 'success'
         run: |
