@@ -68,25 +68,25 @@ fi
 #}
 
 # Main execution
-main() {
-    local rc=0
+#main() {
+    #local rc=0
     
     # Download custom packages
-    log "INFO" "Downloading Custom packages..."
-    download_packages packages_custom || rc=1
+    #log "INFO" "Downloading Custom packages..."
+    #download_packages packages_custom || rc=1
     
     # Verify all downloads
-    log "INFO" "Verifying all packages..."
-    verify_packages packages_custom || rc=1
+    #log "INFO" "Verifying all packages..."
+    #verify_packages packages_custom || rc=1
     
-    if [ $rc -eq 0 ]; then
-        log "SUCCESS" "Package download and verification completed successfully"
-    else
-        error_msg "Package download or verification failed"
-    fi
+    #if [ $rc -eq 0 ]; then
+        #log "SUCCESS" "Package download and verification completed successfully"
+    #else
+        #error_msg "Package download or verification failed"
+    #fi
     
-    return $rc
-}
+    #return $rc
+#}
 
 # Execute main if script is run directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
