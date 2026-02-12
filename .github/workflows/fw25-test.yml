@@ -196,7 +196,7 @@ jobs:
           
       - name: Create simulated physical disk
         id: disk
-        if: steps.init.outputs.status == 'success' && (github.event.inputs.target == 'all-device' || github.event.inputs.target == 'opt-devices')
+        if: steps.init.outputs.status == 'success' && (github.event.inputs.target == 'all-devices' || github.event.inputs.target == 'opt-devices')
         run: |
           mnt_size=$(expr $(df -h /mnt | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\..*//') - 1)
           root_size=$(expr $(df -h / | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\..*//') - 4)
@@ -208,11 +208,12 @@ jobs:
           sudo pvcreate /dev/loop7
           sudo vgcreate github /dev/loop6 /dev/loop7
           sudo lvcreate -n runner -l 100%FREE github
-          sudo mkfs.xfs /dev/github/runner
+          sudo mkfs.xfs -f -i sparse=0 -b size=4096 /dev/github/runner
           sudo mkdir -p /builder
           sudo mount /dev/github/runner /builder
-          sudo chown -R runner.runner /builder
+          sudo chown -R runner:runner /builder
           df -Th
+          echo "status=success" >> "$GITHUB_OUTPUT"
           
       - name: Checkout Repository
         uses: actions/checkout@v4
