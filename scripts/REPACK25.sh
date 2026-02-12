@@ -43,7 +43,7 @@ repackwrt() {
     #local OPHUB_REPO="https://github.com/syntax-xidz/amlogic-s9xxx-openwrt/archive/refs/heads/${BRANCH}.zip"
     #local ULO_REPO="https://github.com/syntax-xidz/ULO-Builder/archive/refs/heads/${BRANCH}.zip"
     local OPHUB_REPO="https://github.com/ophub/amlogic-s9xxx-openwrt/archive/refs/heads/${BRANCH}.zip"
-    local ULO_REPO="https://github.com/ribel13/ULO-Builder/archive/refs/heads/${BRANCH}.zip"
+    #local ULO_REPO="https://github.com/ribel13/ULO-Builder/archive/refs/heads/${BRANCH}.zip"
     local work_dir="$GITHUB_WORKSPACE/$WORKING_DIR"
     local output_dir="${work_dir}/compiled_images"
     local builder_dir repo_url ZIP_FILE="${BRANCH}.zip"
@@ -53,10 +53,10 @@ repackwrt() {
         builder_dir="${work_dir}/amlogic-s9xxx-openwrt-${BRANCH}"
         repo_url="${OPHUB_REPO}"
         log "STEPS" "Repacking with Ophub..."
-    else
-        builder_dir="${work_dir}/ULO-Builder-${BRANCH}"
-        repo_url="${ULO_REPO}"
-        log "STEPS" "Repacking with UloBuilder..."
+    #else
+        #builder_dir="${work_dir}/ULO-Builder-${BRANCH}"
+        #repo_url="${ULO_REPO}"
+        #log "STEPS" "Repacking with UloBuilder..."
     fi
 
     # Prepare working directory
@@ -71,10 +71,10 @@ repackwrt() {
             #repo_url="https://github.com/syntax-xidz/amlogic-s9xxx-openwrt/archive/refs/heads/main.zip"
             repo_url="https://github.com/ophub/amlogic-s9xxx-openwrt/archive/refs/heads/main.zip"
             builder_dir="${work_dir}/amlogic-s9xxx-openwrt-main"
-        else
+        #else
             #repo_url="https://github.com/syntax-xidz/ULO-Builder/archive/refs/heads/main.zip"
-            repo_url="https://github.com/ribel13/ULO-Builder/archive/refs/heads/main.zip"
-            builder_dir="${work_dir}/ULO-Builder-main"
+            #repo_url="https://github.com/ribel13/ULO-Builder/archive/refs/heads/main.zip"
+            #builder_dir="${work_dir}/ULO-Builder-main"
         fi
         ariadl "${repo_url}" "${ZIP_FILE}" || { error_msg "Download failed"; exit 1; }
     fi
@@ -110,11 +110,11 @@ repackwrt() {
         log "INFO" "Executing Ophub Script..."
         sudo ./remake -b "${target_board}" -k "${target_kernel}" -s 512 || { error_msg "Ophub failed"; exit 1; }
         device_output_dir="./openwrt/out"
-    else
-        log "INFO" "Applying ULO patches..."
-        if [[ -f "./.github/workflows/ULO_Workflow.patch" ]]; then
-            mv ./.github/workflows/ULO_Workflow.patch ./ULO_Workflow.patch
-            patch -p1 < ./ULO_Workflow.patch >/dev/null 2>&1 && log "SUCCESS" "Patch applied" || log "WARNING" "Patch failed"
+    #else
+        #log "INFO" "Applying ULO patches..."
+        #if [[ -f "./.github/workflows/ULO_Workflow.patch" ]]; then
+            #mv ./.github/workflows/ULO_Workflow.patch ./ULO_Workflow.patch
+            #patch -p1 < ./ULO_Workflow.patch >/dev/null 2>&1 && log "SUCCESS" "Patch applied" || log "WARNING" "Patch failed"
         fi
 
         log "INFO" "Executing Ulo Script..."
