@@ -23,10 +23,10 @@ REPOS+=(
 declare -a packages_custom
 packages_custom+=(
     # Modem info packages
-    "haproxy_|${REPOS[OPENWRT]}"
-    "UDPspeeder_|${REPOS[OPENWRT]}"
-    "tcpdump_|${REPOS[OPENWRT]}"
-    "luci-theme-argon_|${REPOS[OPENWRT]}"
+    #"haproxy_|${REPOS[OPENWRT]}"
+    #"UDPspeeder_|${REPOS[OPENWRT]}"
+    #"tcpdump_|${REPOS[OPENWRT]}"
+    #"luci-theme-argon_|${REPOS[OPENWRT]}"
 )
 
 # Verify downloaded packages
