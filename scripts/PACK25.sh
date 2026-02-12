@@ -51,7 +51,7 @@ verify_packages() {
     for package in "${package_list[@]}"; do
         local pkg_name="${package%%|*}"
         if ! find "$pkg_dir" -name "${pkg_name}*.${pkg_ext}" -print -quit | grep -q .; then
-            #failed_packages+=("$pkg_name")
+            failed_packages+=("$pkg_name")
         fi
     done
     
@@ -60,7 +60,7 @@ verify_packages() {
     if ((failed > 0)); then
         log "WARNING" "$failed packages failed to download with .$pkg_ext format:"
         for pkg in "${failed_packages[@]}"; do
-            #log "WARNING" "- $pkg"
+            log "WARNING" "- $pkg"
         done
         return 1
     fi
