@@ -77,7 +77,6 @@ main() {
     patch_makefile
     configure_partitions
     configure_amlogic
-    configure_x86
     log "INFO" "Builder patch completed successfully!"
 }
 
