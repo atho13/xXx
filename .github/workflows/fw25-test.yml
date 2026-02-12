@@ -331,8 +331,8 @@ jobs:
         if: steps.download.outputs.status == 'success'
         run: |
           cd ${{ env.WORKING_DIR }}
-          chmod +x scripts/PACKAGES.sh
-          ./scripts/PACKAGES.sh
+          chmod +x scripts/PACK25.sh
+          ./scripts/PACK25.sh
 
           echo "status=success" >> "$GITHUB_OUTPUT"
 
@@ -342,11 +342,11 @@ jobs:
         run: |
           cd ${{ env.WORKING_DIR }}
 
-          chmod +x scripts/PATCH.sh
-          ./scripts/PATCH.sh
+          chmod +x scripts/PACTH25.sh
+          ./scripts/PACTH25.sh
 
-          chmod +x scripts/MISC.sh
-          ./scripts/MISC.sh
+          chmod +x scripts/MISCH25.sh
+          ./scripts/MISCH25.sh
 
           df -hT ${PWD}
           echo "status=success" >> "$GITHUB_OUTPUT"
@@ -357,13 +357,13 @@ jobs:
         run: |
           cd ${{ env.WORKING_DIR }}
           mkdir -p compiled_images
-          chmod +x make-image.sh
+          chmod +x make-image25.sh
 
           if [ "${{ env.CLEAN }}" == "true" ]; then
             make clean
           fi
             
-          time ./make-image.sh ${{ env.PROFILE }}
+          time ./make-image25.sh ${{ env.PROFILE }}
             
           for file in bin/targets/"${{ env.TARGET_SYSTEM }}"/*-rootfs.tar.gz; do
             if [ -f "$file" ]; then
