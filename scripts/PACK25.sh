@@ -13,8 +13,8 @@ REPOS+=(
     ["OPENWRT"]="https://downloads.openwrt.org/releases/packages-${VEROP}/${ARCH_3}"
     ["IMMORTALWRT"]="https://downloads.immortalwrt.org/releases/packages-${VEROP}/${ARCH_3}"
     ["KYARUCLOUD_IMMORTALWRT"]="https://immortalwrt.kyarucloud.moe/releases/packages-${VEROP}/${ARCH_3}"
-    ["GSPOTX2F"]="https://github.com/gSpotx2f/packages-openwrt/raw/refs/heads/master/current"
-    ["FANTASTIC"]="https://fantastic-packages.github.io/packages/releases/${VEROP}/packages/x86_64"
+    ["GSPOTX2F"]="https://github.com/gSpotx2f/packages-openwrt/tree/master/25.12"
+    ["FANTASTIC"]="https://fantastic-packages.github.io/releases/25.12/packages/aarch64_generic/luci/"
     ["DLLKIDS"]="https://op.dllkids.xyz/packages/${ARCH_3}"
     ["OPENWRTRU"]="https://openwrt.132lan.ru/packages/${VEROP}/packages/${ARCH_3}/modemfeed"
 )
@@ -23,10 +23,12 @@ REPOS+=(
 declare -a packages_custom
 packages_custom+=(
     # Modem info packages
-    "haproxy_|${REPOS[OPENWRT]}"
-    "UDPspeeder_|${REPOS[OPENWRT]}"
-    "tcpdump_|${REPOS[OPENWRT]}"
-    "luci-theme-argon_|${REPOS[OPENWRT]}"
+    "luci-app-internet-detector_|${REPOS[GSPOTX2F]}"
+    "internet-detector_|${REPOS[GSPOTX2F]}"
+    "internet-detector-mod-modem-restart_|${REPOS[GSPOTX2F]}"
+    "luci-app-diskman_|${REPOS[FANTASTIC]}"
+    "luci-theme-argon_|${REPOS[FANTASTIC]}"
+    "luci-app-tinyfilemanager_|${REPOS[FANTASTIC]}"
 )
 
 # Verify downloaded packages
