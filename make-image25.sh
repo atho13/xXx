@@ -36,6 +36,9 @@ PACKAGES+=" base-files bash bc blkid block-mount btrfs-progs busybox bzip2 ip-fu
 # THEMES
 PACKAGES+=" luci-theme-material"
 
+# MISC
+MISC+=" internet-detector internet-detector-mod-modem-restart luci-app-internet-detector luci-app-ttyd luci-app-tinyfm"
+
 # MAIN BUILD
 build_firmware() {
     local target_profile="$1"
