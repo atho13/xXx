@@ -8,26 +8,26 @@ if [[ "${VEROP}" == "25.12" ]]; then
 fi
 
 # Define all repositories
-declare -A REPOS
-REPOS+=(
-    ["OPENWRT"]="https://downloads.openwrt.org/releases/packages-${VEROP}/${ARCH_3}"
-    ["IMMORTALWRT"]="https://downloads.immortalwrt.org/releases/packages-${VEROP}/${ARCH_3}"
-    ["KYARUCLOUD_IMMORTALWRT"]="https://immortalwrt.kyarucloud.moe/releases/packages-${VEROP}/${ARCH_3}"
-    ["GSPOTX2F"]="https://github.com/gSpotx2f/packages-openwrt/raw/refs/heads/master/current"
-    ["FANTASTIC"]="https://fantastic-packages.github.io/packages/releases/${VEROP}/packages/x86_64"
-    ["DLLKIDS"]="https://op.dllkids.xyz/packages/${ARCH_3}"
-    ["OPENWRTRU"]="https://openwrt.132lan.ru/packages/${VEROP}/packages/${ARCH_3}/modemfeed"
-)
+#declare -A REPOS
+#REPOS+=(
+    #["OPENWRT"]="https://downloads.openwrt.org/releases/packages-${VEROP}/${ARCH_3}"
+    #["IMMORTALWRT"]="https://downloads.immortalwrt.org/releases/packages-${VEROP}/${ARCH_3}"
+    #["KYARUCLOUD_IMMORTALWRT"]="https://immortalwrt.kyarucloud.moe/releases/packages-${VEROP}/${ARCH_3}"
+    #["GSPOTX2F"]="https://github.com/gSpotx2f/packages-openwrt/raw/refs/heads/master/current"
+    #["FANTASTIC"]="https://fantastic-packages.github.io/packages/releases/${VEROP}/packages/x86_64"
+    #["DLLKIDS"]="https://op.dllkids.xyz/packages/${ARCH_3}"
+    #["OPENWRTRU"]="https://openwrt.132lan.ru/packages/${VEROP}/packages/${ARCH_3}/modemfeed"
+#)
 
 # Custom package list with format: "package_name|repository_url"
-declare -a packages_custom
-packages_custom+=(
+#declare -a packages_custom
+#packages_custom+=(
     # Modem info packages
     #"haproxy_|${REPOS[OPENWRT]}"
     #"UDPspeeder_|${REPOS[OPENWRT]}"
     #"tcpdump_|${REPOS[OPENWRT]}"
     #"luci-theme-argon_|${REPOS[OPENWRT]}"
-)
+#)
 
 # Verify downloaded packages
 verify_packages() {
