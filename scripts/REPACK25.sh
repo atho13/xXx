@@ -87,7 +87,8 @@ repackwrt() {
     [[ "$builder_type" == "--ophub" ]] && mkdir -p "${builder_dir}/openwrt-armsr" || mkdir -p "${builder_dir}/rootfs"
 
     # Find rootfs file
-    local rootfs_files=("${output_dir}/"*"_${tunnel_type}-rootfs.tar.gz")
+    #local rootfs_files=("${output_dir}/"*"_${tunnel_type}-rootfs.tar.gz")
+    local rootfs_files=("${output_dir}-rootfs.tar.gz")
     [[ ${#rootfs_files[@]} -ne 1 ]] && { error_msg "Rootfs file not found or multiple found"; exit 1; }
     local rootfs_file="${rootfs_files[0]}"
 
