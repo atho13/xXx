@@ -115,12 +115,12 @@ repackwrt() {
         #if [[ -f "./.github/workflows/ULO_Workflow.patch" ]]; then
             #mv ./.github/workflows/ULO_Workflow.patch ./ULO_Workflow.patch
             #patch -p1 < ./ULO_Workflow.patch >/dev/null 2>&1 && log "SUCCESS" "Patch applied" || log "WARNING" "Patch failed"
-        fi
+        #fi
 
-        log "INFO" "Executing Ulo Script..."
-        local rootfs_name=$(basename "${target_path}")
-        sudo ./ulo -y -m "${target_board}" -r "${rootfs_name}" -k "${target_kernel}" -s 1024 || { error_msg "Ulo failed"; exit 1; }
-        device_output_dir="./out/${target_board}"
+        #log "INFO" "Executing Ulo Script..."
+        #local rootfs_name=$(basename "${target_path}")
+        #sudo ./ulo -y -m "${target_board}" -r "${rootfs_name}" -k "${target_kernel}" -s 1024 || { error_msg "Ulo failed"; exit 1; }
+        #device_output_dir="./out/${target_board}"
     fi
 
     # Verify and Copy Output
