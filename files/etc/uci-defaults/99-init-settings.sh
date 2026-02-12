@@ -39,12 +39,12 @@ commit system
 EOF
 
 # language and theme
-echo "Setting default en language and theme argon..."
-uci batch <<EOF
-set luci.@core[0].lang='en'
-set luci.main.mediaurlbase='/luci-static/argon'
-commit luci
-EOF
+#echo "Setting default en language and theme argon..."
+#uci batch <<EOF
+#set luci.@core[0].lang='en'
+#set luci.main.mediaurlbase='/luci-static/argon'
+#commit luci
+#EOF
 
 # network interface
 echo "Configuring network interfaces..."
