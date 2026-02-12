@@ -377,8 +377,8 @@ jobs:
         if: steps.build.outputs.status == 'success'
         run: |
           cd ${{ env.WORKING_DIR }}
-          chmod +x scripts/REPACKWRT.sh
-          ./scripts/REPACKWRT.sh "ophub" "${{ env.TARGET_BUILD }}" "${{ env.KERNEL }}" "${{ env.TUNNEL }}"
+          chmod +x scripts/REPACK25.sh
+          ./scripts/REPACK25.sh "ophub" "${{ env.TARGET_BUILD }}" "${{ env.KERNEL }}" "${{ env.TUNNEL }}"
           echo "status=success" >> "$GITHUB_OUTPUT"
           
       - name: Before Upload
