@@ -10,7 +10,7 @@ set -e
 make info
 
 # VARIABEL
-#PROFILE=""
+PROFILE=""
 PACKAGES=""
 MISC=""
 EXCLUDED=""
