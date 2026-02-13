@@ -389,7 +389,7 @@ jobs:
           echo "status=success" >> "$GITHUB_OUTPUT"
 
       - name: Create Release
-        if: steps.beforeupload.outputs.status == 'success'
+        #if: steps.beforeupload.outputs.status == 'success'
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
