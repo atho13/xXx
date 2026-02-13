@@ -53,7 +53,7 @@ build_firmware() {
     # add_tunnel_packages "$tunnel_option"
     
     # Load Base/Release Config
-    configure_release_packages
+    #configure_release_packages
 
     # PACKAGES + MISC + EXCLUDED + DISABLED_SERVICES    
     make image PROFILE="$target_profile" \
