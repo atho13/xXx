@@ -47,7 +47,7 @@ build_firmware() {
     #log "INFO" "Starting build for profile '$target_profile' [Tunnel: $tunnel_option]..."
 
     # Load Profile Specifics
-    configure_profile_packages "$target_profile"
+    #configure_profile_packages "$target_profile"
     
     # Load Tunnel Packages
     # add_tunnel_packages "$tunnel_option"
