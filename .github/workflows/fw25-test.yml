@@ -95,9 +95,9 @@ jobs:
             echo "target=$(echo "$OPT_DEVICES_JSON" | jq -c '.target')" >> "$GITHUB_OUTPUT"
           else
             echo "target=$(jq -nc --arg d "${{ github.event.inputs.target }}" '[$d]')" >> "$GITHUB_OUTPUT"
-          #fi
+          fi
 
-          #echo "Selected tunnel option: [ ${{ github.event.inputs.tunnel }} ]"
+          echo "Selected tunnel option: [ ${{ github.event.inputs.tunnel }} ]"
 
       - name: Setup Release Environment
         id: setupenv
