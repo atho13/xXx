@@ -1,5 +1,5 @@
 # Put your custom commands here that should be executed once
-#sleep 5 && /usr/bin/x-gpio -r
-#sleep 5 && /sbin/free.sh
-#/sbin/jam bug.com
+bash /etc/custom_service/start_service.sh
+/usr/sbin/bhled -r
+# /usr/sbin/hgled -r
 exit 0

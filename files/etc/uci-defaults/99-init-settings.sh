@@ -33,7 +33,10 @@ set system.@system[0].hostname='FRDM-X'
 set system.@system[0].timezone='WIB-7'
 set system.@system[0].zonename='Asia/Jakarta'
 delete system.ntp.server
-add_list system.ntp.server='id.pool.ntp.org'
+add_list system.ntp.server='0.id.pool.ntp.org'
+add_list system.ntp.server='1.id.pool.ntp.org'
+add_list system.ntp.server='2.id.pool.ntp.org'
+add_list system.ntp.server='3.id.pool.ntp.org'
 add_list system.ntp.server='time.google.com'
 commit system
 EOF
