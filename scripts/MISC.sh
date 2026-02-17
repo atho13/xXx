@@ -123,7 +123,7 @@ download_custom_scripts() {
         #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/x-gpio|files/usr/bin"
         #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/x-gpioled|files/usr/bin"
         #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/xidzs|files/etc/init.d"
-        "https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/issue|files/etc/init.d"
+        #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/issue|files/etc/init.d"
     )
     
     for script in "${scripts[@]}"; do
