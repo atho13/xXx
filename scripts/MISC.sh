@@ -138,18 +138,18 @@ configure_file_permissions() {
     log "INFO" "Sett file permissions"
     
     # file etc sett permission
-    local initd_files=(
-        "files/etc/init.d/issue"
+    #local initd_files=(
+        #"files/etc/init.d/issue"
         #"files/etc/init.d/xidzs"
-    )
+    #)
     
-    log "INFO" "Sett permissions for init.d files"
-    for file in "${initd_files[@]}"; do
-        if [ -f "$file" ]; then
-            chmod +x "$file"
-        fi
-    done
-    log "INFO" "Init.d permissions set successfully"
+    #log "INFO" "Sett permissions for init.d files"
+    #for file in "${initd_files[@]}"; do
+        #if [ -f "$file" ]; then
+            #chmod +x "$file"
+        #fi
+    #done
+    #log "INFO" "Init.d permissions set successfully"
     
     # Sbin files sett permission  
     local sbin_files=(
