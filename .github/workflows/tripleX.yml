@@ -682,7 +682,7 @@ jobs:
             
           for file in bin/targets/"${{ env.TARGET_SYSTEM }}"/*-rootfs.tar.gz; do
             if [ -f "$file" ]; then
-              new_name="FRDMx_$(basename "$file" -rootfs.tar.gz)_${{ env.TUNNEL }}-rootfs.tar.gz"
+              new_name="FRDMX_$(basename "$file" -rootfs.tar.gz)_${{ env.TUNNEL }}-rootfs.tar.gz"
               mv "$file" compiled_images/$new_name
             fi
           done
