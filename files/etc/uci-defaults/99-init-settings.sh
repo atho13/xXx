@@ -135,11 +135,11 @@ mv /www/luci-static/resources/view/status/include/29_ports.js /www/luci-static/r
 # System customizations
 echo "Applying system.."
 sed -i -e 's/\[ -f \/etc\/banner \] && cat \/etc\/banner/#&/' -e 's/\[ -n \"\$FAILSAFE\" \] && cat \/etc\/banner.failsafe/& || \/usr\/bin\/chnrot/' /etc/profile
-bash /etc/init.d/xidzs disable
+# bash /etc/init.d/xidzs disable
 
 # Execute scripts
-echo "Running install2 script..."
-bash /root/install2.sh
+# echo "Running install2 script..."
+# bash /root/install2.sh
 
 # Tunnel
 # Web server
