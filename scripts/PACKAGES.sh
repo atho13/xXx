@@ -4,9 +4,11 @@
 
 # Repository URLs based on version
 if [[ "${VEROP}" == "25.12" ]]; then
-    KIDDIN9_REPO="https://dl.openwrt.ai/releases/25.12/packages/${ARCH_3}/kiddin9"
+    #KIDDIN9_REPO="https://dl.openwrt.ai/releases/25.12/packages/${ARCH_3}/kiddin9"
+    KIDDIN9_REPO="https://dl.openwrt.ai/releases/25.12/packages/aarch64_generic/kiddin9"
 else
-    KIDDIN9_REPO="https://dl.openwrt.ai/releases/24.10/packages/${ARCH_3}/kiddin9"
+    #KIDDIN9_REPO="https://dl.openwrt.ai/releases/24.10/packages/${ARCH_3}/kiddin9"
+    KIDDIN9_REPO="https://dl.openwrt.ai/releases/24.10/packages/aarch64_generic/kiddin9"
 fi
 
 # Define all repositories
