@@ -17,7 +17,7 @@ on:
       target:
         description: "Select device board"
         required: true
-        default: "all-devices"
+        default: "X86-64"
         type: choice
         options:
           - all-devices
@@ -42,7 +42,7 @@ on:
       tunnel:
         description: "Select Tunnel VPN"
         required: true
-        default: "openclash"
+        default: "no-tunnel"
         type: choice
         options:
           - openclash
@@ -161,13 +161,13 @@ jobs:
           echo "datemonth=$DATEMONTH" >> "$GITHUB_OUTPUT"
 
           if [ "${BASE}" == "openwrt" ]; then
-            RELEASE_NAME="OpenWRT-Buildx¹-${BRANCH}-${DATE}"
-            RELEASE_TAG="openwrt-buildx¹-${BRANCH}-${DATE}"
+            RELEASE_NAME="OpenWRT-Buildx-${BRANCH}-${DATE}"
+            RELEASE_TAG="openwrt-buildx-${BRANCH}-${DATE}"
             echo "release_name=$RELEASE_NAME" >> "$GITHUB_OUTPUT"
             echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
           elif [ "${BASE}" == "immortalwrt" ]; then
-            RELEASE_NAME="ImmortalWRT-Buildx¹-${BRANCH}-${DATE}"
-            RELEASE_TAG="immortalwrt-buildx¹-${BRANCH}-${DATE}"
+            RELEASE_NAME="ImmortalWRT-Buildx-${BRANCH}-${DATE}"
+            RELEASE_TAG="immortalwrt-buildx-${BRANCH}-${DATE}"
             echo "release_name=$RELEASE_NAME" >> "$GITHUB_OUTPUT"
             echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
           fi
@@ -177,7 +177,7 @@ jobs:
         if: steps.setupenv.outputs.status == 'success'
         uses: softprops/action-gh-release@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.XIDZs_KEY }}
+          GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
         with:
           tag_name: ${{ steps.setupenv.outputs.release_tag }}
           name: ${{ steps.setupenv.outputs.release_name }}
@@ -517,7 +517,7 @@ jobs:
             
           for file in bin/targets/"${{ env.TARGET_SYSTEM }}"/*.img.gz; do
             if [ -f "$file" ]; then
-              new_name="XIDZs_$(basename "$file" .img.gz)_${{ env.TUNNEL }}.img.gz"
+              new_name="FRDMX_$(basename "$file" .img.gz)_${{ env.TUNNEL }}.img.gz"
               mv "$file" compiled_images/$new_name
             fi
           done
@@ -539,7 +539,7 @@ jobs:
         if: steps.beforeupload.outputs.status == 'success'
         uses: softprops/action-gh-release@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.XIDZs_KEY }}
+          GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
         with:
           tag_name: ${{ env.RELEASE_TAG }}
           name: ${{ env.RELEASE_NAME }}
