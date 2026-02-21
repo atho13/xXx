@@ -100,7 +100,7 @@ configure_profile_packages() {
     if [[ "$profile_name" == *"rpi-2"* ]] || [[ "$profile_name" == *"rpi-3"* ]] || [[ "$profile_name" == *"rpi-4"* ]] || [[ "$profile_name" == *"rpi-5"* ]]; then
         PACKAGES+=" kmod-i2c-bcm2835 i2c-tools kmod-i2c-core kmod-i2c-gpio"
     elif [[ "${ARCH_2:-}" == "x86_64" ]] || [[ "${ARCH_2:-}" == "i386" ]]; then
-        PACKAGES+=" kmod-iwlwifi iw-full pciutils wireless-tools"
+        #PACKAGES+=" kmod-iwlwifi iw-full pciutils wireless-tools"
     fi
 
     if [[ "${TYPE:-}" == "OPHUB" ]] || [[ "${TYPE:-}" == "ULO" ]]; then
