@@ -4,13 +4,9 @@
 
 # Repository URLs based on version
 if [[ "${VEROP}" == "25.12" ]]; then
-    #KIDDIN9_REPO="https://dl.openwrt.ai/releases/25.12/packages/${ARCH_3}/kiddin9"
-    #KIDDIN9_REPO="https://dl.openwrt.ai/releases/25.12/packages/aarch64_generic/kiddin9"
-    KIDDIN9_REPO="https://dl.openwrt.ai/releases/25.12/packages/x86_64/kiddin9"
+    KIDDIN9_REPO="https://dl.openwrt.ai/releases/25.12/packages/${ARCH_3}/kiddin9"
 else
-    #KIDDIN9_REPO="https://dl.openwrt.ai/releases/24.10/packages/${ARCH_3}/kiddin9"
-    #KIDDIN9_REPO="https://dl.openwrt.ai/releases/24.10/packages/aarch64_generic/kiddin9"
-    KIDDIN9_REPO="https://dl.openwrt.ai/releases/24.10/packages/x86_64/kiddin9"
+    KIDDIN9_REPO="https://dl.openwrt.ai/releases/24.10/packages/${ARCH_3}/kiddin9"
 fi
 
 # Define all repositories
@@ -69,7 +65,7 @@ packages_custom+=(
     #"luci-app-temp-status_|${REPOS[KIDDIN9]}"
     
     # GitHub releases
-    "luci-app-tinyfm_|https://api.github.com/repos/de-quenx/luci-app-tinyfm/releases/latest"
+    "luci-app-tinyfm_|https://api.github.com/repos/bobbyunknown/luci-app-tinyfm/releases/latest"
     "luci-app-droidnet_|https://api.github.com/repos/animegasan/luci-app-droidmodem/releases/latest"
     "luci-theme-alpha_|https://api.github.com/repos/de-quenx/luci-theme-alpha/releases/latest"
     "luci-app-tailscale_|https://api.github.com/repos/asvow/luci-app-tailscale/releases/latest"
