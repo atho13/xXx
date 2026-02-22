@@ -3,11 +3,11 @@
 . ./scripts/INCLUDE.sh
 
 # Repository URLs based on version
-if [[ "${VEROP}" == "21.02" ]]; then
-    KIDDIN9_REPO="https://dl.openwrt.ai/releases/21.02/packages/${ARCH_3}/kiddin9"
-else
-    KIDDIN9_REPO="https://dl.openwrt.ai/releases/24.10/packages/${ARCH_3}/kiddin9"
-fi
+#if [[ "${VEROP}" == "21.02" ]]; then
+    #KIDDIN9_REPO="https://dl.openwrt.ai/releases/21.02/packages/${ARCH_3}/kiddin9"
+#else
+    #KIDDIN9_REPO="https://dl.openwrt.ai/releases/24.10/packages/${ARCH_3}/kiddin9"
+#fi
 
 # Define all repositories
 declare -A REPOS
@@ -15,7 +15,7 @@ REPOS+=(
     ["OPENWRT"]="https://downloads.openwrt.org/releases/packages-${VEROP}/${ARCH_3}"
     ["IMMORTALWRT"]="https://downloads.immortalwrt.org/releases/packages-${VEROP}/${ARCH_3}"
     ["KYARUCLOUD_IMMORTALWRT"]="https://immortalwrt.kyarucloud.moe/releases/packages-${VEROP}/${ARCH_3}"
-    ["KIDDIN9"]="${KIDDIN9_REPO}"
+    #["KIDDIN9"]="${KIDDIN9_REPO}"
     ["GSPOTX2F"]="https://github.com/gSpotx2f/packages-openwrt/raw/refs/heads/master/current"
     ["FANTASTIC"]="https://fantastic-packages.github.io/packages/releases/${VEROP}/packages/x86_64"
     ["DLLKIDS"]="https://op.dllkids.xyz/packages/${ARCH_3}"
@@ -26,42 +26,42 @@ REPOS+=(
 declare -a packages_custom
 packages_custom+=(
     # Modem info packages
-    "modeminfo_|${REPOS[KIDDIN9]}"
-    "luci-app-modeminfo_|${REPOS[KIDDIN9]}"
-    "modeminfo-serial-tw_|${REPOS[KIDDIN9]}"
-    "modeminfo-serial-dell_|${REPOS[KIDDIN9]}"
-    "modeminfo-serial-sierra_|${REPOS[KIDDIN9]}"
-    "modeminfo-serial-xmm_|${REPOS[KIDDIN9]}"
-    "modeminfo-serial-fibocom_|${REPOS[KIDDIN9]}"
-    "modeminfo-serial-sierra_|${REPOS[KIDDIN9]}"
+    #"modeminfo_|${REPOS[KIDDIN9]}"
+    #"luci-app-modeminfo_|${REPOS[KIDDIN9]}"
+    #"modeminfo-serial-tw_|${REPOS[KIDDIN9]}"
+    #"modeminfo-serial-dell_|${REPOS[KIDDIN9]}"
+    #"modeminfo-serial-sierra_|${REPOS[KIDDIN9]}"
+    #"modeminfo-serial-xmm_|${REPOS[KIDDIN9]}"
+    #"modeminfo-serial-fibocom_|${REPOS[KIDDIN9]}"
+    #"modeminfo-serial-sierra_|${REPOS[KIDDIN9]}"
     
     # System utilities
-    "atinout_|${REPOS[KIDDIN9]}"
-    "luci-app-diskman_|${REPOS[KIDDIN9]}"
-    "luci-app-poweroffdevice_|${REPOS[KIDDIN9]}" 
+    "atinout_|${REPOS[OPENWRT]}/packages"
+    "luci-app-diskman_|${REPOS[OPENWRT]}/packages"
+    #"luci-app-poweroffdevice_|${REPOS[KIDDIN9]}" 
     
     # Monitoring & watchdog
-    "luci-app-lite-watchdog_|${REPOS[KIDDIN9]}"
-    "luci-app-atcommands_|${REPOS[KIDDIN9]}"
+    #"luci-app-lite-watchdog_|${REPOS[KIDDIN9]}"
+    #"luci-app-atcommands_|${REPOS[KIDDIN9]}"
     
     # VPN services
     "tailscale_|${REPOS[OPENWRT]}/packages"
     
     # Display & interface
-    "luci-app-oled_|${REPOS[KIDDIN9]}"
-    "modemband_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/packages"
-    "luci-app-ramfree_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/luci"
-    "luci-app-modemband_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/luci"
+    #"luci-app-oled_|${REPOS[KIDDIN9]}"
+    #"modemband_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/packages"
+    #"luci-app-ramfree_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/luci"
+    #"luci-app-modemband_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/luci"
     "luci-app-sms-tool-js_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/luci"
-    "dns2tcp_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/packages"
+    #"dns2tcp_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/packages"
     
     # Network tools
     "luci-app-ttyd_|${REPOS[OPENWRT]}/luci"
-    "ookla-speedtest_|${REPOS[KIDDIN9]}"
-    "luci-app-eqosplus_|${REPOS[KIDDIN9]}"
-    "luci-app-internet-detector_|${REPOS[KIDDIN9]}"
-    "internet-detector_|${REPOS[KIDDIN9]}"
-    "internet-detector-mod-modem-restart_|${REPOS[KIDDIN9]}"
+    #"ookla-speedtest_|${REPOS[KIDDIN9]}"
+    #"luci-app-eqosplus_|${REPOS[KIDDIN9]}"
+    #"luci-app-internet-detector_|${REPOS[KIDDIN9]}"
+    #"internet-detector_|${REPOS[KIDDIN9]}"
+    #"internet-detector-mod-modem-restart_|${REPOS[KIDDIN9]}"
     #"luci-app-temp-status_|${REPOS[KIDDIN9]}"
     
     # GitHub releases
