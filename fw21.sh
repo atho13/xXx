@@ -29,10 +29,10 @@ qmi-utils mbim-utils usbutils luci-proto-ncm kmod-usb-ohci kmod-usb-uhci kmod-us
 kmod-nls-utf8 kmod-macvlan usb-modeswitch xmm-modem luci-proto-xmm"
 
 # STORAGE
-PACKAGES+=" kmod-usb-storage luci-app-diskman"
+PACKAGES+=" kmod-usb-storage"
 
 # MODEM TOOLS
-PACKAGES+=" atinout sms-tool picocom minicom UDPspeeder fping tcpdump haproxy"
+PACKAGES+=" sms-tool picocom minicom UDPspeeder fping tcpdump haproxy"
 #PACKAGES+=" sms-tool picocom minicom UDPspeeder fping tcpdump haproxy"
 
 # VPN TUNNEL
