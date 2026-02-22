@@ -24,24 +24,24 @@ apply_distro_patches() {
 }
 
 # Patch package signature
-patch_signature_check() {
-    log "INFO" "Disabling package signature"
+#patch_signature_check() {
+    #log "INFO" "Disabling package signature"
     
-    local branch_major=$(echo "${BRANCH}" | cut -d'.' -f1)
-    local repo_file="repositories"
+    #local branch_major=$(echo "${BRANCH}" | cut -d'.' -f1)
+    #local repo_file="repositories"
     
-    case "$branch_major" in
-        "23"|"22")
-            repo_file="repositories.conf"
-            ;;
-        "21"|*)
-            repo_file="repositories"
-            ;;
-    esac
+    #case "$branch_major" in
+        #"23"|"22")
+            #repo_file="repositories.conf"
+            #;;
+        #"21"|*)
+            #repo_file="repositories"
+            #;;
+    #esac
     
-    log "INFO" "Using repository file: ${repo_file}"
-    sed -i '\|option check_signature| s|^|#|' "${repo_file}"
-}
+    #log "INFO" "Using repository file: ${repo_file}"
+    #sed -i '\|option check_signature| s|^|#|' "${repo_file}"
+#}
 
 # Force installation options in Makefile
 patch_makefile() {
@@ -73,7 +73,7 @@ configure_amlogic() {
 main() {
     init_environment
     apply_distro_patches
-    patch_signature_check
+    #patch_signature_check
     patch_makefile
     configure_partitions
     configure_amlogic
