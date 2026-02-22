@@ -341,6 +341,9 @@ jobs:
           chmod +x scripts/MISC.sh
           ./scripts/MISC.sh
 
+          chmod +x scripts/TUNNEL.sh
+          ./scripts/TUNNEL.sh ${{ env.TUNNEL }}
+
           df -hT ${PWD}
           echo "status=success" >> "$GITHUB_OUTPUT"
 
@@ -360,7 +363,7 @@ jobs:
             
           for file in bin/targets/"${{ env.TARGET_SYSTEM }}"/*-rootfs.tar.gz; do
             if [ -f "$file" ]; then
-              new_name="FRDMx_$(basename "$file" -rootfs.tar.gz)-rootfs.tar.gz"
+              new_name="FRDMX_$(basename "$file" -rootfs.tar.gz)-rootfs.tar.gz"
               mv "$file" compiled_images/$new_name
             fi
           done
@@ -371,7 +374,7 @@ jobs:
 
       - name: Repack OpenWrt
         id: repack
-        #if: steps.build.outputs.status == 'success'
+        if: steps.build.outputs.status == 'success'
         run: |
           cd ${{ env.WORKING_DIR }}
           chmod +x scripts/REPACK25.sh
@@ -380,7 +383,7 @@ jobs:
           
       - name: Before Upload
         id: beforeupload
-        #if: steps.modsdcard.outputs.status == 'success'
+        if: steps.modsdcard.outputs.status == 'success'
         run: |
           cd ${{ env.WORKING_DIR }}
           chmod +x scripts/RENAMEFW.sh
@@ -388,7 +391,7 @@ jobs:
           echo "status=success" >> "$GITHUB_OUTPUT"
 
       - name: Create Release
-        #if: steps.beforeupload.outputs.status == 'success'
+        if: steps.beforeupload.outputs.status == 'success'
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
