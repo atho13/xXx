@@ -36,8 +36,8 @@ packages_custom+=(
     #"modeminfo-serial-sierra_|${REPOS[KIDDIN9]}"
     
     # System utilities
-    "atinout_|${REPOS[OPENWRT]}/packages"
-    "luci-app-diskman_|${REPOS[OPENWRT]}/packages"
+    #"atinout_|${REPOS[OPENWRT]}/packages"
+    #"luci-app-diskman_|${REPOS[OPENWRT]}/packages"
     #"luci-app-poweroffdevice_|${REPOS[KIDDIN9]}" 
     
     # Monitoring & watchdog
@@ -52,7 +52,7 @@ packages_custom+=(
     #"modemband_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/packages"
     #"luci-app-ramfree_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/luci"
     #"luci-app-modemband_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/luci"
-    "luci-app-sms-tool-js_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/luci"
+    #"luci-app-sms-tool-js_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/luci"
     #"dns2tcp_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/packages"
     
     # Network tools
