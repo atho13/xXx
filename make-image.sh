@@ -33,7 +33,7 @@ PACKAGES+=" kmod-usb-storage luci-app-diskman"
 
 # MODEM TOOLS
 PACKAGES+=" atinout sms-tool picocom minicom UDPspeeder fping tcpdump haproxy"
-PACKAGES+=" sms-tool picocom minicom UDPspeeder fping tcpdump haproxy"
+#PACKAGES+=" sms-tool picocom minicom UDPspeeder fping tcpdump haproxy"
 
 # VPN TUNNEL
 OPENCLASH="coreutils-nohup ipset ip-full libcap libcap-bin ruby ruby-yaml kmod-tun kmod-inet-diag kmod-nft-tproxy luci-app-openclash"
