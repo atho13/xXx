@@ -91,8 +91,8 @@ PACKAGES+=" php8 php8-cli php8-fastcgi php8-fpm php8-mod-session php8-mod-ctype 
 PACKAGES+=" luci-theme-argon luci-theme-material"
 
 # MISC
-MISC+=" atc-fib-l8x0_gl atc-fib-fm350_gl luci-proto-atc luci-app-ttyd luci-app-tinyfm \
-internet-detector internet-detector-mod-modem-restart luci-app-internet-detector"
+MISC+=" atc-fib-l8x0_gl atc-fib-fm350_gl luci-proto-atc luci-app-ttyd luci-app-tinyfm"
+#internet-detector internet-detector-mod-modem-restart luci-app-internet-detector"
 
 # PROFILE SPECIFIC
 configure_profile_packages() {
