@@ -154,8 +154,8 @@ configure_file_permissions() {
     # Sbin files sett permission  
     local sbin_files=(
         "files/sbin/free.sh"
-        "files/sbin/jam"
-        "files/sbin/ping.sh"
+        #"files/sbin/jam"
+        #"files/sbin/ping.sh"
     )
     
     log "INFO" "Sett permissions for sbin files"
