@@ -13,5 +13,8 @@
 # Untuk modem rakitan fibocom #
 #30 3 * * * ifdown fibocom && sleep 3 && ifup fibocom
 
+# Restart Openclash tiap 60 menit #
+#0 * * * * /etc/init.d/openclash restart
+
 0 * * * * /sbin/free.sh >/dev/null 2>&1
 */5 * * * * /www/vnstati/vnstati.sh >/dev/null 2>&1
