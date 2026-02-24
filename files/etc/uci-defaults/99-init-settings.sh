@@ -58,20 +58,14 @@ set network.wan.device='eth1'
 set network.tethering=interface
 set network.tethering.proto='dhcp'
 set network.tethering.device='usb0'
-set network.mm=interface
-set network.mm.proto='modemmanager'
-set network.mm.device='/sys/devices/platform/scb/fd500000.pcie/pci0000:00/0000:00:00.0/0000:01:00.0/usb2/2-1'
-set network.mm.apn='internet'
-set network.mm.auth='none'
-set network.mm.iptype='ipv4'
-set network.mm.force_connection='1'
+delete network.wan6
 commit network
 EOF
 
 # firewall
 echo "Configuring firewall..."
 uci batch <<EOF
-set firewall.@zone[1].network='tethering wan mm'
+set firewall.@zone[1].network='tethering wan'
 commit firewall
 EOF
 
@@ -135,7 +129,6 @@ mv /www/luci-static/resources/view/status/include/29_ports.js /www/luci-static/r
 # System customizations
 echo "Applying system.."
 sed -i -e 's/\[ -f \/etc\/banner \] && cat \/etc\/banner/#&/' -e 's/\[ -n \"\$FAILSAFE\" \] && cat \/etc\/banner.failsafe/& || \/usr\/bin\/chnrot/' /etc/profile
-# bash /etc/init.d/xidzs disable
 
 # Execute scripts
 # echo "Running install2 script..."
@@ -164,10 +157,5 @@ ln -sf /usr/lib/php8 /usr/lib/php
 # Final cleanup
 echo "cleaning up, completed setup..."
 rm -rf /etc/uci-defaults/$(basename "$0")
-
-# Sync filesystem to disk
-echo "Sync filesystem to disk..."
-sync
-sleep 7
 
 exit 0
