@@ -641,7 +641,7 @@ jobs:
         if: steps.download.outputs.status == 'success'
         run: |
           cd ${{ env.WORKING_DIR }}
-          chmod +x scripts/PACKAGES.sh
+          chmod +x scripts/PACK25.sh
           ./scripts/PACK25.sh
 
           echo "status=success" >> "$GITHUB_OUTPUT"
@@ -652,10 +652,10 @@ jobs:
         run: |
           cd ${{ env.WORKING_DIR }}
 
-          chmod +x scripts/PATCH.sh
+          chmod +x scripts/PACTH25.sh
           ./scripts/PACTH25.sh
 
-          chmod +x scripts/MISC.sh
+          chmod +x scripts/MISCH25.sh
           ./scripts/MISCH25.sh
 
           chmod +x scripts/TUNNEL.sh
@@ -694,7 +694,7 @@ jobs:
         if: steps.build.outputs.status == 'success'
         run: |
           cd ${{ env.WORKING_DIR }}
-          chmod +x scripts/REPACKWRT.sh
+          chmod +x scripts/REPACK25.sh 
           ./scripts/REPACK25.sh "ophub" "${{ env.TARGET_BUILD }}" "${{ env.KERNEL }}" "${{ env.TUNNEL }}"
           echo "status=success" >> "$GITHUB_OUTPUT"
           
