@@ -8,28 +8,28 @@
 #fi
 
 # Define all repositories
-declare -A REPOS
-REPOS+=(
-    ["OPENWRT"]="https://downloads.openwrt.org/releases/packages-${VEROP}/${ARCH_3}"
-    ["IMMORTALWRT"]="https://downloads.immortalwrt.org/releases/packages-${VEROP}/${ARCH_3}"
+#declare -A REPOS
+#REPOS+=(
+    #["OPENWRT"]="https://downloads.openwrt.org/releases/packages-${VEROP}/${ARCH_3}"
+    #["IMMORTALWRT"]="https://downloads.immortalwrt.org/releases/packages-${VEROP}/${ARCH_3}"
     #["KYARUCLOUD_IMMORTALWRT"]="https://immortalwrt.kyarucloud.moe/releases/packages-${VEROP}/${ARCH_3}"
     #["GSPOTX2F"]="https://github.com/gSpotx2f/packages-openwrt/tree/master/25.12"
-    ["FANTASTIC"]="https://fantastic-packages.github.io/releases/25.12/packages/aarch64_generic/luci/"
+    #["FANTASTIC"]="https://fantastic-packages.github.io/releases/25.12/packages/aarch64_generic/luci/"
     #["DLLKIDS"]="https://op.dllkids.xyz/packages/${ARCH_3}"
-    ["OPENWRTRU"]="https://openwrt.132lan.ru/packages/${VEROP}/packages/${ARCH_3}/modemfeed"
-)
+    #["OPENWRTRU"]="https://openwrt.132lan.ru/packages/${VEROP}/packages/${ARCH_3}/modemfeed"
+#)
 
 # Custom package list with format: "package_name|repository_url"
-declare -a packages_custom
-packages_custom+=(
+#declare -a packages_custom
+#packages_custom+=(
     # Modem info packages
     #"luci-app-internet-detector|${REPOS[GSPOTX2F]}"
     #"internet-detector|${REPOS[GSPOTX2F]}"
     #"internet-detector-mod-modem-restart|${REPOS[GSPOTX2F]}"
     #"luci-app-diskman|${REPOS[FANTASTIC]}"
     #"luci-theme-argon|${REPOS[FANTASTIC]}"
-    "luci-app-tinyfilemanager|${REPOS[FANTASTIC]}"
-)
+    #"luci-app-tinyfilemanager|${REPOS[FANTASTIC]}"
+#)
 
 # Verify downloaded packages
 verify_packages() {
