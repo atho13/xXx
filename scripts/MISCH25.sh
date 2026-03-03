@@ -123,7 +123,7 @@ download_custom_scripts() {
         #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/x-gpio|files/usr/bin"
         #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/x-gpioled|files/usr/bin"
         #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/xidzs|files/etc/init.d"
-        "https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/issue|files/etc/init.d"
+        #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/issue|files/etc/init.d"
     )
     
     for script in "${scripts[@]}"; do
@@ -138,24 +138,24 @@ configure_file_permissions() {
     log "INFO" "Sett file permissions"
     
     # file etc sett permission
-    local initd_files=(
-        "files/etc/init.d/issue"
+    #local initd_files=(
+        #"files/etc/init.d/issue"
         #"files/etc/init.d/xidzs"
-    )
+    #)
     
-    log "INFO" "Sett permissions for init.d files"
-    for file in "${initd_files[@]}"; do
-        if [ -f "$file" ]; then
-            chmod +x "$file"
-        fi
-    done
-    log "INFO" "Init.d permissions set successfully"
+    #log "INFO" "Sett permissions for init.d files"
+    #for file in "${initd_files[@]}"; do
+        #if [ -f "$file" ]; then
+            #chmod +x "$file"
+        #fi
+    #done
+    #log "INFO" "Init.d permissions set successfully"
     
     # Sbin files sett permission  
     local sbin_files=(
         "files/sbin/free.sh"
-        "files/sbin/jam"
-        "files/sbin/ping.sh"
+        #"files/sbin/jam"
+        #"files/sbin/ping.sh"
     )
     
     log "INFO" "Sett permissions for sbin files"
