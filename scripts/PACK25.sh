@@ -32,42 +32,42 @@
 #)
 
 # Verify downloaded packages
-verify_packages() {
-    local pkg_dir="packages"
-    local -a failed_packages=()
-    local -a package_list=("${!1}")
-    local pkg_ext=$(get_package_extension "${VEROP}")
+#verify_packages() {
+    #local pkg_dir="packages"
+    #local -a failed_packages=()
+    #local -a package_list=("${!1}")
+    #local pkg_ext=$(get_package_extension "${VEROP}")
     
-    if [[ ! -d "$pkg_dir" ]]; then
-        error_msg "Package directory not found: $pkg_dir"
-        return 1
-    fi
+    #if [[ ! -d "$pkg_dir" ]]; then
+        #error_msg "Package directory not found: $pkg_dir"
+        #return 1
+    #fi
     
     # Count packages with correct extension
-    local total_found=$(find "$pkg_dir" -name "*.${pkg_ext}" | wc -l)
-    log "INFO" "Found $total_found package files with .$pkg_ext extension"
+    #local total_found=$(find "$pkg_dir" -name "*.${pkg_ext}" | wc -l)
+    #log "INFO" "Found $total_found package files with .$pkg_ext extension"
     
     # Check each package
-    for package in "${package_list[@]}"; do
-        local pkg_name="${package%%|*}"
-        if ! find "$pkg_dir" -name "${pkg_name}*.${pkg_ext}" -print -quit | grep -q .; then
-            failed_packages+=("$pkg_name")
-        fi
-    done
+    #for package in "${package_list[@]}"; do
+        #local pkg_name="${package%%|*}"
+        #if ! find "$pkg_dir" -name "${pkg_name}*.${pkg_ext}" -print -quit | grep -q .; then
+            #failed_packages+=("$pkg_name")
+        #fi
+    #done
     
-    local failed=${#failed_packages[@]}
+    #local failed=${#failed_packages[@]}
     
-    if ((failed > 0)); then
-        log "WARNING" "$failed packages failed to download with .$pkg_ext format:"
-        for pkg in "${failed_packages[@]}"; do
-            log "WARNING" "- $pkg"
-        done
-        return 1
-    fi
+    #if ((failed > 0)); then
+        #log "WARNING" "$failed packages failed to download with .$pkg_ext format:"
+        #for pkg in "${failed_packages[@]}"; do
+            #log "WARNING" "- $pkg"
+        #done
+        #return 1
+    #fi
     
-    log "SUCCESS" "All packages downloaded successfully with .$pkg_ext format"
-    return 0
-}
+    #log "SUCCESS" "All packages downloaded successfully with .$pkg_ext format"
+    #return 0
+#}
 
 # Main execution
 main() {
