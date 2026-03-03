@@ -12,7 +12,7 @@ declare -A REPOS
 REPOS+=(
     ["OPENWRT"]="https://downloads.openwrt.org/releases/packages-${VEROP}/${ARCH_3}"
     ["IMMORTALWRT"]="https://downloads.immortalwrt.org/releases/packages-${VEROP}/${ARCH_3}"
-    ["KYARUCLOUD_IMMORTALWRT"]="https://immortalwrt.kyarucloud.moe/releases/packages-${VEROP}/${ARCH_3}"
+    #["KYARUCLOUD_IMMORTALWRT"]="https://immortalwrt.kyarucloud.moe/releases/packages-${VEROP}/${ARCH_3}"
     #["GSPOTX2F"]="https://github.com/gSpotx2f/packages-openwrt/tree/master/25.12"
     ["FANTASTIC"]="https://fantastic-packages.github.io/releases/25.12/packages/aarch64_generic/luci/"
     #["DLLKIDS"]="https://op.dllkids.xyz/packages/${ARCH_3}"
