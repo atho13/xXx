@@ -636,15 +636,15 @@ jobs:
 
           echo "status=success" >> "$GITHUB_OUTPUT"
 
-      - name: Download External Packages
-        id: packages
-        if: steps.download.outputs.status == 'success'
-        run: |
-          cd ${{ env.WORKING_DIR }}
-          chmod +x scripts/PACK25.sh
-          ./scripts/PACK25.sh
+      #- name: Download External Packages
+        #id: packages
+        #if: steps.download.outputs.status == 'success'
+        #run: |
+          #cd ${{ env.WORKING_DIR }}
+          #chmod +x scripts/PACK25.sh
+          #./scripts/PACK25.sh
 
-          echo "status=success" >> "$GITHUB_OUTPUT"
+          #echo "status=success" >> "$GITHUB_OUTPUT"
 
       - name: Apply Patches and Customizations
         id: customize
