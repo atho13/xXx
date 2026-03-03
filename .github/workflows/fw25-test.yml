@@ -18,14 +18,44 @@ on:
         type: choice
         options:
           - all-device
+          - opt-devices
+          - Amlogic s905 MXQ-Pro+
+          - Amlogic s905 Beelink-Mini
+          - Amlogic s905lb Q96-Mini
+          - Amlogic s905w TX3-Mini
+          - Amlogic s905w X96-Mini
+          - Amlogic s905w X96W
           - Amlogic s905x B860H
           - Amlogic s905x HG680P
+          - Amlogic s905x HG680P MODSDCARD
+          - Amlogic s905x2 B860Hv5
+          - Amlogic s905x2 HG680-FJ
+          - Amlogic s905x2 X96Max-v2Gb
+          - Amlogic s905x2 X96Max-v4Gb
+          - Amlogic s905x3 HK1-Vontar-X3
+          - Amlogic s905x3 X96Air_100mb
+          - Amlogic s905x3 X96Air_1Gb
+          - Amlogic s905x3 X96Max+_100Mb
+          - Amlogic s905x3 X96Max+_1Gb
+          - Amlogic s905x3 H96-Max-X3
+          - Amlogic s905x4 Advan-At01_Ax810
+          - Amlogic s912 Nexbox-A1-A95X
+          - Amlogic s912 Nexbox-A95X-A2
+          - Amlogic s922x GT-King-Pro
+          - Tanix-TX6
+          - RK3318-BOX
+          - Firefly-Rk3328
+          - Rk3399 King3399
       tunnel:
         description: "Select Tunnel VPN"
         required: true
         default: "no-tunnel"
         type: choice
         options:
+          - openclash
+          - openclash-nikki
+          - openclash-insomclash
+          - openclash-nikki-passwall
           - no-tunnel
       clean:
         description: "Do 'make clean' for each run"
@@ -72,8 +102,34 @@ jobs:
           TARGET_JSON=$(cat << 'EOJ'
           {
             "target": [
+              "Amlogic s905 MXQ-Pro+",
+              "Amlogic s905 Beelink-Mini",
+              "Amlogic s905lb Q96-Mini",
+              "Amlogic s905w TX3-Mini",
+              "Amlogic s905w X96-Mini",
+              "Amlogic s905w X96W",
               "Amlogic s905x B860H",
+              "Amlogic s905x B860H MODSDCARD",
               "Amlogic s905x HG680P",
+              "Amlogic s905x HG680P MODSDCARD",
+              "Amlogic s905x2 B860Hv5",
+              "Amlogic s905x2 HG680-FJ",
+              "Amlogic s905x2 X96Max-v2Gb",
+              "Amlogic s905x2 X96Max-v4Gb",
+              "Amlogic s905x3 HK1-Vontar-X3",
+              "Amlogic s905x3 X96Air_100mb",
+              "Amlogic s905x3 X96Air_1Gb",
+              "Amlogic s905x3 X96Max+_100Mb",
+              "Amlogic s905x3 X96Max+_1Gb",
+              "Amlogic s905x3 H96-Max-X3",
+              "Amlogic s905x4 Advan-At01_Ax810",
+              "Amlogic s912 Nexbox-A1-A95X",
+              "Amlogic s912 Nexbox-A95X-A2",
+              "Amlogic s922x GT-King-Pro",
+              "Tanix-TX6",
+              "Firefly-Rk3328",
+              "Rk3318-BOX",
+              "Rk3399 King3399"
             ]
           }
           EOJ
@@ -83,7 +139,9 @@ jobs:
           {
             "target": [
               "Amlogic s905x B860H",
+              "Amlogic s905x B860H MODSDCARD",
               "Amlogic s905x HG680P",
+              "Amlogic s905x HG680P MODSDCARD"
             ]
           }
           EOJ
@@ -125,13 +183,13 @@ jobs:
           echo "datemonth=$DATEMONTH" >> "$GITHUB_OUTPUT"
 
           if [ "${BASE}" == "openwrt" ]; then
-            RELEASE_NAME="OpenWRT-Buildx-${BRANCH}-${DATE}"
-            RELEASE_TAG="openwrt-buildx-${BRANCH}-${DATE}"
+            RELEASE_NAME="OpenWRT-Buildx³-${BRANCH}-${DATE}"
+            RELEASE_TAG="openwrt-buildx³-${BRANCH}-${DATE}"
             echo "release_name=$RELEASE_NAME" >> "$GITHUB_OUTPUT"
             echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
           elif [ "${BASE}" == "immortalwrt" ]; then
-            RELEASE_NAME="ImmortalWRT-Buildx-${BRANCH}-${DATE}"
-            RELEASE_TAG="immortalwrt-buildx-${BRANCH}-${DATE}"
+            RELEASE_NAME="ImmortalWRT-Buildx³-${BRANCH}-${DATE}"
+            RELEASE_TAG="immortalwrt-buildx³-${BRANCH}-${DATE}"
             echo "release_name=$RELEASE_NAME" >> "$GITHUB_OUTPUT"
             echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
           fi
@@ -211,7 +269,7 @@ jobs:
           sudo chown -R runner:runner /builder
           df -Th
           echo "status=success" >> "$GITHUB_OUTPUT"
-          
+
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
@@ -246,15 +304,273 @@ jobs:
           echo "ARCH_3=aarch64_generic" >> $GITHUB_ENV
 
           case "$MATRIXTARGET" in
+            "Amlogic s905 MXQ-Pro+")
+              TARGET_BUILD="s905-mxqpro-plus"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905 Beelink-Mini")
+              TARGET_BUILD="s905-beelink-mini"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905d Phicomm-N1")
+              TARGET_BUILD="s905d"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905l B860AV2")
+              TARGET_BUILD="s905l"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905l Mibox-4")
+              TARGET_BUILD="s905l-mg101"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905l2 M301A")
+              TARGET_BUILD="s905l2"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905l2 MGV-M301A")
+              TARGET_BUILD="s905l2"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905l3 HG680-LC")
+              TARGET_BUILD="s905l3"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905l3a B863AV3")
+              TARGET_BUILD="s905l3a-m401a"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905l3b MGV2000")
+              TARGET_BUILD="s905l3b-e900v22e"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905lb Q96-Mini")
+              TARGET_BUILD="s905lb-q96-mini"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905w TX3-Mini")
+              TARGET_BUILD="s905w"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905w X96-Mini")
+              TARGET_BUILD="s905w-x96-mini"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905w X96W")
+              TARGET_BUILD="s905w-x96w"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
             "Amlogic s905x B860H")
               TARGET_BUILD="s905x-b860h"
-              KERNEL="6.12.y"
+              KERNEL="6.6.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905x B860H MODSDCARD")
+              TARGET_BUILD="s905x-b860h"
+              KERNEL="5.15.y_6.1.y_6.6.y"
               echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
               echo "KERNEL=$KERNEL" >> $GITHUB_ENV
               ;;
             "Amlogic s905x HG680P")
               TARGET_BUILD="s905x"
-              KERNEL="6.12.y"
+              KERNEL="6.6.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905x HG680P MODSDCARD")
+              TARGET_BUILD="s905x"
+              KERNEL="5.15.y_6.1.y_6.6.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905x2 B860Hv5")
+              TARGET_BUILD="s905x2-b860h-v5"
+              KERNEL="6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905x2 HG680-FJ")
+              TARGET_BUILD="s905x2-hg680-fj"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905x2 X96Max-v2Gb")
+              TARGET_BUILD="s905x2-x96max-2g"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905x2 X96Max-v4Gb")
+              TARGET_BUILD="s905x2"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905x3 HK1-Vontar-X3")
+              TARGET_BUILD="s905x3-hk1"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905x3 X96Air_100mb")
+              TARGET_BUILD="s905x3-x96air"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905x3 X96Air_1Gb")
+              TARGET_BUILD="s905x3-x96air-gb"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905x3 X96Max+_100Mb")
+              TARGET_BUILD="s905x3"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905x3 X96Max+_1Gb")
+              TARGET_BUILD="s905x3-x96max"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905x3 H96-Max-X3")
+              TARGET_BUILD="s905x3-h96max"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s905x4 Advan-At01_Ax810")
+              TARGET_BUILD="s905x4-advan"
+              KERNEL="6.1.y_6.6.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s912 Nexbox-A1-A95X")
+              TARGET_BUILD="s912-nexbox-a1"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s912 Nexbox-A95X-A2")
+              TARGET_BUILD="s912-nexbox-a2"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Amlogic s922x GT-King-Pro")
+              TARGET_BUILD="s922x"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Firefly-Rk3328")
+              TARGET_BUILD="renegade-rk3328"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Rk3318-BOX")
+              TARGET_BUILD="rk3318-box"
+              KERNEL="5.15.y_6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;            
+            "Rk3528 H96-Max-M2")
+              TARGET_BUILD="h96-max-m2"
+              KERNEL="6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Rk3566 Panther-X2")
+              TARGET_BUILD="panther-x2"
+              KERNEL="6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Rk3568 NanoPi-R5S")
+              TARGET_BUILD="nanopi-r5s"
+              KERNEL="6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Rk3588 Rock5B")
+              TARGET_BUILD="rock5b"
+              KERNEL="6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Rk3399 King3399")
+              TARGET_BUILD="king3399"
+              KERNEL="6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "Tanix-TX6")
+              TARGET_BUILD="tanix-tx6"
+              KERNEL="6.1.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "OrangePi3")
+              TARGET_BUILD="orangepi-3"
+              KERNEL="6.6.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "OrangePi Z Plus")
+              TARGET_BUILD="orangepi-zplus"
+              KERNEL="6.6.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "OrangePi Z Plus2")
+              TARGET_BUILD="orangepi-zplus2"
+              KERNEL="6.6.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "OrangePi Zero2")
+              TARGET_BUILD="orangepi-zero2"
+              KERNEL="6.6.y"
+              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
+              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
+              ;;
+            "OrangePi Zero3")
+              TARGET_BUILD="orangepi-zero3"
+              KERNEL="6.6.y"
               echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
               echo "KERNEL=$KERNEL" >> $GITHUB_ENV
               ;;
@@ -320,27 +636,30 @@ jobs:
 
           echo "status=success" >> "$GITHUB_OUTPUT"
 
-      #- name: Download External Packages
-        #id: packages
-        #if: steps.download.outputs.status == 'success'
-        #run: |
-          #cd ${{ env.WORKING_DIR }}
-          #chmod +x scripts/PACK25.sh
-          #./scripts/PACK25.sh
+      - name: Download External Packages
+        id: packages
+        if: steps.download.outputs.status == 'success'
+        run: |
+          cd ${{ env.WORKING_DIR }}
+          chmod +x scripts/PACKAGES.sh
+          ./scripts/PACK25.sh
 
-          #echo "status=success" >> "$GITHUB_OUTPUT"
+          echo "status=success" >> "$GITHUB_OUTPUT"
 
       - name: Apply Patches and Customizations
         id: customize
         if: steps.packages.outputs.status == 'success'
         run: |
           cd ${{ env.WORKING_DIR }}
-          
-          chmod +x scripts/PACTH25.sh
+
+          chmod +x scripts/PATCH.sh
           ./scripts/PACTH25.sh
-          
-          chmod +x scripts/MISCH25.sh
+
+          chmod +x scripts/MISC.sh
           ./scripts/MISCH25.sh
+
+          chmod +x scripts/TUNNEL.sh
+          ./scripts/TUNNEL.sh ${{ env.TUNNEL }}
 
           df -hT ${PWD}
           echo "status=success" >> "$GITHUB_OUTPUT"
@@ -357,11 +676,11 @@ jobs:
             make clean
           fi
             
-          time ./make-image25.sh ${{ env.PROFILE }}
+          time ./make-image25.sh ${{ env.PROFILE }} ${{ env.TUNNEL }}
             
           for file in bin/targets/"${{ env.TARGET_SYSTEM }}"/*-rootfs.tar.gz; do
             if [ -f "$file" ]; then
-              new_name="FRDMx_$(basename "$file" -rootfs.tar.gz)-rootfs.tar.gz"
+              new_name="FRDMX_$(basename "$file" -rootfs.tar.gz)_${{ env.TUNNEL }}-rootfs.tar.gz"
               mv "$file" compiled_images/$new_name
             fi
           done
@@ -375,8 +694,17 @@ jobs:
         if: steps.build.outputs.status == 'success'
         run: |
           cd ${{ env.WORKING_DIR }}
-          chmod +x scripts/REPACK25.sh
-          ./scripts/REPACK25.sh "ophub" "${{ env.TARGET_BUILD }}" "${{ env.KERNEL }}"
+          chmod +x scripts/REPACKWRT.sh
+          ./scripts/REPACK25.sh "ophub" "${{ env.TARGET_BUILD }}" "${{ env.KERNEL }}" "${{ env.TUNNEL }}"
+          echo "status=success" >> "$GITHUB_OUTPUT"
+          
+      - name: Mod SDCard
+        id: modsdcard
+        if: steps.repack.outputs.status == 'success'
+        run: |
+          cd ${{ env.WORKING_DIR }}
+          chmod +x scripts/MODSDCARD.sh
+          ./scripts/MODSDCARD.sh
           echo "status=success" >> "$GITHUB_OUTPUT"
           
       - name: Before Upload
