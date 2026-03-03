@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ./scripts/INCLUDE.sh
+./scripts/INCLUDE.sh
 
 # Repository URLs based on version
 #if [[ "${VEROP}" == "25.12" ]]; then
