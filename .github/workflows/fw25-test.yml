@@ -6,11 +6,11 @@ on:
       release_branch:
         description: "Select the release branch:"
         required: true
-        default: "openwrt:25.12.0-rc4"
+        default: "openwrt:25.12.0-rc5"
         type: choice
         options:
-          - openwrt:25.12.0-rc4
-          - immortalwrt:25.12.0-rc4
+          - openwrt:25.12.0-rc5
+          - immortalwrt:25.12.0-rc5
       target:
         description: "Select device board"
         required: false
@@ -320,15 +320,15 @@ jobs:
 
           echo "status=success" >> "$GITHUB_OUTPUT"
 
-      - name: Download External Packages
-        id: packages
-        if: steps.download.outputs.status == 'success'
-        run: |
-          cd ${{ env.WORKING_DIR }}
-          chmod +x scripts/PACK25.sh
-          ./scripts/PACK25.sh
+      #- name: Download External Packages
+        #id: packages
+        #if: steps.download.outputs.status == 'success'
+        #run: |
+          #cd ${{ env.WORKING_DIR }}
+          #chmod +x scripts/PACK25.sh
+          #./scripts/PACK25.sh
 
-          echo "status=success" >> "$GITHUB_OUTPUT"
+          #echo "status=success" >> "$GITHUB_OUTPUT"
 
       - name: Apply Patches and Customizations
         id: customize
@@ -372,7 +372,7 @@ jobs:
 
       - name: Repack OpenWrt
         id: repack
-        #if: steps.build.outputs.status == 'success'
+        if: steps.build.outputs.status == 'success'
         run: |
           cd ${{ env.WORKING_DIR }}
           chmod +x scripts/REPACK25.sh
@@ -381,7 +381,7 @@ jobs:
           
       - name: Before Upload
         id: beforeupload
-        #if: steps.modsdcard.outputs.status == 'success'
+        if: steps.modsdcard.outputs.status == 'success'
         run: |
           cd ${{ env.WORKING_DIR }}
           chmod +x scripts/RENAMEFW.sh
@@ -389,7 +389,7 @@ jobs:
           echo "status=success" >> "$GITHUB_OUTPUT"
 
       - name: Create Release
-        #if: steps.beforeupload.outputs.status == 'success'
+        if: steps.beforeupload.outputs.status == 'success'
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
