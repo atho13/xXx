@@ -3,9 +3,9 @@
 . ./scripts/INCLUDE.sh
 
 # Repository URLs based on version
-if [[ "${VEROP}" == "25.12" ]]; then
-    OPENWRT="https://downloads.openwrt.org/releases/packages-${VEROP}/${ARCH_3}"
-fi
+#if [[ "${VEROP}" == "25.12" ]]; then
+    #OPENWRT="https://downloads.openwrt.org/releases/packages-${VEROP}/${ARCH_3}"
+#fi
 
 # Define all repositories
 declare -A REPOS
