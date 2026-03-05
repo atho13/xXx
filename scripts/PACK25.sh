@@ -22,10 +22,10 @@ REPOS+=(
 declare -a packages_custom
 packages_custom+=( 
     # Network tools
-    "luci-app-ttyd_|${REPOS[OPENWRT]}/luci"
-    "luci-app-internet-detector_|${REPOS[OPENWRT]}"
-    "internet-detector_|${REPOS[OPENWRT]}"
-    "internet-detector-mod-modem-restart_|${REPOS[OPENWRT]}"
+    "luci-app-ttyd.apk|${REPOS[OPENWRT]}/luci"
+    "luci-app-internet-detector.apk|${REPOS[OPENWRT]}"
+    "internet-detector.apk|${REPOS[OPENWRT]}"
+    "internet-detector-mod-modem-restart.apk|${REPOS[OPENWRT]}"
     
 )
 
