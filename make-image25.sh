@@ -11,18 +11,18 @@ make info
 
 # VARIABEL
 PROFILE=""
-PACKAGES=""
+PACK25=""
 MISC=""
 EXCLUDED=""
 
 #CORE SYSTEM
-PACKAGES+=" dnsmasq-full libc block-mount zram-swap zoneinfo-core zoneinfo-asia bash screen \
+PACK25+=" dnsmasq-full libc block-mount zram-swap zoneinfo-core zoneinfo-asia bash screen \
 uhttpd uhttpd-mod-ubus luci luci-ssl openssh-sftp-server adb curl wget-ssl \
 httping htop jq tar unzip coreutils-base64 coreutils-sleep coreutils-stat"
 
 # ETHERNET & MODEM DRIVERS
-PACKAGES+=" kmod-usb-net-rtl8150 kmod-usb-net-rtl8152 kmod-usb-net-asix kmod-usb-net-asix-ax88179"
-PACKAGES+=" kmod-mii kmod-usb-net kmod-usb-wdm kmod-usb-net-rndis kmod-usb-net-cdc-ether kmod-usb-net-cdc-ncm kmod-usb-net-sierrawireless \
+PACK25=" kmod-usb-net-rtl8150 kmod-usb-net-rtl8152 kmod-usb-net-asix kmod-usb-net-asix-ax88179"
+PACK25=" kmod-mii kmod-usb-net kmod-usb-wdm kmod-usb-net-rndis kmod-usb-net-cdc-ether kmod-usb-net-cdc-ncm kmod-usb-net-sierrawireless \
 kmod-usb-net-qmi-wwan uqmi luci-proto-qmi kmod-usb-acm kmod-usb-net-huawei-cdc-ncm kmod-usb-net-cdc-mbim umbim \
 kmod-usb-serial kmod-usb-serial-option kmod-usb-serial-wwan kmod-usb-serial-qualcomm kmod-usb-serial-sierrawireless \
 modemmanager luci-proto-modemmanager libqmi libmbim glib2 dbus dbus-utils ppp chat \
@@ -30,13 +30,13 @@ qmi-utils mbim-utils usbutils luci-proto-ncm kmod-usb-ohci kmod-usb-uhci kmod-us
 kmod-nls-utf8 kmod-macvlan usb-modeswitch xmm-modem luci-proto-xmm"
 
 # STORAGE
-PACKAGES+=" kmod-usb-storage"
+PACK25=" kmod-usb-storage"
 
 # THEMES
-PACKAGES+=" luci-theme-material"
+PACK25=" luci-theme-material"
 
 # MISC
-#MISC+=" internet-detector internet-detector-mod-modem-restart luci-app-internet-detector luci-app-ttyd luci-app-tinyfm"
+MISC+=" internet-detector internet-detector-mod-modem-restart luci-app-internet-detector luci-app-ttyd luci-app-tinyfm"
 
 # MAIN BUILD
 build_firmware() {
@@ -57,8 +57,8 @@ build_firmware() {
 
     # PACKAGES + MISC + EXCLUDED + DISABLED_SERVICES    
     make image PROFILE="$target_profile" \
-               #PACKAGES="$PACKAGES $MISC $EXCLUDED" \
-               PACKAGES="$MISC $EXCLUDED" \
+               PACKAGES="$PACK25 $MISC $EXCLUDED" \
+               #PACKAGES="$MISC $EXCLUDED" \
                FILES="$build_files"
     
     local build_status=$?
