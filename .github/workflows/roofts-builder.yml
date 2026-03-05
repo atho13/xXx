@@ -7,12 +7,12 @@ on:
       openwrt_ver:
         description: 'Select OpenWrt Version'
         required: true
-        default: '25.12.x'
+        default: '25.12.0'
         type: choice
         options:
           - 23.05.x
           - 24.10.x
-          - 25.12.x
+          - 25.12.0
       board_version:
         description: 'Select board version to compile'
         required: true
