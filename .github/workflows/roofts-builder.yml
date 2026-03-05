@@ -120,7 +120,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.AKSI_GITHUB }}
+          GITHUB_TOKEN: ${{ secrets.AKSI_TOKEN }}
         with:
           name: FRDMX-Wrt ${{ github.event.inputs.openwrt_ver }}
           tag_name: v${{ github.event.inputs.openwrt_ver }}_k${{ github.event.inputs.kernel_version }}
@@ -197,7 +197,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.AKSI_GITHUB }}
+          GITHUB_TOKEN: ${{ secrets.AKSI_TOKEN }}
         with:
           name: FRDM-Wrt ${{ github.event.inputs.openwrt_ver }}
           tag_name: v${{ github.event.inputs.openwrt_ver }}_k${{ github.event.inputs.kernel_version }}
