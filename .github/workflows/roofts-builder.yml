@@ -35,6 +35,15 @@ on:
           - 6.6.y
           - 6.12.y
           - 6.18.y
+      auto_kernel:
+        description: "Auto use the latest kernel"
+        required: false
+        default: true
+        type: boolean
+      kernel_repo:
+        description: "Set the kernel repository"
+        required: false
+        default: "https://github.com/ribel13/kernel"
       rootfs_size:
         description: 'Select Rootfs Size'
         required: true
@@ -45,20 +54,11 @@ on:
           - 512
           - 1024
           - 1536
-      auto_kernel:
-        description: "Auto use the latest kernel"
-        required: false
-        default: true
-        type: boolean
-      kernel_repo:
-        description: "Set the kernel repository"
-        required: false
-        default: "https://github.com/ribel13/kernel"
       rootfs_url:
         description: 'Input Rootfs URL (Wget Only)'
         required: true
         default: ''
-
+        
 jobs:
   download:
     name: Download Rootfs
