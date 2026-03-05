@@ -3,86 +3,86 @@
 . ./scripts/INCLUDE.sh
 
 # Repository URLs based on version
-if [[ "${VEROP}" == "25.12" ]]; then
-    KIDDIN9_REPO="https://dl.openwrt.ai/releases/25.12/packages/${ARCH_3}/kiddin9"
-else
-    KIDDIN9_REPO="https://dl.openwrt.ai/releases/24.10/packages/${ARCH_3}/kiddin9"
-fi
+#if [[ "${VEROP}" == "25.12" ]]; then
+    #KIDDIN9_REPO="https://dl.openwrt.ai/releases/25.12/packages/${ARCH_3}/kiddin9"
+#else
+    #KIDDIN9_REPO="https://dl.openwrt.ai/releases/24.10/packages/${ARCH_3}/kiddin9"
+#fi
 
 # Define all repositories
 declare -A REPOS
 REPOS+=(
     ["OPENWRT"]="https://downloads.openwrt.org/releases/packages-${VEROP}/${ARCH_3}"
     ["IMMORTALWRT"]="https://downloads.immortalwrt.org/releases/packages-${VEROP}/${ARCH_3}"
-    ["KYARUCLOUD_IMMORTALWRT"]="https://immortalwrt.kyarucloud.moe/releases/packages-${VEROP}/${ARCH_3}"
-    ["KIDDIN9"]="${KIDDIN9_REPO}"
-    ["GSPOTX2F"]="https://github.com/gSpotx2f/packages-openwrt/raw/refs/heads/master/current"
+    #["KYARUCLOUD_IMMORTALWRT"]="https://immortalwrt.kyarucloud.moe/releases/packages-${VEROP}/${ARCH_3}"
+    #["KIDDIN9"]="${KIDDIN9_REPO}"
+    #["GSPOTX2F"]="https://github.com/gSpotx2f/packages-openwrt/raw/refs/heads/master/current"
     ["FANTASTIC"]="https://fantastic-packages.github.io/packages/releases/${VEROP}/packages/x86_64"
-    ["DLLKIDS"]="https://op.dllkids.xyz/packages/${ARCH_3}"
-    ["OPENWRTRU"]="https://openwrt.132lan.ru/packages/${VEROP}/packages/${ARCH_3}/modemfeed"
+    #["DLLKIDS"]="https://op.dllkids.xyz/packages/${ARCH_3}"
+    #["OPENWRTRU"]="https://openwrt.132lan.ru/packages/${VEROP}/packages/${ARCH_3}/modemfeed"
 )
 
 # Custom package list with format: "package_name|repository_url"
 declare -a packages_custom
 packages_custom+=(
     # Modem info packages
-    "modeminfo_|${REPOS[KIDDIN9]}"
-    "luci-app-modeminfo_|${REPOS[KIDDIN9]}"
-    "modeminfo-serial-tw_|${REPOS[KIDDIN9]}"
-    "modeminfo-serial-dell_|${REPOS[KIDDIN9]}"
-    "modeminfo-serial-sierra_|${REPOS[KIDDIN9]}"
-    "modeminfo-serial-xmm_|${REPOS[KIDDIN9]}"
-    "modeminfo-serial-fibocom_|${REPOS[KIDDIN9]}"
-    "modeminfo-serial-sierra_|${REPOS[KIDDIN9]}"
+    #"modeminfo_|${REPOS[KIDDIN9]}"
+    #"luci-app-modeminfo_|${REPOS[KIDDIN9]}"
+    #"modeminfo-serial-tw_|${REPOS[KIDDIN9]}"
+    #"modeminfo-serial-dell_|${REPOS[KIDDIN9]}"
+    #"modeminfo-serial-sierra_|${REPOS[KIDDIN9]}"
+    #"modeminfo-serial-xmm_|${REPOS[KIDDIN9]}"
+    #"modeminfo-serial-fibocom_|${REPOS[KIDDIN9]}"
+    #"modeminfo-serial-sierra_|${REPOS[KIDDIN9]}"
     
     # System utilities
-    "atinout_|${REPOS[KIDDIN9]}"
-    "luci-app-diskman_|${REPOS[KIDDIN9]}"
-    "luci-app-poweroffdevice_|${REPOS[KIDDIN9]}" 
+    #"atinout_|${REPOS[KIDDIN9]}"
+    #"luci-app-diskman_|${REPOS[KIDDIN9]}"
+    #"luci-app-poweroffdevice_|${REPOS[KIDDIN9]}" 
     
     # Monitoring & watchdog
-    "luci-app-lite-watchdog_|${REPOS[KIDDIN9]}"
-    "luci-app-atcommands_|${REPOS[KIDDIN9]}"
+    #"luci-app-lite-watchdog_|${REPOS[KIDDIN9]}"
+    #"luci-app-atcommands_|${REPOS[KIDDIN9]}"
     
     # VPN services
-    "tailscale_|${REPOS[OPENWRT]}/packages"
+    #"tailscale_|${REPOS[OPENWRT]}/packages"
     
     # Display & interface
-    "luci-app-oled_|${REPOS[KIDDIN9]}"
-    "modemband_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/packages"
-    "luci-app-ramfree_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/luci"
-    "luci-app-modemband_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/luci"
-    "luci-app-sms-tool-js_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/luci"
-    "dns2tcp_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/packages"
+    #"luci-app-oled_|${REPOS[KIDDIN9]}"
+    #"modemband_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/packages"
+    #"luci-app-ramfree_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/luci"
+    #"luci-app-modemband_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/luci"
+    #"luci-app-sms-tool-js_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/luci"
+    #"dns2tcp_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/packages"
     
     # Network tools
     "luci-app-ttyd_|${REPOS[OPENWRT]}/luci"
-    "ookla-speedtest_|${REPOS[KIDDIN9]}"
-    "luci-app-eqosplus_|${REPOS[KIDDIN9]}"
-    "luci-app-internet-detector_|${REPOS[KIDDIN9]}"
-    "internet-detector_|${REPOS[KIDDIN9]}"
-    "internet-detector-mod-modem-restart_|${REPOS[KIDDIN9]}"
+    #"ookla-speedtest_|${REPOS[KIDDIN9]}"
+    #"luci-app-eqosplus_|${REPOS[KIDDIN9]}"
+    #"luci-app-internet-detector_|${REPOS[KIDDIN9]}"
+    #"internet-detector_|${REPOS[KIDDIN9]}"
+    #"internet-detector-mod-modem-restart_|${REPOS[KIDDIN9]}"
     #"luci-app-temp-status_|${REPOS[KIDDIN9]}"
     
     # GitHub releases
-    "luci-app-tinyfm_|https://api.github.com/repos/bobbyunknown/luci-app-tinyfm/releases/latest"
-    "luci-app-droidnet_|https://api.github.com/repos/animegasan/luci-app-droidmodem/releases/latest"
-    "luci-theme-alpha_|https://api.github.com/repos/de-quenx/luci-theme-alpha/releases/latest"
-    "luci-app-tailscale_|https://api.github.com/repos/asvow/luci-app-tailscale/releases/latest"
-    "luci-app-ipinfo_|https://api.github.com/repos/bobbyunknown/luci-app-ipinfo/releases/latest"
-    "luci-app-netmonitor_|https://api.github.com/repos/de-quenx/luci-app-netmonitor/releases/latest"
-    "luci-theme-argon_|https://api.github.com/repos/de-quenx/luci-theme-argon/releases/latest"
-    "luci-app-ttl_|https://api.github.com/repos/de-quenx/custom-x/releases/latest"
-    "luci-app-temp-status_|https://api.github.com/repos/de-quenx/kwrt-packages/releases/latest"
+    #"luci-app-tinyfm_|https://api.github.com/repos/bobbyunknown/luci-app-tinyfm/releases/latest"
+    #"luci-app-droidnet_|https://api.github.com/repos/animegasan/luci-app-droidmodem/releases/latest"
+    #"luci-theme-alpha_|https://api.github.com/repos/de-quenx/luci-theme-alpha/releases/latest"
+    #"luci-app-tailscale_|https://api.github.com/repos/asvow/luci-app-tailscale/releases/latest"
+    #"luci-app-ipinfo_|https://api.github.com/repos/bobbyunknown/luci-app-ipinfo/releases/latest"
+    #"luci-app-netmonitor_|https://api.github.com/repos/de-quenx/luci-app-netmonitor/releases/latest"
+    #"luci-theme-argon_|https://api.github.com/repos/de-quenx/luci-theme-argon/releases/latest"
+    #"luci-app-ttl_|https://api.github.com/repos/de-quenx/custom-x/releases/latest"
+    #"luci-app-temp-status_|https://api.github.com/repos/de-quenx/kwrt-packages/releases/latest"
 )
 
 # Add Amlogic packages for specific device types
-if [[ "${TYPE}" == "OPHUB" || "${TYPE}" == "ULO" ]]; then
-    log "INFO" "Add Packages Amlogic In ${TYPE}.."
-    packages_custom+=(
-        "luci-app-amlogic_|https://api.github.com/repos/ophub/luci-app-amlogic/releases/latest"
-    )
-fi
+#if [[ "${TYPE}" == "OPHUB" || "${TYPE}" == "ULO" ]]; then
+    #log "INFO" "Add Packages Amlogic In ${TYPE}.."
+    #packages_custom+=(
+        #"luci-app-amlogic_|https://api.github.com/repos/ophub/luci-app-amlogic/releases/latest"
+    #)
+#fi
 
 # Verify downloaded packages
 verify_packages() {
