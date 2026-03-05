@@ -82,7 +82,7 @@ if [[ "${TYPE}" == "OPHUB" || "${TYPE}" == "ULO" ]]; then
     packages_custom+=(
         "luci-app-amlogic_|https://api.github.com/repos/ophub/luci-app-amlogic/releases/latest"
     )
-#lfi
+fi
 
 # Verify downloaded packages
 verify_packages() {
