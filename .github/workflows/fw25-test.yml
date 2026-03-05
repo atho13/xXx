@@ -6,10 +6,10 @@ on:
       release_branch:
         description: "Select the release branch:"
         required: true
-        default: "openwrt:25.12.0"
+        default: "openwrt:25.12.0-rc5"
         type: choice
         options:
-          - openwrt:25.12.0
+          - openwrt:25.12.0-rc5
           - immortalwrt:25.12
       target:
         description: "Select device board"
@@ -636,15 +636,15 @@ jobs:
 
           echo "status=success" >> "$GITHUB_OUTPUT"
 
-      - name: Download External Packages
-        id: packages
-        if: steps.download.outputs.status == 'success'
-        run: |
-          cd ${{ env.WORKING_DIR }}
-          chmod +x scripts/PACKAGES.sh
-          ./scripts/PACKAGES.sh
+      #- name: Download External Packages
+        #id: packages
+        #if: steps.download.outputs.status == 'success'
+        #run: |
+          #cd ${{ env.WORKING_DIR }}
+          #chmod +x scripts/PACKAGES.sh
+          #./scripts/PACKAGES.sh
 
-          echo "status=success" >> "$GITHUB_OUTPUT"
+          #echo "status=success" >> "$GITHUB_OUTPUT"
 
       - name: Apply Patches and Customizations
         id: customize
