@@ -56,7 +56,7 @@ packages_custom+=(
     #"dns2tcp_|${REPOS[KYARUCLOUD_IMMORTALWRT]}/packages"
     
     # Network tools
-    "luci-app-ttyd_|${REPOS[OPENWRT]}/luci"
+    #"luci-app-ttyd_|${REPOS[OPENWRT]}/luci"
     #"ookla-speedtest_|${REPOS[KIDDIN9]}"
     #"luci-app-eqosplus_|${REPOS[KIDDIN9]}"
     #"luci-app-internet-detector_|${REPOS[KIDDIN9]}"
