@@ -641,8 +641,8 @@ jobs:
         if: steps.download.outputs.status == 'success'
         run: |
           cd ${{ env.WORKING_DIR }}
-          chmod +x scripts/PACK25.sh
-          ./scripts/PACK25.sh
+          chmod +x scripts/PACKAGES.sh
+          ./scripts/PACKAGES.sh
 
           echo "status=success" >> "$GITHUB_OUTPUT"
 
