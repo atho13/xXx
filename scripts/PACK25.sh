@@ -1,73 +1,73 @@
 #!/bin/bash
 
-#. ./scripts/INCLUDE.sh
+. ./scripts/INCLUDE.sh
 
 # Repository URLs based on version
-#if [[ "${VEROP}" == "25.12" ]]; then
-    #OPENWRT="https://downloads.openwrt.org/releases/packages-${VEROP}/${ARCH_3}"
-#fi
+if [[ "${VEROP}" == "25.12" ]]; then
+    OPENWRT="https://downloads.openwrt.org/releases/packages-${VEROP}/${ARCH_3}"
+fi
 
 # Define all repositories
-#declare -A REPOS
-#REPOS+=(
-    #["OPENWRT"]="https://downloads.openwrt.org/releases/packages-${VEROP}/${ARCH_3}"
+declare -A REPOS
+REPOS+=(
+    ["OPENWRT"]="https://downloads.openwrt.org/releases/packages-${VEROP}/${ARCH_3}"
     #["IMMORTALWRT"]="https://downloads.immortalwrt.org/releases/packages-${VEROP}/${ARCH_3}"
     #["KYARUCLOUD_IMMORTALWRT"]="https://immortalwrt.kyarucloud.moe/releases/packages-${VEROP}/${ARCH_3}"
     #["GSPOTX2F"]="https://github.com/gSpotx2f/packages-openwrt/tree/master/25.12"
-    #["FANTASTIC"]="https://fantastic-packages.github.io/releases/25.12/packages/aarch64_generic/luci/"
+    ["FANTASTIC"]="https://fantastic-packages.github.io/releases/25.12/packages/aarch64_generic/luci/"
     #["DLLKIDS"]="https://op.dllkids.xyz/packages/${ARCH_3}"
     #["OPENWRTRU"]="https://openwrt.132lan.ru/packages/${VEROP}/packages/${ARCH_3}/modemfeed"
 #)
 
 # Custom package list with format: "package_name|repository_url"
-#declare -a packages_custom
-#packages_custom+=(
+declare -a packages_custom
+packages_custom+=(
     # Modem info packages
-    #"luci-app-internet-detector|${REPOS[GSPOTX2F]}"
-    #"internet-detector|${REPOS[GSPOTX2F]}"
-    #"internet-detector-mod-modem-restart|${REPOS[GSPOTX2F]}"
+    "luci-app-internet-detector|${REPOS[OPENWRT]}"
+    "internet-detector|${REPOS[OPENWRT]}"
+    "internet-detector-mod-modem-restart|${REPOS[OPENWRT]}"
     #"luci-app-diskman|${REPOS[FANTASTIC]}"
     #"luci-theme-argon|${REPOS[FANTASTIC]}"
-    #"luci-app-tinyfilemanager|${REPOS[FANTASTIC]}"
-#)
+    "luci-app-tinyfilemanager|${REPOS[FANTASTIC]}"
+)
 
 # Verify downloaded packages
-#verify_packages() {
-    #local pkg_dir="packages"
-    #local -a failed_packages=()
-    #local -a package_list=("${!1}")
-    #local pkg_ext=$(get_package_extension "${VEROP}")
+verify_packages() {
+    local pkg_dir="packages"
+    local -a failed_packages=()
+    local -a package_list=("${!1}")
+    local pkg_ext=$(get_package_extension "${VEROP}")
     
-    #if [[ ! -d "$pkg_dir" ]]; then
-        #error_msg "Package directory not found: $pkg_dir"
-        #return 1
-    #fi
+    if [[ ! -d "$pkg_dir" ]]; then
+        error_msg "Package directory not found: $pkg_dir"
+        return 1
+    fi
     
     # Count packages with correct extension
-    #local total_found=$(find "$pkg_dir" -name "*.${pkg_ext}" | wc -l)
-    #log "INFO" "Found $total_found package files with .$pkg_ext extension"
+    local total_found=$(find "$pkg_dir" -name "*.${pkg_ext}" | wc -l)
+    log "INFO" "Found $total_found package files with .$pkg_ext extension"
     
     # Check each package
-    #for package in "${package_list[@]}"; do
-        #local pkg_name="${package%%|*}"
-        #if ! find "$pkg_dir" -name "${pkg_name}*.${pkg_ext}" -print -quit | grep -q .; then
-            #failed_packages+=("$pkg_name")
-        #fi
-    #done
+    for package in "${package_list[@]}"; do
+        local pkg_name="${package%%|*}"
+        if ! find "$pkg_dir" -name "${pkg_name}*.${pkg_ext}" -print -quit | grep -q .; then
+            failed_packages+=("$pkg_name")
+        fi
+    done
     
-    #local failed=${#failed_packages[@]}
+    local failed=${#failed_packages[@]}
     
-    #if ((failed > 0)); then
-        #log "WARNING" "$failed packages failed to download with .$pkg_ext format:"
-        #for pkg in "${failed_packages[@]}"; do
-            #log "WARNING" "- $pkg"
-        #done
-        #return 1
-    #fi
+    if ((failed > 0)); then
+        log "WARNING" "$failed packages failed to download with .$pkg_ext format:"
+        for pkg in "${failed_packages[@]}"; do
+            log "WARNING" "- $pkg"
+        done
+        return 1
+    fi
     
-    #log "SUCCESS" "All packages downloaded successfully with .$pkg_ext format"
-    #return 0
-#}
+    log "SUCCESS" "All packages downloaded successfully with .$pkg_ext format"
+    return 0
+}
 
 # Main execution
 main() {
