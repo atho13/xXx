@@ -56,7 +56,7 @@ on:
       rootfs_url:
         description: 'Input Rootfs URL (Wget Only)'
         required: true
-        default: 'downloads.openwrt.org/releases/25.12.0/targets/armsr/armv8/openwrt-imagebuilder-25.12.0-armsr-armv8.Linux-x86_64.tar.zst'
+        default: ''
         
 jobs:
   download:
@@ -66,8 +66,7 @@ jobs:
       - name: Download Rootfs
         run: |
           wget "${{ github.event.inputs.rootfs_url }}"
-          ROOTFS_PATH=$(find ./ -name "*rootfs.tar.zst")
-          #ROOTFS_PATH=$(find ./ -name "*rootfs.tar.gz")
+          ROOTFS_PATH=$(find ./ -name "*rootfs.tar.gz")
           echo "ROOTFS_PATH=$ROOTFS_PATH" >> $GITHUB_ENV
           
       - name: Upload Rootfs
