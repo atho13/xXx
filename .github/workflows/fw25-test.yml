@@ -642,7 +642,7 @@ jobs:
         run: |
           cd ${{ env.WORKING_DIR }}
           chmod +x scripts/PACKAGES.sh
-          ./scripts/PACKAGES.sh
+          ./scripts/PACK25.sh
 
           echo "status=success" >> "$GITHUB_OUTPUT"
 
