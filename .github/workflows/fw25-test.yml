@@ -689,23 +689,23 @@ jobs:
           ls -la compiled_images/
           echo "status=success" >> "$GITHUB_OUTPUT"
 
-      #- name: Repack OpenWrt
-        #id: repack
-        #if: steps.build.outputs.status == 'success'
-        #run: |
-          #cd ${{ env.WORKING_DIR }}
-          #chmod +x scripts/REPACK25.sh 
-          #./scripts/REPACK25.sh "ophub" "${{ env.TARGET_BUILD }}" "${{ env.KERNEL }}" "${{ env.TUNNEL }}"
-          #echo "status=success" >> "$GITHUB_OUTPUT"
+      - name: Repack OpenWrt
+        id: repack
+        if: steps.build.outputs.status == 'success'
+        run: |
+          cd ${{ env.WORKING_DIR }}
+          chmod +x scripts/REPACK25.sh 
+          ./scripts/REPACK25.sh "ophub" "${{ env.TARGET_BUILD }}" "${{ env.KERNEL }}" "${{ env.TUNNEL }}"
+          echo "status=success" >> "$GITHUB_OUTPUT"
           
-      #- name: Mod SDCard
-        #id: modsdcard
-        #if: steps.repack.outputs.status == 'success'
-        #run: |
-          #cd ${{ env.WORKING_DIR }}
-          #chmod +x scripts/MODSDCARD.sh
-          #./scripts/MODSDCARD.sh
-          #echo "status=success" >> "$GITHUB_OUTPUT"
+      - name: Mod SDCard
+        id: modsdcard
+        if: steps.repack.outputs.status == 'success'
+        run: |
+          cd ${{ env.WORKING_DIR }}
+          chmod +x scripts/MODSDCARD.sh
+          ./scripts/MODSDCARD.sh
+          echo "status=success" >> "$GITHUB_OUTPUT"
           
       - name: Before Upload
         id: beforeupload
