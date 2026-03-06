@@ -74,7 +74,7 @@ build_firmware() {
 if [ -z "${1:-}" ]; then
     echo "ERROR: Profile not specified."
     echo "Usage: $0 <profile> [tunnel_option]"
-    echo "Tunnel Options: openclash, nikki, insomclash, nikki-passwall, openclash-nikki, openclash-insomclash, openclash-nikki-passwall, no-tunnel"
+    #echo "Tunnel Options: openclash, nikki, insomclash, nikki-passwall, openclash-nikki, openclash-insomclash, openclash-nikki-passwall, no-tunnel"
     exit 1
 fi
 
