@@ -10,10 +10,10 @@ set -e
 make info
 
 # VARIABEL
-PROFILE=""
+#PROFILE=""
 PACK25=""
 MISC=""
-#EXCLUDED=""
+EXCLUDED=""
 
 #CORE SYSTEM
 PACK25+=" dnsmasq-full libc block-mount zram-swap zoneinfo-core zoneinfo-asia bash screen \
@@ -41,24 +41,23 @@ MISC+=" internet-detector internet-detector-mod-modem-restart luci-app-internet-
 # MAIN BUILD
 build_firmware() {
     local target_profile="$1"
-    #local tunnel_option="${2:-}"
+    local tunnel_option="${2:-}"
     local build_files="files"
 
-    log "INFO" "Starting build for profile '$target_profile' [Pack25: $release_packages]..."
+    log "INFO" "Starting build for profile '$target_profile' [Tunnel: $tunnel_option]..."
 
     # Load Profile Specifics
     configure_profile_packages "$target_profile"
     
     # Load Tunnel Packages
-    #add_tunnel_packages "$tunnel_option"
+    add_tunnel_packages "$tunnel_option"
     
     # Load Base/Release Config
     configure_release_packages
 
     # PACKAGES + MISC + EXCLUDED + DISABLED_SERVICES    
     make image PROFILE="$target_profile" \
-               PACKAGES="$PACK25 $MISC" \
-               #PACKAGES="$PACK25 $MISC $EXCLUDED" \
+               PACKAGES="$PACK25 $MISC $EXCLUDED" \
                #PACKAGES="$MISC $EXCLUDED" \
                FILES="$build_files"
     
@@ -72,12 +71,12 @@ build_firmware() {
 }
 
 # Validasi Argumen
-#if [ -z "${1:-}" ]; then
-    #echo "ERROR: Profile not specified."
-    #echo "Usage: $0 <profile> #[tunnel_option]"
-    #echo "Tunnel Options: openclash, nikki, insomclash, nikki-passwall, openclash-nikki, openclash-insomclash, openclash-nikki-passwall, no-tunnel"
-    #exit 1
-#fi
+if [ -z "${1:-}" ]; then
+    echo "ERROR: Profile not specified."
+    echo "Usage: $0 <profile> #[tunnel_option]"
+    echo "Tunnel Options: openclash, nikki, insomclash, nikki-passwall, openclash-nikki, openclash-insomclash, openclash-nikki-passwall, no-tunnel"
+    exit 1
+fi
 
 # Jalankan log function dummy
 if ! command -v log &> /dev/null; then
