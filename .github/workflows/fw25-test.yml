@@ -46,17 +46,17 @@ on:
           - RK3318-BOX
           - Firefly-Rk3328
           - Rk3399 King3399
-      tunnel:
-        description: "Select Tunnel VPN"
-        required: true
-        default: "no-tunnel"
-        type: choice
-        options:
-          - openclash
-          - openclash-nikki
-          - openclash-insomclash
-          - openclash-nikki-passwall
-          - no-tunnel
+      #tunnel:
+        #description: "Select Tunnel VPN"
+        #required: true
+        #default: "no-tunnel"
+        #type: choice
+        #options:
+          #- openclash
+          #- openclash-nikki
+          #- openclash-insomclash
+          #- openclash-nikki-passwall
+          #- no-tunnel
       clean:
         description: "Do 'make clean' for each run"
         required: false
@@ -658,8 +658,8 @@ jobs:
           chmod +x scripts/MISCH25.sh
           ./scripts/MISCH25.sh
 
-          chmod +x scripts/TUNNEL.sh
-          ./scripts/TUNNEL.sh ${{ env.TUNNEL }}
+          #chmod +x scripts/TUNNEL.sh
+          #./scripts/TUNNEL.sh ${{ env.TUNNEL }}
 
           df -hT ${PWD}
           echo "status=success" >> "$GITHUB_OUTPUT"
