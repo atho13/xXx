@@ -35,12 +35,6 @@ build_firmware() {
 
     log "INFO" "Starting build for profile '$target_profile' [my_packages]..."
 
-    # Load Profile Specifics
-    configure_profile_packages "$target_profile"
-    
-    # Load Base/Release Config
-    configure_release_packages
-
     # PACKAGES + MISC + EXCLUDED + DISABLED_SERVICES    
     make image #PROFILE="$target_profile" \
                PROFILE="" PACKAGES="${my_packages}" FILES="files"
