@@ -10,13 +10,13 @@ set -e
 make info
 
 # VARIABEL
-#PROFILE=""
+PROFILE=""
 PACK25=""
 MISC=""
 EXCLUDED=""
 
 #CORE SYSTEM
-PACK25+=" dnsmasq-full libc block-mount zram-swap zoneinfo-core zoneinfo-asia bash screen \
+PACK25=" dnsmasq-full libc block-mount zram-swap zoneinfo-core zoneinfo-asia bash screen \
 uhttpd uhttpd-mod-ubus luci luci-ssl openssh-sftp-server adb curl wget-ssl \
 httping htop jq tar unzip coreutils-base64 coreutils-sleep coreutils-stat"
 
@@ -41,22 +41,23 @@ MISC+=" internet-detector internet-detector-mod-modem-restart luci-app-internet-
 # MAIN BUILD
 build_firmware() {
     local target_profile="$1"
-    local tunnel_option="${2:-}"
+    local PACK25="${2:-}"
     local build_files="files"
 
-    log "INFO" "Starting build for profile '$target_profile' [Tunnel: $tunnel_option]..."
+    log "INFO" "Starting build for profile '$target_profile' [PACK25: $PACK25]..."
 
     # Load Profile Specifics
     configure_profile_packages "$target_profile"
     
     # Load Tunnel Packages
-    add_tunnel_packages "$tunnel_option"
+    add_PACK25_packages "$PACK25"
     
     # Load Base/Release Config
     configure_release_packages
 
     # PACKAGES + MISC + EXCLUDED + DISABLED_SERVICES    
-    make image PROFILE="$target_profile" \
+    make image #PROFILE="$target_profile" \
+               PROFILE="" PACKAGES="${PACK25}" FILES="files"
                PACKAGES="$PACK25 $MISC $EXCLUDED" \
                #PACKAGES="$MISC $EXCLUDED" \
                FILES="$build_files"
@@ -73,9 +74,8 @@ build_firmware() {
 # Validasi Argumen
 if [ -z "${1:-}" ]; then
     echo "ERROR: Profile not specified."
-    echo "Usage: $0 <profile> #[tunnel_option]"
-    echo "Tunnel Options: openclash, nikki, insomclash, nikki-passwall, openclash-nikki, openclash-insomclash, openclash-nikki-passwall, no-tunnel"
-    exit 1
+    echo "Usage: $0 <profile> #[PACK25]"
+    echo "PACK25: PACK25"
 fi
 
 # Jalankan log function dummy
