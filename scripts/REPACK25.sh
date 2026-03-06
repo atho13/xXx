@@ -53,10 +53,10 @@ repackwrt() {
         builder_dir="${work_dir}/amlogic-s9xxx-openwrt-${BRANCH}"
         repo_url="${OPHUB_REPO}"
         log "STEPS" "Repacking with Ophub..."
-    #else
-        #builder_dir="${work_dir}/ULO-Builder-${BRANCH}"
-        #repo_url="${ULO_REPO}"
-        #log "STEPS" "Repacking with UloBuilder..."
+    else
+        builder_dir="${work_dir}/ULO-Builder-${BRANCH}"
+        repo_url="${ULO_REPO}"
+        log "STEPS" "Repacking with UloBuilder..."
     fi
 
     # Prepare working directory
@@ -71,10 +71,10 @@ repackwrt() {
             #repo_url="https://github.com/syntax-xidz/amlogic-s9xxx-openwrt/archive/refs/heads/main.zip"
             repo_url="https://github.com/ribel13/amlogic-s9xxx-openwrt/archive/refs/heads/main.zip"
             builder_dir="${work_dir}/amlogic-s9xxx-openwrt-main"
-        #else
-            #repo_url="https://github.com/syntax-xidz/ULO-Builder/archive/refs/heads/main.zip"
-            #repo_url="https://github.com/ribel13/ULO-Builder/archive/refs/heads/main.zip"
-            #builder_dir="${work_dir}/ULO-Builder-main"
+        else
+            repo_url="https://github.com/syntax-xidz/ULO-Builder/archive/refs/heads/main.zip"
+            repo_url="https://github.com/ribel13/ULO-Builder/archive/refs/heads/main.zip"
+            builder_dir="${work_dir}/ULO-Builder-main"
         fi
         ariadl "${repo_url}" "${ZIP_FILE}" || { error_msg "Download failed"; exit 1; }
     fi
@@ -111,17 +111,17 @@ repackwrt() {
         log "INFO" "Executing Ophub Script..."
         sudo ./remake -b "${target_board}" -k "${target_kernel}" -s 512 || { error_msg "Ophub failed"; exit 1; }
         device_output_dir="./openwrt/out"
-    #else
-        #log "INFO" "Applying ULO patches..."
-        #if [[ -f "./.github/workflows/ULO_Workflow.patch" ]]; then
-            #mv ./.github/workflows/ULO_Workflow.patch ./ULO_Workflow.patch
-            #patch -p1 < ./ULO_Workflow.patch >/dev/null 2>&1 && log "SUCCESS" "Patch applied" || log "WARNING" "Patch failed"
-        #fi
+    else
+        log "INFO" "Applying ULO patches..."
+        if [[ -f "./.github/workflows/ULO_Workflow.patch" ]]; then
+            mv ./.github/workflows/ULO_Workflow.patch ./ULO_Workflow.patch
+            patch -p1 < ./ULO_Workflow.patch >/dev/null 2>&1 && log "SUCCESS" "Patch applied" || log "WARNING" "Patch failed"
+        fi
 
-        #log "INFO" "Executing Ulo Script..."
-        #local rootfs_name=$(basename "${target_path}")
-        #sudo ./ulo -y -m "${target_board}" -r "${rootfs_name}" -k "${target_kernel}" -s 1024 || { error_msg "Ulo failed"; exit 1; }
-        #device_output_dir="./out/${target_board}"
+        log "INFO" "Executing Ulo Script..."
+        local rootfs_name=$(basename "${target_path}")
+        sudo ./ulo -y -m "${target_board}" -r "${rootfs_name}" -k "${target_kernel}" -s 1024 || { error_msg "Ulo failed"; exit 1; }
+        device_output_dir="./out/${target_board}"
     fi
 
     # Verify and Copy Output
