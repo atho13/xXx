@@ -71,12 +71,12 @@ build_firmware() {
 }
 
 # Validasi Argumen
-if [ -z "${1:-}" ]; then
-    echo "ERROR: Profile not specified."
-    echo "Usage: $0 <profile> [tunnel_option]"
+#if [ -z "${1:-}" ]; then
+    #echo "ERROR: Profile not specified."
+    #echo "Usage: $0 <profile> #[tunnel_option]"
     #echo "Tunnel Options: openclash, nikki, insomclash, nikki-passwall, openclash-nikki, openclash-insomclash, openclash-nikki-passwall, no-tunnel"
-    exit 1
-fi
+    #exit 1
+#fi
 
 # Jalankan log function dummy
 if ! command -v log &> /dev/null; then
