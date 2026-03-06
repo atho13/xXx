@@ -38,8 +38,8 @@ build_firmware() {
     # PACKAGES + MISC + EXCLUDED + DISABLED_SERVICES    
     make image PROFILE="$target_profile" \
                #PROFILE="" PACKAGES="${my_packages}" FILES="files"
-               PACKAGES="$PACK25 $MISC $EXCLUDED" \
-               #PACKAGES="$MISC $EXCLUDED" \
+               #PACKAGES="$PACK25 $MISC $EXCLUDED" \
+               PACKAGES="$MISC $EXCLUDED" \
                FILES="$build_files"
     
     local build_status=$?
