@@ -29,7 +29,7 @@ repackwrt() {
     done
 
     # Validate inputs
-    [[ -z "$builder_type" ]] && { error_msg "Builder type required (--ophub or --ulo)"; exit 1; }
+    [[ -z "$builder_type" ]] && { error_msg "Builder type required (--ophub)"; exit 1; }
     [[ -z "$target_board" ]] && { error_msg "Target board required (-t)"; exit 1; }
     [[ -z "$target_kernel" ]] && { error_msg "Target kernel required (-k)"; exit 1; }
     #[[ -z "$tunnel_type" ]] && { error_msg "Tunnel type required (-tn)"; exit 1; }
