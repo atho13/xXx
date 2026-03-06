@@ -41,7 +41,7 @@ MISC+=" internet-detector internet-detector-mod-modem-restart luci-app-internet-
 # MAIN BUILD
 build_firmware() {
     local target_profile="$1"
-    local tunnel_option="${2:-}"
+    #local tunnel_option="${2:-}"
     local build_files="files"
 
     log "INFO" "Starting build for profile '$target_profile' [Tunnel: $tunnel_option]..."
@@ -50,7 +50,7 @@ build_firmware() {
     configure_profile_packages "$target_profile"
     
     # Load Tunnel Packages
-    add_tunnel_packages "$tunnel_option"
+    #add_tunnel_packages "$tunnel_option"
     
     # Load Base/Release Config
     configure_release_packages
