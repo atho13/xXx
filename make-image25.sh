@@ -13,7 +13,7 @@ make info
 PROFILE=""
 PACK25=""
 MISC=""
-EXCLUDED=""
+#EXCLUDED=""
 
 #CORE SYSTEM
 PACK25+=" dnsmasq-full libc block-mount zram-swap zoneinfo-core zoneinfo-asia bash screen \
@@ -44,7 +44,7 @@ build_firmware() {
     #local tunnel_option="${2:-}"
     local build_files="files"
 
-    log "INFO" "Starting build for profile '$target_profile' [Tunnel: $tunnel_option]..."
+    log "INFO" "Starting build for profile '$target_profile' [Pack25: $release_packages]..."
 
     # Load Profile Specifics
     configure_profile_packages "$target_profile"
@@ -57,7 +57,8 @@ build_firmware() {
 
     # PACKAGES + MISC + EXCLUDED + DISABLED_SERVICES    
     make image PROFILE="$target_profile" \
-               PACKAGES="$PACK25 $MISC $EXCLUDED" \
+               PACKAGES="$PACK25 $MISC" \
+               #PACKAGES="$PACK25 $MISC $EXCLUDED" \
                #PACKAGES="$MISC $EXCLUDED" \
                FILES="$build_files"
     
