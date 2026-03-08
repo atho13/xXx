@@ -8,7 +8,6 @@ repackwrt() {
     local builder_type=""
     local target_board=""
     local target_kernel=""
-    #local tunnel_type=""
     
     # Parse command line arguments
     while [[ $# -gt 0 ]]; do
@@ -32,7 +31,6 @@ repackwrt() {
     [[ -z "$builder_type" ]] && { error_msg "Builder type required (--ophub)"; exit 1; }
     [[ -z "$target_board" ]] && { error_msg "Target board required (-t)"; exit 1; }
     [[ -z "$target_kernel" ]] && { error_msg "Target kernel required (-k)"; exit 1; }
-    #[[ -z "$tunnel_type" ]] && { error_msg "Tunnel type required (-tn)"; exit 1; }
 
     # Set branch (fallback to main if not on a branch)
     local BRANCH="${GITHUB_REF_NAME:-main}"
@@ -40,10 +38,7 @@ repackwrt() {
     log "INFO" "Using Branch: $BRANCH"
 
     # Define repo URLs and directories
-    #local OPHUB_REPO="https://github.com/syntax-xidz/amlogic-s9xxx-openwrt/archive/refs/heads/${BRANCH}.zip"
-    #local ULO_REPO="https://github.com/syntax-xidz/ULO-Builder/archive/refs/heads/${BRANCH}.zip"
     local OPHUB_REPO="https://github.com/ribel13/amlogic-s9xxx-openwrt/archive/refs/heads/${BRANCH}.zip"
-    #local ULO_REPO="https://github.com/ribel13/ULO-Builder/archive/refs/heads/${BRANCH}.zip"
     local work_dir="$GITHUB_WORKSPACE/$WORKING_DIR"
     local output_dir="${work_dir}/compiled_images"
     local builder_dir repo_url ZIP_FILE="${BRANCH}.zip"
@@ -68,7 +63,6 @@ repackwrt() {
         log "WARNING" "Branch download failed. Fallback to main."
         ZIP_FILE="main.zip"
         if [[ "$builder_type" == "--ophub" ]]; then
-            #repo_url="https://github.com/syntax-xidz/amlogic-s9xxx-openwrt/archive/refs/heads/main.zip"
             repo_url="https://github.com/ribel13/amlogic-s9xxx-openwrt/archive/refs/heads/main.zip"
             builder_dir="${work_dir}/amlogic-s9xxx-openwrt-main"
         else
@@ -87,8 +81,7 @@ repackwrt() {
     [[ "$builder_type" == "--ophub" ]] && mkdir -p "${builder_dir}/openwrt-armsr" || mkdir -p "${builder_dir}/rootfs"
 
     # Find rootfs file
-    #local rootfs_files=("${output_dir}/"*"_${tunnel_type}-rootfs.tar.gz")
-    local rootfs_files=("${output_dir}-rootfs.tar.gz")
+    local rootfs_files=("${output_dir}/"*"_${tunnel_type}-rootfs.tar.gz")
     [[ ${#rootfs_files[@]} -ne 1 ]] && { error_msg "Rootfs file not found or multiple found"; exit 1; }
     local rootfs_file="${rootfs_files[0]}"
 
