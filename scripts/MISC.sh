@@ -141,7 +141,7 @@ configure_file_permissions() {
     # file etc sett permission
     local initd_files=(
         #"files/etc/init.d/issue"
-        "files/etc/init.d/ro-fix"
+        "files/etc/init.d/ro_fix"
         #"files/etc/init.d/xidzs"
     )
     
