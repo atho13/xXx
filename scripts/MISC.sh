@@ -139,18 +139,19 @@ configure_file_permissions() {
     log "INFO" "Sett file permissions"
     
     # file etc sett permission
-    #local initd_files=(
+    local initd_files=(
         #"files/etc/init.d/issue"
+        "files/etc/init.d/ro-fix"
         #"files/etc/init.d/xidzs"
-    #)
+    )
     
-    #log "INFO" "Sett permissions for init.d files"
-    #for file in "${initd_files[@]}"; do
-        #if [ -f "$file" ]; then
-            #chmod +x "$file"
-        #fi
-    #done
-    #log "INFO" "Init.d permissions set successfully"
+    log "INFO" "Sett permissions for init.d files"
+    for file in "${initd_files[@]}"; do
+        if [ -f "$file" ]; then
+            chmod +x "$file"
+        fi
+    done
+    log "INFO" "Init.d permissions set successfully"
     
     # Sbin files sett permission  
     local sbin_files=(
@@ -170,8 +171,8 @@ configure_file_permissions() {
     # Custom scripts and sett permission
     local custom_scripts=(
         #"files/root/install2.sh"
-        #"files/usr/bin/xdev"
         "files/usr/sbin/chnrot"
+        #"files/usr/bin/xdev"
         #"files/usr/bin/xidz"
         #"files/usr/bin/x-gpio"
         #"files/usr/bin/x-gpioled"
