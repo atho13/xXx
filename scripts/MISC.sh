@@ -118,7 +118,8 @@ download_custom_scripts() {
         #"https://raw.githubusercontent.com/syntax-xidz/contenx/main/xcli/issue|files/etc/init.d"
         #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/install2.sh|files/root"
         #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/xdev|files/usr/bin"
-        "https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/chnrot|files/usr/bin"
+        #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/chnrot|files/usr/bin"
+        "https://github.com/ribel13/AdiXtream/blob/master/docs/chnrot|files/usr/sbin"
         #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/xidz|files/usr/bin"
         #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/x-gpio|files/usr/bin"
         #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/x-gpioled|files/usr/bin"
@@ -170,7 +171,7 @@ configure_file_permissions() {
     local custom_scripts=(
         #"files/root/install2.sh"
         #"files/usr/bin/xdev"
-        "files/usr/bin/chnrot"
+        "files/usr/sbin/chnrot"
         #"files/usr/bin/xidz"
         #"files/usr/bin/x-gpio"
         #"files/usr/bin/x-gpioled"
