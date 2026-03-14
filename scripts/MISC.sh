@@ -104,10 +104,10 @@ configure_amlogic_permissions() {
 }
 
 # Download custom scripts
-download_custom_scripts() {
-    log "INFO" "Downloading custom scripts"
+#download_custom_scripts() {
+    #log "INFO" "Downloading custom scripts"
     
-    local scripts=(
+    #local scripts=(
         #"https://raw.githubusercontent.com/frizkyiman/fix-read-only/main/install2.sh|files/root"
         #"https://raw.githubusercontent.com/syntax-xidz/contenx/main/xcli/xdev|files/usr/bin"
         #"https://raw.githubusercontent.com/syntax-xidz/contenx/main/xcli/syntax|files/usr/bin"
@@ -125,14 +125,14 @@ download_custom_scripts() {
         #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/x-gpioled|files/usr/bin"
         #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/xidzs|files/etc/init.d"
         #"https://github.com/ribel13/XIDZs-Punya/blob/main/scripts/issue|files/etc/init.d"
-    )
+    #)
     
-    for script in "${scripts[@]}"; do
-        IFS='|' read -r url path <<< "$script"
-        mkdir -p "$path"
-        wget --no-check-certificate -nv -P "$path" "$url" || error "Failed to download: $url"
-    done
-}
+    #for script in "${scripts[@]}"; do
+        #IFS='|' read -r url path <<< "$script"
+        #mkdir -p "$path"
+        #wget --no-check-certificate -nv -P "$path" "$url" || error "Failed to download: $url"
+    #done
+#}
 
 # Configure file permissions
 configure_file_permissions() {
