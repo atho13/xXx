@@ -740,8 +740,7 @@ jobs:
           name: ${{ env.RELEASE_NAME }}
           files: ${{ env.WORKING_DIR }}/compiled_images/*.img.gz
           prerelease: ${{ github.ref_name == 'dev' }}
-
-      #continue-on-error:
+          
       - name: Cleanup Build Artifacts
         id: cleanup_artifacts
         if: always()
