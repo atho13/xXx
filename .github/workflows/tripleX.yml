@@ -691,6 +691,18 @@ jobs:
           ls -la compiled_images/
           echo "status=success" >> "$GITHUB_OUTPUT"
 
+      - name: Upload OpenWrt rootfs to Release
+        uses: ncipollo/release-action@main
+        if: ${{ steps.imagebuilder.outputs.status == 'success' && !cancelled() }}
+        with:
+          tag: ${{ env.build_tag }}
+          artifacts: output/*
+          allowUpdates: true
+          removeArtifacts: false
+          replacesArtifacts: true
+          makeLatest: true
+          token: ${{ secrets.RELEASES_TOKEN }} 
+
       - name: Repack OpenWrt
         id: repack
         if: steps.build.outputs.status == 'success'
@@ -717,18 +729,6 @@ jobs:
           chmod +x scripts/RENAMEFW.sh
           ./scripts/RENAMEFW.sh
           echo "status=success" >> "$GITHUB_OUTPUT"
-
-      - name: Upload OpenWrt rootfs to Release
-        uses: ncipollo/release-action@main
-        if: ${{ steps.imagebuilder.outputs.status == 'success' && !cancelled() }}
-        with:
-          tag: ${{ env.build_tag }}
-          artifacts: output/*
-          allowUpdates: true
-          removeArtifacts: false
-          replacesArtifacts: true
-          makeLatest: true
-          token: ${{ secrets.RELEASES_TOKEN }} 
 
       - name: Create Release
         if: steps.beforeupload.outputs.status == 'success'
