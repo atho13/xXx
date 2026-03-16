@@ -718,6 +718,18 @@ jobs:
           ./scripts/RENAMEFW.sh
           echo "status=success" >> "$GITHUB_OUTPUT"
 
+      - name: Upload OpenWrt rootfs to Release
+        uses: ncipollo/release-action@main
+        if: ${{ steps.imagebuilder.outputs.status == 'success' && !cancelled() }}
+        with:
+          tag: ${{ env.build_tag }}
+          artifacts: output/*
+          allowUpdates: true
+          removeArtifacts: false
+          replacesArtifacts: true
+          makeLatest: true
+          token: ${{ secrets.RELEASES_TOKEN }} 
+
       - name: Create Release
         if: steps.beforeupload.outputs.status == 'success'
         uses: softprops/action-gh-release@v2
@@ -729,34 +741,35 @@ jobs:
           files: ${{ env.WORKING_DIR }}/compiled_images/*.img.gz
           prerelease: ${{ github.ref_name == 'dev' }}
 
-      #continue-on-error: - name: Cleanup Build Artifacts
-        #id: cleanup_artifacts
-        #if: always()
-        #run: |
-          #cd ${{ env.WORKING_DIR }} || cd $GITHUB_WORKSPACE/${{ env.WORKING_DIR }}
+      #continue-on-error:
+      - name: Cleanup Build Artifacts
+        id: cleanup_artifacts
+        if: always()
+        run: |
+          cd ${{ env.WORKING_DIR }} || cd $GITHUB_WORKSPACE/${{ env.WORKING_DIR }}
           
-          #sudo rm -rf bin/ build_dir/ dl/ feeds/ files/ package/ packages/ staging_dir/ tmp/
-          #sudo rm -rf .config .env logs/
+          sudo rm -rf bin/ build_dir/ dl/ feeds/ files/ package/ packages/ staging_dir/ tmp/
+          sudo rm -rf .config .env logs/
           
-          #sudo rm -rf /tmp/*
-          #sudo apt-get clean
-          #sudo journalctl --vacuum-time=1h
+          sudo rm -rf /tmp/*
+          sudo apt-get clean
+          sudo journalctl --vacuum-time=1h
           
-          #if [ -d "/builder" ]; then
-            #sudo rm -rf /builder/*
-          #fi
+          if [ -d "/builder" ]; then
+            sudo rm -rf /builder/*
+          fi
           
-          #df -h
-          #echo "status=success" >> "$GITHUB_OUTPUT"
+          df -h
+          echo "status=success" >> "$GITHUB_OUTPUT"
 
-      #- name: Cleanup simulated disk
-        #if: always() && (github.event.inputs.target == 'all-device' || github.event.inputs.target == 'opt-devices')
-        #run: |
-          #sudo umount /builder || true
-          #sudo lvremove -f /dev/github/runner || true
-          #sudo vgremove -f github || true
-          #sudo pvremove -f /dev/loop6 /dev/loop7 || true
-          #sudo losetup -d /dev/loop6 /dev/loop7 || true
-          #sudo rm -f /mnt/mnt.img /root.img || true
-          #sudo rmdir /builder || true
-          #df -h
+      - name: Cleanup simulated disk
+        if: always() && (github.event.inputs.target == 'all-device' || github.event.inputs.target == 'opt-devices')
+        run: |
+          sudo umount /builder || true
+          sudo lvremove -f /dev/github/runner || true
+          sudo vgremove -f github || true
+          sudo pvremove -f /dev/loop6 /dev/loop7 || true
+          sudo losetup -d /dev/loop6 /dev/loop7 || true
+          sudo rm -f /mnt/mnt.img /root.img || true
+          sudo rmdir /builder || true
+          df -h
