@@ -27,7 +27,7 @@
     #"internet-detector|${REPOS[OPENWRT]}"
     #"internet-detector-mod-modem-restart|${REPOS[OPENWRT]}"
     
-)
+#)
 
 # Add Amlogic packages for specific device types
 #if [[ "${TYPE}" == "OPHUB" || "${TYPE}" == "ULO" ]]; then
