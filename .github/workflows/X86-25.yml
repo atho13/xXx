@@ -62,7 +62,7 @@ jobs:
       release_tag: ${{ steps.setupenv.outputs.release_tag }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.ref_name }}
 
@@ -213,7 +213,7 @@ jobs:
           echo "status=success" >> "$GITHUB_OUTPUT"
 
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: origin
           fetch-depth: 1
