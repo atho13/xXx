@@ -74,9 +74,11 @@ configure_x86() {
     if [[ "${ARCH_2}" == "x86_64" ]] || [[ "${ARCH_2}" == "i386" ]]; then
         log "INFO" "Applying ${ARCH_2} configurations"
         # disable iso
-        sed -i "s|CONFIG_ISO_IMAGES=y|# CONFIG_ISO_IMAGES is not set|" .config
+        #sed -i "s|CONFIG_ISO_IMAGES=y|# CONFIG_ISO_IMAGES is not set|" .config
+        ./scripts/config -d ISO_IMAGES
         # disable vhdx
-        sed -i "s|CONFIG_VHDX_IMAGES=y|# CONFIG_VHDX_IMAGES is not set|" .config  
+        #sed -i "s|CONFIG_VHDX_IMAGES=y|# CONFIG_VHDX_IMAGES is not set|" .config 
+        ./scripts/config -d VHDX_IMAGES
     fi
 }
 
