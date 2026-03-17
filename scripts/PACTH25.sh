@@ -71,14 +71,14 @@ configure_amlogic() {
 
 # Apply x86_64 and i386 configurations
 configure_x86() {
-    if [[ "${ARCH_2}" == "x86_64" ]] || [[ "${ARCH_2}" == "i386" ]]; then
+    #if [[ "${ARCH_2}" == "x86_64" ]] || [[ "${ARCH_2}" == "i386" ]]; then
+        #log "INFO" "Applying ${ARCH_2} configurations"
+    if [[ "${ARCH_2:-unknown}" == "x86_64" ]] || [[ "${ARCH_2:-unknown}" == "i386" ]]; then
         log "INFO" "Applying ${ARCH_2} configurations"
         # disable iso
-        #sed -i "s|CONFIG_ISO_IMAGES=y|# CONFIG_ISO_IMAGES is not set|" .config
-        ./scripts/config -d ISO_IMAGES
+        sed -i "s|CONFIG_ISO_IMAGES=y|# CONFIG_ISO_IMAGES is not set|" .config
         # disable vhdx
-        #sed -i "s|CONFIG_VHDX_IMAGES=y|# CONFIG_VHDX_IMAGES is not set|" .config 
-        ./scripts/config -d VHDX_IMAGES
+        sed -i "s|CONFIG_VHDX_IMAGES=y|# CONFIG_VHDX_IMAGES is not set|" .config 
     fi
 }
 
