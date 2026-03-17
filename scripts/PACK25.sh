@@ -41,7 +41,7 @@
 verify_packages() {
     local pkg_dir="packages"
     local -a failed_packages=()
-    local -a package_list=("${!1}")
+    #local -a package_list=("${!1}")
     local pkg_ext=$(get_package_extension "${VEROP}")
     
     if [[ ! -d "$pkg_dir" ]]; then
