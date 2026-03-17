@@ -1,4 +1,4 @@
-name: Buildx¹ Official Firmware
+name: my X86
 
 on:
   workflow_dispatch:
