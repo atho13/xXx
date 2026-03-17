@@ -125,13 +125,13 @@ jobs:
           echo "datemonth=$DATEMONTH" >> "$GITHUB_OUTPUT"
 
           if [ "${BASE}" == "openwrt" ]; then
-            RELEASE_NAME="FRDMX-x86-${BRANCH}-${DATE}"
-            RELEASE_TAG="FRDMX-x86-${BRANCH}-${DATE}"
+            RELEASE_NAME="OpenWRT-Buildx-${BRANCH}-${DATE}"
+            RELEASE_TAG="openwrt-buildx-${BRANCH}-${DATE}"
             echo "release_name=$RELEASE_NAME" >> "$GITHUB_OUTPUT"
             echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
           elif [ "${BASE}" == "immortalwrt" ]; then
-            RELEASE_NAME="ImmortalWRT-x86-${BRANCH}-${DATE}"
-            RELEASE_TAG="immortalwrt-x86-${BRANCH}-${DATE}"
+            RELEASE_NAME="ImmortalWRT-Buildx-${BRANCH}-${DATE}"
+            RELEASE_TAG="immortalwrt-buildx-${BRANCH}-${DATE}"
             echo "release_name=$RELEASE_NAME" >> "$GITHUB_OUTPUT"
             echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
           fi
