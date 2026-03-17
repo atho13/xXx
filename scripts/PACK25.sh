@@ -7,35 +7,35 @@
     #OPENWRT="https://downloads.openwrt.org/releases/packages-${VEROP}/${ARCH_3"
 
 # Define all repositories
-declare -A REPOS
-REPOS+=(
-    ["OPENWRT"]="https://downloads.openwrt.org/releases/packages-${VEROP}/${ARCH_3}"
-    ["IMMORTALWRT"]="https://downloads.immortalwrt.org/releases/packages-${VEROP}/${ARCH_3}"
-    ["KYARUCLOUD_IMMORTALWRT"]="https://immortalwrt.kyarucloud.moe/releases/packages-${VEROP}/${ARCH_3}"
-    ["GSPOTX2F"]="https://github.com/gSpotx2f/packages-openwrt/raw/refs/heads/master/current"
-    ["FANTASTIC"]="https://fantastic-packages.github.io/packages/releases/${VEROP}/packages/x86_64"
-    ["DLLKIDS"]="https://op.dllkids.xyz/packages/${ARCH_3}"
+#declare -A REPOS
+#REPOS+=(
+    #["OPENWRT"]="https://downloads.openwrt.org/releases/packages-${VEROP}/${ARCH_3}"
+    #["IMMORTALWRT"]="https://downloads.immortalwrt.org/releases/packages-${VEROP}/${ARCH_3}"
+    #["KYARUCLOUD_IMMORTALWRT"]="https://immortalwrt.kyarucloud.moe/releases/packages-${VEROP}/${ARCH_3}"
+    #["GSPOTX2F"]="https://github.com/gSpotx2f/packages-openwrt/raw/refs/heads/master/current"
+    #["FANTASTIC"]="https://fantastic-packages.github.io/packages/releases/${VEROP}/packages/x86_64"
+    #["DLLKIDS"]="https://op.dllkids.xyz/packages/${ARCH_3}"
     #["OPENWRTRU"]="https://openwrt.132lan.ru/packages/${VEROP}/packages/${ARCH_3}/modemfeed"
-)
+#)
 
 # Custom package list with format: "package_name|repository_url"
-declare -a packages_custom
-packages_custom+=( 
+#declare -a packages_custom
+#packages_custom+=( 
     # Network tools
-    "luci-app-ttyd|${REPOS[OPENWRT]}/luci"
-    "luci-app-internet-detector|${REPOS[OPENWRT]}"
-    "internet-detector|${REPOS[OPENWRT]}"
-    "internet-detector-mod-modem-restart|${REPOS[OPENWRT]}"
+    #"luci-app-ttyd|${REPOS[OPENWRT]}/luci"
+    #"luci-app-internet-detector|${REPOS[OPENWRT]}"
+    #"internet-detector|${REPOS[OPENWRT]}"
+    #"internet-detector-mod-modem-restart|${REPOS[OPENWRT]}"
     
 )
 
 # Add Amlogic packages for specific device types
-if [[ "${TYPE}" == "OPHUB" || "${TYPE}" == "ULO" ]]; then
-    log "INFO" "Add Packages Amlogic In ${TYPE}.."
-    packages_custom+=(
-        "luci-app-amlogic_|https://api.github.com/repos/ophub/luci-app-amlogic/releases/latest"
-    )
-fi
+#if [[ "${TYPE}" == "OPHUB" || "${TYPE}" == "ULO" ]]; then
+    #log "INFO" "Add Packages Amlogic In ${TYPE}.."
+    #packages_custom+=(
+        #"luci-app-amlogic_|https://api.github.com/repos/ophub/luci-app-amlogic/releases/latest"
+    #)
+#fi
 
 # Verify downloaded packages
 verify_packages() {
