@@ -71,30 +71,30 @@ verify_packages() {
         return 1
     fi
     
-    log "SUCCESS" "All packages downloaded successfully with .$pkg_ext format"
-    return 0
+    #log "SUCCESS" "All packages downloaded successfully with .$pkg_ext format"
+    #return 0
 }
 
 # Main execution
-main() {
-    local rc=0
+#main() {
+    #local rc=0
     
     # Download custom packages
-    log "INFO" "Downloading Custom packages..."
-    download_packages packages_custom || rc=1
+    #log "INFO" "Downloading Custom packages..."
+    #download_packages packages_custom || rc=1
     
     # Verify all downloads
-    log "INFO" "Verifying all packages..."
-    verify_packages packages_custom || rc=1
+    #log "INFO" "Verifying all packages..."
+    #verify_packages packages_custom || rc=1
     
-    if [ $rc -eq 0 ]; then
-        log "SUCCESS" "Package download and verification completed successfully"
-    else
-        error_msg "Package download or verification failed"
-    fi
+    #if [ $rc -eq 0 ]; then
+        #log "SUCCESS" "Package download and verification completed successfully"
+    #else
+        #error_msg "Package download or verification failed"
+    #fi
     
-    return $rc
-}
+    #return $rc
+#}
 
 # Execute main if script is run directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
