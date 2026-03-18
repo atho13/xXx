@@ -340,28 +340,24 @@ jobs:
           echo "status=success" >> "$GITHUB_OUTPUT"
 
       - name: Build Firmware Images
-        id: build
-        if: steps.customize.outputs.status == 'success'
+        id: imagebuilder
         run: |
           cd ${{ env.WORKING_DIR }}
           mkdir -p compiled_images
-          chmod +x make-image25.sh
+          chmod +x ./make-image25.sh
 
-          if [ "${{ env.CLEAN }}" == "true" ]; then
-            make clean
-          fi
-            
-          time ./make-image25.sh ${{ env.PROFILE }} ${{ env.TUNNEL }}
-            
-          find bin/targets/x86/64/ -type f -name "*-combined*" | while read -r file; do
-              new_name="FRDMX_$(basename "$file")"
-              mv "$file" compiled_images/"$new_name"
+          ./make-image25.sh generic ${{ env.TUNNEL }}
+
+          echo "Memeriksa hasil di bin/targets/x86/64/..."
+          find bin/targets/x86/64/ -type f \( -name "*.img*" -o -name "*.tar.gz" \) | while read -r file; do
+              filename=$(basename "$file")
+              echo "Berhasil menemukan: $filename"
+              mv "$file" "compiled_images/FRDMX_${{ env.TUNNEL }}_$filename"
           done
 
-          echo "Build completed:"
-          ls -la compiled_images/
-          echo "status=success" >> "$GITHUB_OUTPUT"
-
+          echo "Isi folder compiled_images:"
+          ls -lh compiled_images/
+ 
       - name: Upload Artifacts to Release
         uses: softprops/action-gh-release@v2
         env:
