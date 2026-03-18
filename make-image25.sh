@@ -79,4 +79,4 @@ if ! command -v log &> /dev/null; then
 fi
 
 # Running Build
-build_firmware "$1" "${2:-}"
+build_firmware
