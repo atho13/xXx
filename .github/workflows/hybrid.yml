@@ -11,6 +11,30 @@ on:
         options:
           - X86-64
           - Amlogic-TVBox
+      board:
+        description: "Pilih Board Amlogic (Khusus Amlogic)"
+        required: true
+        default: "s905x-b860h"
+        type: choice
+        options:
+          - s905x-b860h
+          - s905x3
+          - s905x2
+          - s905w
+          - s912
+          - s922x
+          - s905d
+          - n1
+      kernel:
+        description: "Pilih Versi Kernel Amlogic"
+        required: true
+        default: "6.1.x"
+        type: choice
+        options:
+          - 6.1.x
+          - 6.6.x
+          - 5.15.x
+          - 6.12.y
       tunnel:
         description: "Pilih Tunnel VPN"
         required: true
@@ -20,11 +44,7 @@ on:
           - no-tunnel
           - openclash
           - nikki
-      kernel:
-        description: "Versi Kernel (Khusus Amlogic)"
-        required: true
-        default: "6.18.x"
-
+          
 env:
   TZ: Asia/Jakarta
   WORKING_DIR: imagebuilder
