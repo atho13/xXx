@@ -72,4 +72,3 @@ build_firmware() {
 
 # Running Build
 build_firmware
-#build_firmware "$1"
