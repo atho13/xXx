@@ -59,7 +59,24 @@ build_firmware() {
     local build_status=$?
     if [ "$build_status" -eq 0 ]; then
         log "SUCCESS" "Build completed successfully!"
+    else
+        log "ERROR" "Build failed with exit code $build_status"
+        exit "$build_status"
+    fi
 }
 
+# Validasi Argumen
+if [ -z "${1:-}" ]; then
+    echo "ERROR: Profile not specified."
+    echo "Usage: $0 <profile> [tunnel_option]"
+    echo "Tunnel Options: openclash, nikki, fusiontunx, nikki-passwall, openclash-nikki, openclash-fusiontunx, openclash-nikki-passwall, no-tunnel"
+    exit 1
+fi
+
+# Jalankan log function dummy
+if ! command -v log &> /dev/null; then
+    log() { echo "[$1] $2"; }
+fi
+
 # Running Build
-build_firmware
+build_firmware "$1" "${2:-}"
