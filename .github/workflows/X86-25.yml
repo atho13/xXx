@@ -321,6 +321,11 @@ jobs:
 
           echo "status=success" >> "$GITHUB_OUTPUT"
 
+      - name: Run Patch Script
+        run: |
+          chmod +x ./scripts/MISCH25.sh
+          ./scripts/MISCH25.sh
+          
       - name: Apply Patches and Customizations
         id: customize
         if: steps.packages.outputs.status == 'success'
@@ -330,8 +335,8 @@ jobs:
           chmod +x scripts/PACTH25.sh
           ./scripts/PACTH25.sh
 
-          #chmod +x scripts/MISC.sh
-          #./scripts/MISCH25.sh
+          chmod +x scripts/MISC.sh
+          ./scripts/MISCH25.sh
 
           chmod +x scripts/TUNNEL.sh
           ./scripts/TUNNEL.sh ${{ env.TUNNEL }}
