@@ -16,16 +16,21 @@ MISC=""
 EXCLUDED=""
 
 #CORE SYSTEM
-my_package=" dnsmasq-full libc block-mount zram-swap zoneinfo-core zoneinfo-asia bash screen \
-uhttpd uhttpd-mod-ubus luci luci-ssl openssh-sftp-server adb curl wget-ssl \
-httping htop jq tar unzip coreutils-base64 coreutils-sleep coreutils-stat \
-kmod-usb-net-rtl8150 kmod-usb-net-rtl8152 kmod-usb-net-asix kmod-usb-net-asix-ax88179 \
-kmod-mii kmod-usb-net kmod-usb-wdm kmod-usb-net-rndis kmod-usb-net-cdc-ether kmod-usb-net-cdc-ncm kmod-usb-net-sierrawireless \
-kmod-usb-net-qmi-wwan uqmi luci-proto-qmi kmod-usb-acm kmod-usb-net-huawei-cdc-ncm kmod-usb-net-cdc-mbim umbim \
-kmod-usb-serial kmod-usb-serial-option kmod-usb-serial-wwan kmod-usb-serial-qualcomm kmod-usb-serial-sierrawireless \
-modemmanager luci-proto-modemmanager libqmi libmbim glib2 dbus dbus-utils ppp chat kmod-usb-ehci kmod-usb3 \
-qmi-utils mbim-utils usbutils luci-proto-ncm kmod-usb-ohci kmod-usb-uhci kmod-usb2 \
-kmod-nls-utf8 kmod-macvlan usb-modeswitch xmm-modem luci-proto-xmm kmod-usb-storage luci-theme-material"
+my_package="
+apk-mbedtls base-files ca-bundle dnsmasq-full dropbear e2fsprogs firewall4 fstools grub2-bios-setup kmod-button-hotplug kmod-nft-offload \
+libc libgcc libustream-mbedtls logd mkf2fs mtd netifd nftables odhcp6c odhcpd-ipv6only partx-utils ppp ppp-mod-pppoe procd-ujail uci \
+uclient-fetch urandom-seed urngd kmod-amazon-ena kmod-amd-xgbe kmod-bnx2 kmod-dwmac-intel kmod-e1000e kmod-e1000 kmod-forcedeth \
+kmod-fs-vfat kmod-igb kmod-igc kmod-ixgbe kmod-r8169 kmod-tg3 kmod-drm-i915 luci luci-compat luci-lib-base kmod-usb-net-huawei-cdc-ncm \
+kmod-usb-net kmod-usb-net-rndis luci-lib-ip luci-lib-ipkg luci-lib-jsonc luci-lib-nixio luci-mod-admin-full luci-mod-network \
+kmod-usb-net-rtl8150 kmod-usb-net-rtl8152 kmod-usb-net-asix kmod-usb-net-asix-ax88179 kmod-mii luci-mod-status luci-mod-system \
+luci-proto-3g luci-proto-mbim mbim-utils picocom minicom luci-proto-ncm luci-proto-ppp luci-proto-qmi screen kmod-tun ttyd kmod-usb-atm \
+kmod-macvlan kmod-usb-net-cdc-ncm kmod-usb-net-cdc-mbim luci-proto-modemmanager modemmanager modemmanager-rpcd libqmi libmbim glib2 ipset \
+libcap libcap-bin ruby ruby-yaml kmod-tun kmod-inet-diag kmod-nft-tproxy kmod-tun ip-full php8 haproxy tcpdump UDPspeeder irqbalance \
+kmod-dummy bc haproxy uclient-fetch uhttpd uhttpd-mod-ubus unzip uqmi usb-modeswitch uuidgen zstd wwan ziptool zoneinfo-asia zoneinfo-core \
+libc zram-swap zoneinfo-core zoneinfo-asia bash screen uhttpd-mod-ubus openssh-sftp-server adb wget-ssl httping htop jq tar unzip \
+coreutils-sleep coreutils-stat kmod-nls-utf8 kmod-macvlan usb-modeswitch kmod-usb-storage cgi-io chattr comgt comgt-ncm coremark coreutils \
+coreutils-base64 coreutils-nohup kmod-usb-net-rtl8152 kmod-usb-net-sierrawireless kmod-usb-serial-qualcomm kmod-usb-serial-sierrawireless \
+luci-app-ttyd luci-theme-material wpad-openssl iw iwinfo wireless-regdb kmod-cfg80211 kmod-80211"
 
 # MAIN BUILD
 build_firmware() {
