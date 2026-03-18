@@ -50,10 +50,8 @@ build_firmware() {
     configure_release_packages
     
     # PACKAGES + MISC + EXCLUDED + DISABLED_SERVICES    
-    make image PROFILE="$target_profile" \
-               #PROFILE="" PACKAGES="${my_packages}" FILES="files"
+    make image PROFILE="$,{1:-generic}" \
                PACKAGES="$PACKAGES $MISC $EXCLUDED" \
-               #PACKAGES="$MISC $EXCLUDED" \
                FILES="$build_files"
     
     local build_status=$?
@@ -66,7 +64,7 @@ build_firmware() {
 }
 
 # Validasi Argumen
-if [ -z "${1:-}" ]; then
+if [ -z "$PROFILE" ]; then
     echo "ERROR: Profile not specified."
     exit 1
 fi
