@@ -353,11 +353,9 @@ jobs:
             
           time ./make-image25.sh ${{ env.PROFILE }} ${{ env.TUNNEL }}
             
-          for file in bin/targets/"${{ env.TARGET_SYSTEM }}"/*.img.gz; do
-            if [ -f "$file" ]; then
-              new_name="FRDMX_$(basename "$file" .img.gz)_${{ env.TUNNEL }}.img.gz"
-              mv "$file" compiled_images/$new_name
-            fi
+          find bin/targets/x86/64/ -type f -name "*-combined*" | while read -r file; do
+              new_name="FRDMX_$(basename "$file")"
+              mv "$file" compiled_images/"$new_name"
           done
 
           echo "Build completed:"
