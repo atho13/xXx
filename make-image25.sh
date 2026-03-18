@@ -25,8 +25,7 @@ kmod-usb-net-qmi-wwan uqmi luci-proto-qmi kmod-usb-acm kmod-usb-net-huawei-cdc-n
 kmod-usb-serial kmod-usb-serial-option kmod-usb-serial-wwan kmod-usb-serial-qualcomm kmod-usb-serial-sierrawireless \
 modemmanager luci-proto-modemmanager libqmi libmbim glib2 dbus dbus-utils ppp chat kmod-usb-ehci kmod-usb3 \
 qmi-utils mbim-utils usbutils luci-proto-ncm kmod-usb-ohci kmod-usb-uhci kmod-usb2 \
-kmod-nls-utf8 kmod-macvlan usb-modeswitch xmm-modem luci-proto-xmm kmod-usb-storage luci-theme-material \
-internet-detector internet-detector-mod-modem-restart luci-app-internet-detector luci-app-ttyd luci-app-tinyfm"
+kmod-nls-utf8 kmod-macvlan usb-modeswitch xmm-modem luci-proto-xmm kmod-usb-storage luci-theme-material"
 
 # MAIN BUILD
 build_firmware() {
@@ -36,10 +35,10 @@ build_firmware() {
     log "INFO" "Starting build for profile '$target_profile' [my_packages]..."
 
     # PACKAGES + MISC + EXCLUDED + DISABLED_SERVICES    
-    make image PROFILE="$target_profile" \
-               #PROFILE="" PACKAGES="${my_packages}" FILES="files"
-               #PACKAGES="$PACK25 $MISC $EXCLUDED" \
-               PACKAGES="$MISC $EXCLUDED" \
+    make image #PROFILE="$target_profile" \
+               PROFILE="" PACKAGES="${my_packages}" FILES="files"
+               PACKAGES="$PACK25 $MISC $EXCLUDED" \
+               #PACKAGES="$MISC $EXCLUDED" \
                FILES="$build_files"
     
     local build_status=$?
