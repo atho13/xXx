@@ -12,7 +12,7 @@ make info
 # VARIABEL
 PROFILE=""
 PACKAGES=""
-#MISC=""
+MISC=""
 EXCLUDED=""
 
 #CORE SYSTEM
@@ -42,8 +42,8 @@ build_firmware() {
     # PACKAGES + MISC + EXCLUDED + DISABLED_SERVICES    
     make image PROFILE="$target_profile" \
                #PROFILE="" PACKAGES="${my_packages}" FILES="files"
-               PACKAGES="$PACKAGES $EXCLUDED" \
-               #PACKAGES="$MISC $EXCLUDED" \
+               #PACKAGES="$PACKAGES $EXCLUDED" \
+               PACKAGES="$MISC $EXCLUDED" \
                FILES="$build_files"
     
     local build_status=$?
