@@ -342,21 +342,20 @@ jobs:
       - name: Build Firmware Images
         id: imagebuilder
         run: |
-          cd ${{ env.WORKING_DIR }}
           mkdir -p compiled_images
+          
+          cd ${{ env.WORKING_DIR }}
           chmod +x ./make-image25.sh
 
           ./make-image25.sh generic ${{ env.TUNNEL }}
-
-          echo "Memeriksa hasil di bin/targets/x86/64/..."
           find bin/targets/x86/64/ -type f \( -name "*.img*" -o -name "*.tar.gz" \) | while read -r file; do
               filename=$(basename "$file")
               echo "Berhasil menemukan: $filename"
-              mv "$file" "compiled_images/FRDMX_${{ env.TUNNEL }}_$filename"
+              mv "$file" "../compiled_images/FRDMX_${{ env.TUNNEL }}_$filename"
           done
 
-          echo "Isi folder compiled_images:"
-          ls -lh compiled_images/
+          echo "Isi folder compiled_images di root:"
+          ls -lh ../compiled_images/
  
       - name: Upload Artifacts to Release
         uses: softprops/action-gh-release@v2
@@ -364,13 +363,13 @@ jobs:
            GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
         with:
            tag_name: ${{ env.RELEASE_TAG }}
-           files: compiled_images/*.img*
+           files: compiled_images/*
 
       - name: Upload Artifacts to Actions
         uses: actions/upload-artifact@v4
         with:
            name: ${{ env.RELEASE_NAME }}
-           path: compiled_images/*.img*
+           path: compiled_images/*
            
       - name: Cleanup Build Artifacts
         id: cleanup_artifacts
