@@ -67,8 +67,8 @@ build_firmware() {
 
 # Jalankan log function dummy
 if ! command -v log &> /dev/null; then
-    log() { echo "[$1] $2"; }
+    log() { echo "[$1]"; }
 fi
 
 # Running Build
-build_firmware "$1" "${2:-}"
+build_firmware "$1"
