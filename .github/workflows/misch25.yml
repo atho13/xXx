@@ -1,0 +1,5 @@
+yaml
+- name: Run Patch Script
+  run: |
+    chmod +x ./scripts/MISCH25.sh
+    ./scripts/MISCH25.sh
