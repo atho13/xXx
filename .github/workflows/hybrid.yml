@@ -14,10 +14,11 @@ on:
       board:
         description: "Pilih Board Amlogic (Khusus Amlogic)"
         required: true
-        default: "s905x-b860h"
+        default: "s905x"
         type: choice
         options:
           - s905x-b860h
+          - s905x
           - s905x3
           - s905x2
           - s905w
@@ -28,13 +29,12 @@ on:
       kernel:
         description: "Pilih Versi Kernel Amlogic"
         required: true
-        default: "6.1.x"
+        default: "6.18.y"
         type: choice
         options:
-          - 6.1.x
-          - 6.6.x
-          - 5.15.x
+          - 6.6.y
           - 6.12.y
+          - 6.18.y
       tunnel:
         description: "Pilih Tunnel VPN"
         required: true
