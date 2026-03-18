@@ -380,7 +380,7 @@ jobs:
            
       - name: Create Release
         if: steps.beforeupload.outputs.status == 'success'
-        uses: softprops/action-gh-release@v4
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
         with:
@@ -393,19 +393,19 @@ jobs:
         id: cleanup_artifacts
         if: always()
         run: |
-          cd ${{ env.WORKING_DIR }} || cd $GITHUB_WORKSPACE/${{ env.WORKING_DIR }}
+          cd "${{ github.workspace }}/${{ env.WORKING_DIR }}" || cd "${{ github.workspace }}"
           
-          sudo rm -rf bin/ build_dir/ dl/ feeds/ files/ package/ packages/ staging_dir/ tmp/
-          sudo rm -rf .config .env logs/
+          sudo rm -rf build_dir/ dl/ feeds/ staging_dir/ tmp/ logs/ .config* .env
           
-          sudo rm -rf /tmp/*
+          sudo rm -rf bin/
           sudo apt-get clean
-          sudo journalctl --vacuum-time=1h
-          
-          if [ -d "/builder" ]; then
+          sudo rm -rf /var/lib/apt/lists/*
+
+          if mountpoint -q /builder; then
             sudo rm -rf /builder/*
           fi
-          
+
+          echo "Disk space after cleanup:"
           df -h
           echo "status=success" >> "$GITHUB_OUTPUT"
 
