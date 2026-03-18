@@ -364,18 +364,23 @@ jobs:
           ls -la compiled_images/
           echo "status=success" >> "$GITHUB_OUTPUT"
 
-      - name: Before Upload
-        id: beforeupload
-        if: steps.build.outputs.status == 'success'
-        run: |
-          cd ${{ env.WORKING_DIR }}
-          chmod +x scripts/RENAMEFW.sh
-          ./scripts/RENAMEFW.sh
-          echo "status=success" >> "$GITHUB_OUTPUT"
+      - name: Upload Artifacts to Release
+        uses: softprops/action-gh-release@v2
+        env:
+           GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+        with:
+           tag_name: ${{ env.RELEASE_TAG }}
+           files: compiled_images/*.img*
 
+      - name: Upload Artifacts to Actions
+        uses: actions/upload-artifact@v4
+        with:
+           name: ${{ env.RELEASE_NAME }}
+           path: compiled_images/*.img*
+           
       - name: Create Release
         if: steps.beforeupload.outputs.status == 'success'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v4
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
         with:
