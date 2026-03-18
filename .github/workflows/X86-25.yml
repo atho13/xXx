@@ -330,8 +330,8 @@ jobs:
           chmod +x scripts/PACTH25.sh
           ./scripts/PACTH25.sh
 
-          chmod +x scripts/MISC.sh
-          ./scripts/MISCH25.sh
+          #chmod +x scripts/MISC.sh
+          #./scripts/MISCH25.sh
 
           #chmod +x scripts/TUNNEL.sh
           #./scripts/TUNNEL.sh ${{ env.TUNNEL }}
