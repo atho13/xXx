@@ -49,8 +49,7 @@ build_firmware() {
     
     # Eksekusi Build
     make image PROFILE="$PROFILE" \
-               PACKAGES="$PACKAGES $MISC $EXCLUDED" \
-               FILES="$BUILD_FILES"
+               PACKAGES="$PACKAGES $MISC $EXCLUDED"
     
     local build_status=$?
     if [ "$build_status" -eq 0 ]; then
