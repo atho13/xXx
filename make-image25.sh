@@ -74,9 +74,8 @@ if [ -z "${1:-}" ]; then
 fi
 
 # Jalankan log function dummy
-if ! command -v log &> /dev/null; then
-    log() { echo "[$1] $2"; }
-fi
+#if ! command -v log &> /dev/null; then
+#fi
 
 # Running Build
 build_firmware
