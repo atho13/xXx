@@ -38,14 +38,25 @@ kmod-nls-utf8 kmod-usb-storage cgi-io chattr comgt comgt-ncm coremark coreutils 
 coreutils-nohup kmod-usb-net-sierrawireless kmod-usb-serial-qualcomm kmod-usb-serial-sierrawireless \
 luci-app-ttyd luci-theme-material wpad-openssl iw iwinfo wireless-regdb kmod-cfg80211 kmod-80211"
 
+log() {
+    local level="$1"
+    local msg="$2"
+    case "$level" in
+       "INFO")    echo -e "[ \033[1;34mINFO\033[0m ] $msg" ;;
+       "SUCCESS") echo -e "[ \033[1;32mSUCCESS\033[0m ] $msg" ;;
+       "ERROR")   echo -e "[ \033[1;31mERROR\033[0m ] $msg" ;;
+       *)         echo -e "[ $level ] $msg" ;;   
+    esac
+}
+
 # MAIN BUILD
 build_firmware() {
     log "INFO" "Starting build for profile '$PROFILE'..."
 
     # Load Profile & Tunnel Specifics
-    configure_profile_packages "$PROFILE"
-    add_tunnel_packages "$TUNNEL_OPT"
-    configure_release_packages
+    #configure_profile_packages "$PROFILE"
+    #add_tunnel_packages "$TUNNEL_OPT"
+    #configure_release_packages
     
     # Eksekusi Build
     make image PROFILE="$PROFILE" \
