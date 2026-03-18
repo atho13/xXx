@@ -1,8 +1,0 @@
-# https://github.com/maizil41/amlogic-s9xxx-openwrt
-
-name: Permission
-on:
-  workflow_dispatch:
-  - name: Run Patch Script
-    run: |
-    chmod +x ./scripts/MISCH25.sh
