@@ -59,10 +59,6 @@ build_firmware() {
     local build_status=$?
     if [ "$build_status" -eq 0 ]; then
         log "SUCCESS" "Build completed successfully!"
-    else
-        log "ERROR" "Build failed with exit code $build_status"
-        exit "$build_status"
-    fi
 }
 
 # Running Build
