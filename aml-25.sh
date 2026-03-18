@@ -75,7 +75,7 @@ configure_release_packages() {
 build_firmware() {
     local target_profile="$1"
     local tunnel_option="${2:-}"
-    #local build_files="files"
+    local build_files="files"
 
     log "INFO" "Starting build for profile '$target_profile' [Tunnel: $tunnel_option]..."
 
