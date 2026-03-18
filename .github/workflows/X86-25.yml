@@ -259,10 +259,10 @@ jobs:
           archive_ext=$([ "${CURVER}" -ge "25" ] && echo "tar.zst" || echo "tar.xz")
 
           # FILENAME="${BASE}-imagebuilder-${BRANCH}-${TARGET_NAME}.Linux-x86_64.${archive_ext}"
-          FILENAME="https://downloads.openwrt.org/releases/25.12.1/targets/x86/64/openwrt-imagebuilder-25.12.0-x86-64.Linux-x86_64.tar.zst"
+          FILENAME="https://downloads.openwrt.org/releases/25.12.1/targets/x86/generic/openwrt-imagebuilder-25.12.1-x86-generic.Linux-x86_64.tar.zst"
           
           # PRIMARY_URL="${DOWNLOAD_BASE}/releases/${BRANCH}/targets/${TARGET_SYSTEM}/${FILENAME}"
-          PRIMARY_URL="https://downloads.openwrt.org/releases/25.12.1/targets/x86/64/openwrt-imagebuilder-25.12.0-x86-64.Linux-x86_64.tar.zst"
+          PRIMARY_URL="https://downloads.openwrt.org/releases/25.12.1/targets/x86/generic/openwrt-imagebuilder-25.12.1-x86-generic.Linux-x86_64.tar.zst"
           
           FALLBACK_URL=""
           if [ "${BASE}" == "immortalwrt" ]; then
