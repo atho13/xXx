@@ -1,0 +1,92 @@
+name: Build FRDMX Hybrid (x86 & Amlogic)
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Pilih Target Hardware"
+        required: true
+        default: "X86-64"
+        type: choice
+        options:
+          - X86-64
+          - Amlogic-TVBox
+      tunnel:
+        description: "Pilih Tunnel VPN"
+        required: true
+        default: "no-tunnel"
+        type: choice
+        options:
+          - no-tunnel
+          - openclash
+          - nikki
+      kernel:
+        description: "Versi Kernel (Khusus Amlogic)"
+        required: true
+        default: "6.18.x"
+
+env:
+  TZ: Asia/Jakarta
+  WORKING_DIR: imagebuilder
+  # Variabel ARCH_2 untuk memicu logika Hybrid di aml-25.sh
+  ARCH_2: ${{ github.event.inputs.target == 'X86-64' && 'x86_64' || 'armvirt' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Initialization Environment
+        run: |
+          sudo timedatectl set-timezone "${{ env.TZ }}"
+          sudo apt-get update
+          sudo apt-get install -y build-essential clang flex bison g++ gawk gettext \
+          git libncurses5-dev libssl-dev python3-distutils rsync unzip zlib1g-dev \
+          curl tar qemu-utils
+
+      - name: Download Image Builder
+        run: |
+          # Logika download berdasarkan Target
+          if [ "${{ github.event.inputs.target }}" == "X86-64" ]; then
+            URL="https://downloads.openwrt.org"
+          else
+            URL="https://downloads.openwrt.org"
+          fi
+          wget -qO- "$URL" | tar -xJ
+          mv openwrt-imagebuilder-* ${{ env.WORKING_DIR }}
+
+      - name: Build Rootfs/Image (Hybrid Mode)
+        id: build_base
+        run: |
+          mkdir -p compiled_images
+          cd ${{ env.WORKING_DIR }}
+          # Salin skrip aml-x86.sh dari repo ke folder kerja
+          cp ../scripts/aml-x86.sh .
+          chmod +x aml-x86.sh
+          
+          # Jalankan skrip Hybrid (Otomatis deteksi ARCH_2)
+          ./aml-x86.sh ${{ github.event.inputs.target == 'X86-64' && 'generic' || 'default' }} ${{ github.event.inputs.tunnel }}
+          
+          # Pindahkan hasil ke folder luar (sejajar root)
+          mv ../compiled_images/* ../compiled_images/ 2>/dev/null || true
+
+      - name: Repack Amlogic (Hanya jika Target Amlogic)
+        if: github.event.inputs.target == 'Amlogic-TVBox'
+        run: |
+          # Memberikan izin ke skrip repack
+          chmod +x ./scripts/REPACK25.sh
+          # Repack menggunakan rootfs yang baru saja dibuat
+          ./scripts/REPACK25.sh "ophub" "s905x" "${{ github.event.inputs.kernel }}" "${{ github.event.inputs.tunnel }}"
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: FRDMX-Firmware-${{ github.event.inputs.target }}
+          path: compiled_images/*
+
+      - name: Cleanup
+        if: always()
+        run: |
+          sudo rm -rf ${{ env.WORKING_DIR }} compiled_images
