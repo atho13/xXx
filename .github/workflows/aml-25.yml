@@ -10,7 +10,7 @@ on:
         type: choice
         options:
           - openwrt:25.12.1
-          - immortalwrt:25.12
+          - immortalwrt:25.12.1
       target:
         description: "Select device board"
         required: false
@@ -272,7 +272,7 @@ jobs:
               ;;
             "Amlogic s905x HG680P")
               TARGET_BUILD="s905x"
-              KERNEL="6.6.y"
+              KERNEL="6.18.y"
               echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
               echo "KERNEL=$KERNEL" >> $GITHUB_ENV
               ;;
@@ -426,42 +426,57 @@ jobs:
           ./scripts/REPACK25.sh "ophub" "${{ env.TARGET_BUILD }}" "${{ env.KERNEL }}" "${{ env.TUNNEL }}"
           echo "status=success" >> "$GITHUB_OUTPUT"
           
-      - name: Upload Artifacts to Release
+      - name: Mod SDCard
+        id: modsdcard
+        if: steps.repack.outputs.status == 'success'
+        run: |
+          cd ${{ env.WORKING_DIR }}
+          chmod +x scripts/MODSDCARD.sh
+          ./scripts/MODSDCARD.sh
+          echo "status=success" >> "$GITHUB_OUTPUT"
+          
+      - name: Before Upload
+        id: beforeupload
+        if: steps.modsdcard.outputs.status == 'success'
+        run: |
+          cd ${{ env.WORKING_DIR }}
+          chmod +x scripts/RENAMEFW.sh
+          ./scripts/RENAMEFW.sh
+          echo "status=success" >> "$GITHUB_OUTPUT"
+
+      - name: Create Release
+        if: steps.beforeupload.outputs.status == 'success'
         uses: softprops/action-gh-release@v2
         env:
-           GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.XIDZs_KEY }}
         with:
-           tag_name: ${{ env.RELEASE_TAG }}
-           files: compiled_images/*
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: ${{ env.RELEASE_NAME }}
+          files: ${{ env.WORKING_DIR }}/compiled_images/*.img.gz
+          prerelease: ${{ github.ref_name == 'dev' }}
 
-      - name: Upload Artifacts to Actions
-        uses: actions/upload-artifact@v4
-        with:
-           name: ${{ env.RELEASE_NAME }}
-           path: compiled_images/*
-           
       - name: Cleanup Build Artifacts
         id: cleanup_artifacts
         if: always()
         run: |
-          cd "${{ github.workspace }}/${{ env.WORKING_DIR }}" || cd "${{ github.workspace }}"
+          cd ${{ env.WORKING_DIR }} || cd $GITHUB_WORKSPACE/${{ env.WORKING_DIR }}
           
-          sudo rm -rf build_dir/ dl/ feeds/ staging_dir/ tmp/ logs/ .config* .env
+          sudo rm -rf bin/ build_dir/ dl/ feeds/ files/ package/ packages/ staging_dir/ tmp/
+          sudo rm -rf .config .env logs/
           
-          sudo rm -rf bin/
+          sudo rm -rf /tmp/*
           sudo apt-get clean
-          sudo rm -rf /var/lib/apt/lists/*
-
-          if mountpoint -q /builder; then
+          sudo journalctl --vacuum-time=1h
+          
+          if [ -d "/builder" ]; then
             sudo rm -rf /builder/*
           fi
-
-          echo "Disk space after cleanup:"
+          
           df -h
           echo "status=success" >> "$GITHUB_OUTPUT"
 
       - name: Cleanup simulated disk
-        if: always() && (github.event.inputs.target == 'all-devices' || github.event.inputs.target == 'opt-devices')
+        if: always() && (github.event.inputs.target == 'all-device' || github.event.inputs.target == 'opt-devices')
         run: |
           sudo umount /builder || true
           sudo lvremove -f /dev/github/runner || true
