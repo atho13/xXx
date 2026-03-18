@@ -340,20 +340,21 @@ jobs:
           echo "status=success" >> "$GITHUB_OUTPUT"
 
       - name: Build Firmware Images
+        id: imagebuilder
         run: |
-          cd ${{ env.WORKING_DIR }}
-          ./make-image25.sh generic ${{ env.TUNNEL }}
-
-          mkdir -p ../compiled_images
+          mkdir -p compiled_images
           
-          [ -f .config ] && cp .config "../compiled_images/FRDMX_${{ env.TUNNEL }}_build.config"
-   
-          echo "Memindahkan Image, Rootfs, dan Manifest..."
-          find bin/targets/x86/64/ -type f \( -name "*.img*" -o -name "*.tar.gz" -o -name "*.manifest" \) | while read -r file; do
+          cd ${{ env.WORKING_DIR }}
+          chmod +x ./make-image25.sh
+
+          ./make-image25.sh generic ${{ env.TUNNEL }}
+          find bin/targets/x86/64/ -type f \( -name "*.img*" -o -name "*.tar.gz" \) | while read -r file; do
               filename=$(basename "$file")
+              echo "Berhasil menemukan: $filename"
               mv "$file" "../compiled_images/FRDMX_${{ env.TUNNEL }}_$filename"
           done
 
+          echo "Isi folder compiled_images di root:"
           ls -lh ../compiled_images/
  
       - name: Upload Artifacts to Release
