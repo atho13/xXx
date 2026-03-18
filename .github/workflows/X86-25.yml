@@ -333,8 +333,8 @@ jobs:
           #chmod +x scripts/MISC.sh
           #./scripts/MISCH25.sh
 
-          #chmod +x scripts/TUNNEL.sh
-          #./scripts/TUNNEL.sh ${{ env.TUNNEL }}
+          chmod +x scripts/TUNNEL.sh
+          ./scripts/TUNNEL.sh ${{ env.TUNNEL }}
 
           df -hT ${PWD}
           echo "status=success" >> "$GITHUB_OUTPUT"
