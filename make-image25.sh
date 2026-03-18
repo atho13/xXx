@@ -65,6 +65,7 @@ build_firmware() {
     # Eksekusi Build
     make image PROFILE="$PROFILE" \
                PACKAGES="$PACKAGES $MISC $EXCLUDED" \
+               CONFIG_TARGET_ROOTFS_TARGZ=1 \
                CONFIG_TARGET_KERNEL_PARTSIZE=128 \
                CONFIG_TARGET_ROOTFS_PARTSIZE=800
                V=s
