@@ -67,6 +67,7 @@ build_firmware() {
                PACKAGES="$PACKAGES $MISC $EXCLUDED" \
                CONFIG_TARGET_KERNEL_PARTSIZE=128 \
                CONFIG_TARGET_ROOTFS_PARTSIZE=800
+               V=s
                
     local build_status=$?
     if [ "$build_status" -eq 0 ]; then
