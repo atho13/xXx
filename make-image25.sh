@@ -52,7 +52,7 @@ build_firmware() {
     # PACKAGES + MISC + EXCLUDED + DISABLED_SERVICES    
     make image PROFILE="$target_profile" \
                #PROFILE="" PACKAGES="${my_packages}" FILES="files"
-               PACKAGES="$PACKAGES $MISC $EXCLUDED"" \
+               PACKAGES="$PACKAGES $MISC $EXCLUDED" \
                #PACKAGES="$MISC $EXCLUDED" \
                FILES="$build_files"
     
