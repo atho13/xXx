@@ -6,11 +6,24 @@
 # Exit on error
 set -e
 
-# VARIABEL AWAL
-MISC=""
-EXCLUDED=""
+# 1. Konfigurasi Target (Otomatis ke Amlogic ArmVirt)
+PROFILE="default"
+TUNNEL_OPT="${2:-no-tunnel}"
+ARTIFACT_DIR="../compiled_images"
 
-# CORE SYSTEM (Daftar paket yang sudah dibersihkan dari driver x86/PC)
+# Fungsi Log Sederhana
+log() {
+    local level="$1"
+    local msg="$2"
+    case "$level" in
+       "INFO")    echo -e "[ \033[1;34mINFO\033[0m ] $msg" ;;
+       "SUCCESS") echo -e "[ \033[1;32mSUCCESS\033[0m ] $msg" ;;
+       "ERROR")   echo -e "[ \033[1;31mERROR\033[0m ] $msg" ;;
+       *)         echo -e "[ $level ] $msg" ;;   
+    esac
+}
+
+# DAFTAR PAKET (Disesuaikan untuk Amlogic 25.12.0)
 PACKAGES="base-files ca-bundle dnsmasq-full dropbear e2fsprogs firewall4 fstools \
 kmod-button-hotplug kmod-nft-offload libc libgcc libustream-mbedtls logd \
 mkf2fs mtd netifd nftables odhcp6c odhcpd-ipv6only partx-utils ppp ppp-mod-pppoe procd-ujail \
@@ -28,55 +41,43 @@ kmod-nls-utf8 kmod-usb-storage cgi-io chattr comgt comgt-ncm coremark coreutils 
 coreutils-nohup kmod-usb-net-sierrawireless kmod-usb-serial-qualcomm kmod-usb-serial-sierrawireless \
 luci-app-ttyd luci-theme-material wpad-openssl iw iwinfo wireless-regdb netdata vnstat2 vnstati2 \
 php8-cli php8-fastcgi php8-fpm php8-mod-session php8-mod-ctype php8-mod-fileinfo php8-mod-zip php8-mod-iconv \
-php8-mod-mbstring"
-
-# Fungsi Tunnel (Perbaikan sintaksis *)
-add_tunnel_packages() {
-    local tunnel="$1"
-    case "$tunnel" in
-        "openclash") PACKAGES+=" luci-app-openclash" ;;
-        "nikki")     PACKAGES+=" luci-app-nikki" ;;
-        "passwall")  PACKAGES+=" luci-app-passwall" ;;
-        "no-tunnel"|"") log "INFO" "No tunnel selected." ;;
-        *) log "INFO" "Custom tunnel: $tunnel" ;;
-    esac
-}
+php8-mod-mbstring luci-app-amlogic luci-theme-material"
 
 # MAIN BUILD
-build_firmware() {
-    local target_profile="$1"
-    local tunnel_option="${2:-no-tunnel}"
-    local build_files="files"
+build_rootfs() {
+    log "INFO" "Memulai Build Rootfs Only untuk Amlogic (25.12.0)..."
 
-    log "INFO" "Starting build for profile '$target_profile' [Tunnel: $tunnel_option]..."
-
-    # Jalankan fungsi pendukung
-    add_tunnel_packages "$tunnel_option"
-    
-    # Buat folder files jika belum ada agar tidak error
-    mkdir -p "$build_files"
-
-    # Perintah Build khusus Amlogic Repack
-    make image PROFILE="$target_profile" \
-               PACKAGES="$PACKAGES $MISC $EXCLUDED" \
-               FILES="$build_files" \
+    # KUNCI: Aktifkan Rootfs TARGZ, Matikan pembuatan image disk (.img, .iso, .grub)
+    # Ini akan membuat proses build sangat cepat
+    make image PROFILE="$PROFILE" \
+               PACKAGES="$PACKAGES" \
                CONFIG_TARGET_ROOTFS_TARGZ=y \
-               CONFIG_TARGET_KERNEL_PARTSIZE=256 \
-               CONFIG_TARGET_ROOTFS_PARTSIZE=2048
+               CONFIG_TARGET_ROOTFS_EXT4FS=n \
+               CONFIG_TARGET_ROOTFS_SQUASHFS=n \
+               CONFIG_GRUB_IMAGES=n \
+               CONFIG_ISO_IMAGES=n \
+               CONFIG_VHDX_IMAGES=n
     
     local build_status=$?
     if [ "$build_status" -eq 0 ]; then
-        log "SUCCESS" "Rootfs created successfully!"
+        log "INFO" "Memindahkan hasil Rootfs ke folder artifacts..."
+        
+        # Buat folder tujuan di root workspace
+        mkdir -p "$ARTIFACT_DIR"
+        
+        # Cari file .tar.gz (Rootfs) dan salin ke folder tujuan
+        # Gunakan nama yang konsisten agar mudah dikenali
+        find bin/targets/armvirt/64/ -type f -name "*.tar.gz" -exec cp {} "$ARTIFACT_DIR/FRDMX_Amlogic_Rootfs_$(date +%Y%m%d).tar.gz" \;
+        
+        # Salin juga file manifest untuk daftar paket
+        find bin/targets/armvirt/64/ -type f -name "*.manifest" -exec cp {} "$ARTIFACT_DIR/FRDMX_Amlogic_Rootfs_$(date +%Y%m%d).manifest" \;
+        
+        log "SUCCESS" "Build Rootfs SELESAI! File tersedia di folder compiled_images."
     else
-        log "ERROR" "Build failed with exit code $build_status"
+        log "ERROR" "Build gagal dengan exit code $build_status"
         exit "$build_status"
     fi
 }
 
-# Fungsi Log jika belum ada
-if ! command -v log &> /dev/null; then
-    log() { echo -e "[\033[1;34m $1 \033[0m] $2"; }
-fi
-
-# Jalankan (Default profile untuk armvirt adalah 'default')
-build_firmware "${1:-default}" "${2:-no-tunnel}"
+# Jalankan fungsi
+build_rootfs
