@@ -40,7 +40,7 @@ uqmi usb-modeswitch uuidgen zstd wwan ziptool zoneinfo-asia zoneinfo-core zram-s
 openssh-sftp-server adb wget-ssl httping htop jq tar coreutils-sleep coreutils-stat \
 kmod-nls-utf8 kmod-usb-storage cgi-io chattr comgt comgt-ncm coremark coreutils coreutils-base64 \
 coreutils-nohup kmod-usb-net-sierrawireless kmod-usb-serial-qualcomm kmod-usb-serial-sierrawireless \
-luci-app-ttyd luci-theme-material wpad-openssl iw iwinfo wireless-regdb kmod-cfg80211 kmod-80211"
+luci-app-ttyd luci-theme-material wpad-openssl iw iwinfo wireless-regdb"
 
 log() {
     local level="$1"
