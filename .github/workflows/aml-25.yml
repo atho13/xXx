@@ -311,11 +311,11 @@ jobs:
           CURVER=$(echo "${BRANCH}" | cut -d'.' -f1)
           archive_ext=$([ "${CURVER}" -ge "25" ] && echo "tar.zst" || echo "tar.xz")
 
-          # FILENAME="${BASE}-imagebuilder-${BRANCH}-${TARGET_NAME}.Linux-x86_64.${archive_ext}"
-          FILENAME="https://downloads.openwrt.org/releases/25.12.1/targets/armsr/armv8/openwrt-imagebuilder-25.12.1-armsr-armv8.Linux-x86_64.tar.zst"
+          FILENAME="${BASE}-imagebuilder-${BRANCH}-${TARGET_NAME}.Linux-x86_64.${archive_ext}"
+          #FILENAME="https://downloads.openwrt.org/releases/25.12.1/targets/armsr/armv8/openwrt-imagebuilder-25.12.1-armsr-armv8.Linux-x86_64.tar.zst"
           
-          # PRIMARY_URL="${DOWNLOAD_BASE}/releases/${BRANCH}/targets/${TARGET_SYSTEM}/${FILENAME}"
-          PRIMARY_URL="https://downloads.openwrt.org/releases/25.12.1/targets/armsr/armv8/openwrt-imagebuilder-25.12.1-armsr-armv8.Linux-x86_64.tar.zst"
+          PRIMARY_URL="${DOWNLOAD_BASE}/releases/${BRANCH}/targets/${TARGET_SYSTEM}/${FILENAME}"
+          #PRIMARY_URL="https://downloads.openwrt.org/releases/25.12.1/targets/armsr/armv8/openwrt-imagebuilder-25.12.1-armsr-armv8.Linux-x86_64.tar.zst"
           
           FALLBACK_URL=""
           if [ "${BASE}" == "immortalwrt" ]; then
