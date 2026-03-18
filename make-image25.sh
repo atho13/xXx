@@ -12,11 +12,11 @@ make info
 # VARIABEL
 PROFILE=""
 PACKAGES=""
-MISC=""
+#MISC=""
 EXCLUDED=""
 
 #CORE SYSTEM
-my_package="
+PACKAGES="
 apk-mbedtls base-files ca-bundle dnsmasq-full dropbear e2fsprogs firewall4 fstools grub2-bios-setup kmod-button-hotplug kmod-nft-offload \
 libc libgcc libustream-mbedtls logd mkf2fs mtd netifd nftables odhcp6c odhcpd-ipv6only partx-utils ppp ppp-mod-pppoe procd-ujail uci \
 uclient-fetch urandom-seed urngd kmod-amazon-ena kmod-amd-xgbe kmod-bnx2 kmod-dwmac-intel kmod-e1000e kmod-e1000 kmod-forcedeth \
@@ -35,14 +35,14 @@ luci-app-ttyd luci-theme-material wpad-openssl iw iwinfo wireless-regdb kmod-cfg
 # MAIN BUILD
 build_firmware() {
     local target_profile="$1"
-    local build_files="my_package"
+    local build_files="PACKAGES"
 
-    log "INFO" "Starting build for profile '$target_profile' [my_packages]..."
+    log "INFO" "Starting build for profile '$target_profile' [PACKAGES]..."
 
     # PACKAGES + MISC + EXCLUDED + DISABLED_SERVICES    
-    make image #PROFILE="$target_profile" \
-               PROFILE="" PACKAGES="${my_packages}" FILES="files"
-               PACKAGES="$PACK25 $MISC $EXCLUDED" \
+    make image PROFILE="$target_profile" \
+               #PROFILE="" PACKAGES="${my_packages}" FILES="files"
+               PACKAGES="$PACKAGES $EXCLUDED" \
                #PACKAGES="$MISC $EXCLUDED" \
                FILES="$build_files"
     
