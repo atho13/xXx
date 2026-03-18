@@ -372,17 +372,6 @@ jobs:
            name: ${{ env.RELEASE_NAME }}
            path: compiled_images/*.img*
            
-      - name: Create Release
-        if: steps.beforeupload.outputs.status == 'success'
-        uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
-        with:
-          tag_name: ${{ env.RELEASE_TAG }}
-          name: ${{ env.RELEASE_NAME }}
-          files: ${{ env.WORKING_DIR }}/compiled_images/*.img.gz
-          prerelease: ${{ github.ref_name == 'dev' }}
-
       - name: Cleanup Build Artifacts
         id: cleanup_artifacts
         if: always()
