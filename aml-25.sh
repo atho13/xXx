@@ -28,7 +28,7 @@ kmod-nls-utf8 kmod-usb-storage cgi-io chattr comgt comgt-ncm coremark coreutils 
 coreutils-nohup kmod-usb-net-sierrawireless kmod-usb-serial-qualcomm kmod-usb-serial-sierrawireless \
 luci-app-ttyd luci-theme-material wpad-openssl iw iwinfo wireless-regdb netdata vnstat2 vnstati2 \
 php8-cli php8-fastcgi php8-fpm php8-mod-session php8-mod-ctype php8-mod-fileinfo php8-mod-zip php8-mod-iconv \
-php8-mod-mbstring luci-app-amlogic" # Tambahkan luci-app-amlogic untuk TV Box
+php8-mod-mbstring"
 
 # Fungsi Tunnel (Perbaikan sintaksis *)
 add_tunnel_packages() {
