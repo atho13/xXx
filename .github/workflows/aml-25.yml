@@ -398,13 +398,13 @@ jobs:
         run: |
           cd ${{ env.WORKING_DIR }}
           mkdir -p compiled_images
-          chmod +x 25-image.sh
+          chmod +x aml-25.sh
 
           if [ "${{ env.CLEAN }}" == "true" ]; then
             make clean
           fi
             
-          time ./25-image.sh ${{ env.PROFILE }} ${{ env.TUNNEL }}
+          time ./aml-25.sh ${{ env.PROFILE }} ${{ env.TUNNEL }}
             
           for file in bin/targets/"${{ env.TARGET_SYSTEM }}"/*-rootfs.tar.gz; do
             if [ -f "$file" ]; then
