@@ -89,7 +89,11 @@ build_firmware() {
     configure_release_packages
 
     # PACKAGES + MISC + EXCLUDED    
-    make image PROFILE="$target_profile" PACKAGES="$PACKAGES $MISC $EXCLUDED" FILES="$build_files"
+    #make image PROFILE="$target_profile" PACKAGES="$PACKAGES $MISC $EXCLUDED" FILES="$build_files"
+    make image PROFILE="$target_profile" \
+               PACKAGES="$PACKAGES $MISC $EXCLUDED" \
+               FILES="$build_files" \
+               CONFIG_TARGET_ROOTFS_TARGZ=y
     
     local build_status=$?
     if [ "$build_status" -eq 0 ]; then
