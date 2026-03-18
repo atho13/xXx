@@ -17,21 +17,10 @@ on:
         default: "Amlogic s905x B860H"
         type: choice
         options:
-          - all-device
-          - opt-devices
-          - Amlogic s905 MXQ-Pro+
-          - Amlogic s905 Beelink-Mini
-          - Amlogic s905lb Q96-Mini
-          - Amlogic s905w TX3-Mini
-          - Amlogic s905w X96-Mini
-          - Amlogic s905w X96W
           - Amlogic s905x B860H
           - Amlogic s905x HG680P
-          - Amlogic s905x HG680P MODSDCARD
           - Amlogic s905x2 B860Hv5
           - Amlogic s905x2 HG680-FJ
-          - Amlogic s905x2 X96Max-v2Gb
-          - Amlogic s905x2 X96Max-v4Gb
       tunnel:
         description: "Select Tunnel VPN"
         required: true
@@ -75,47 +64,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-
-      - name: Set Matrix Run
-        id: set-matrix
-        run: |
-          echo "Selected target option: [ ${{ github.event.inputs.target }} ]"
-          
-          TARGET_JSON=$(cat << 'EOJ'
-          {
-            "target": [
-              "Amlogic s905x B860H",
-              "Amlogic s905x HG680P",
-              "Amlogic s905x2 B860Hv5",
-              "Amlogic s905x2 HG680-FJ",
-              "Amlogic s905x2 X96Max-v2Gb",
-              "Amlogic s905x2 X96Max-v4Gb",
-            ]
-          }
-          EOJ
-          )
-
-          OPT_DEVICES_JSON=$(cat << 'EOJ'
-          {
-            "target": [
-              "Amlogic s905x B860H",
-              "Amlogic s905x B860H MODSDCARD",
-              "Amlogic s905x HG680P",
-              "Amlogic s905x HG680P MODSDCARD"
-            ]
-          }
-          EOJ
-          )
-
-          if [ "${{ github.event.inputs.target }}" == "all-device" ]; then
-            echo "target=$(echo "$TARGET_JSON" | jq -c '.target')" >> "$GITHUB_OUTPUT"
-          elif [ "${{ github.event.inputs.target }}" == "opt-devices" ]; then
-            echo "target=$(echo "$OPT_DEVICES_JSON" | jq -c '.target')" >> "$GITHUB_OUTPUT"
-          else
-            echo "target=$(jq -nc --arg d "${{ github.event.inputs.target }}" '[$d]')" >> "$GITHUB_OUTPUT"
-          fi
-
-          echo "Selected tunnel option: [ ${{ github.event.inputs.tunnel }} ]"
 
       - name: Setup Release Environment
         id: setupenv
@@ -284,18 +232,6 @@ jobs:
               ;;
             "Amlogic s905x2 HG680-FJ")
               TARGET_BUILD="s905x2-hg680-fj"
-              KERNEL="5.15.y_6.1.y"
-              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
-              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
-              ;;
-            "Amlogic s905x2 X96Max-v2Gb")
-              TARGET_BUILD="s905x2-x96max-2g"
-              KERNEL="5.15.y_6.1.y"
-              echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
-              echo "KERNEL=$KERNEL" >> $GITHUB_ENV
-              ;;
-            "Amlogic s905x2 X96Max-v4Gb")
-              TARGET_BUILD="s905x2"
               KERNEL="5.15.y_6.1.y"
               echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
               echo "KERNEL=$KERNEL" >> $GITHUB_ENV
