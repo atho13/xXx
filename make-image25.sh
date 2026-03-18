@@ -68,7 +68,6 @@ build_firmware() {
 # Validasi Argumen
 if [ -z "${1:-}" ]; then
     echo "ERROR: Profile not specified."
-    echo "Usage: $0 <profile> [tunnel_option]"
     exit 1
 fi
 
