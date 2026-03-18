@@ -34,25 +34,25 @@ luci-app-ttyd luci-theme-material wpad-openssl iw iwinfo wireless-regdb kmod-cfg
 
 # MAIN BUILD
 build_firmware() {
-    local target_profile="$1"
-    local tunnel_option="${2:-}"
-    local build_files="PACKAGES"
+    PROFILE="${1:-generic}"
+    TUNNEL_OPT="${2:-}"
+    BUILD_FILES="PACKAGES"
 
     log "INFO" "Starting build for profile '$target_profile' [PACKAGES]..."
 
     # Load Profile Specifics
-    configure_profile_packages "$target_profile"
+    configure_profile_packages "$$PROFILE"
     
     # Load Tunnel Packages
-    add_tunnel_packages "$tunnel_option"
+    add_tunnel_packages "$TUNNEL_OPT"
     
     # Load Base/Release Config
     configure_release_packages
     
     # PACKAGES + MISC + EXCLUDED + DISABLED_SERVICES    
-    make image PROFILE="$,{1:-generic}" \
+    make image PROFILE="$PROFILE" \
                PACKAGES="$PACKAGES $MISC $EXCLUDED" \
-               FILES="$build_files"
+               FILES="$BUILD_FILES"
     
     local build_status=$?
     if [ "$build_status" -eq 0 ]; then
