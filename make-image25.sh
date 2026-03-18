@@ -65,10 +65,5 @@ build_firmware() {
     fi
 }
 
-# Jalankan log function dummy
-#if ! command -v log &> /dev/null; then
-    #log() { echo "[$1]"; }
-#fi
-
 # Running Build
 build_firmware
