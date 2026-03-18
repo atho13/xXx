@@ -393,22 +393,30 @@ jobs:
           echo "status=success" >> "$GITHUB_OUTPUT"
 
       - name: Build Firmware Images
+        id: build
+        if: steps.customize.outputs.status == 'success'
         run: |
           cd ${{ env.WORKING_DIR }}
-          ./make-image25.sh generic ${{ env.TUNNEL }}
+          mkdir -p compiled_images
+          chmod +x 25-image.sh
 
-          mkdir -p ../compiled_images
-          
-          [ -f .config ] && cp .config "../compiled_images/FRDMX_${{ env.TUNNEL }}_build.config"
-   
-          echo "Memindahkan Image, Rootfs, dan Manifest..."
-          find bin/targets/x86/64/ -type f \( -name "*.img*" -o -name "*.tar.gz" -o -name "*.manifest" \) | while read -r file; do
-              filename=$(basename "$file")
-              mv "$file" "../compiled_images/FRDMX_${{ env.TUNNEL }}_$filename"
+          if [ "${{ env.CLEAN }}" == "true" ]; then
+            make clean
+          fi
+            
+          time ./25-image.sh ${{ env.PROFILE }} ${{ env.TUNNEL }}
+            
+          for file in bin/targets/"${{ env.TARGET_SYSTEM }}"/*-rootfs.tar.gz; do
+            if [ -f "$file" ]; then
+              new_name="FRDMX_$(basename "$file" -rootfs.tar.gz)_${{ env.TUNNEL }}-rootfs.tar.gz"
+              mv "$file" compiled_images/$new_name
+            fi
           done
 
-          ls -lh ../compiled_images/
-
+          echo "Images built successfully:"
+          ls -la compiled_images/
+          echo "status=success" >> "$GITHUB_OUTPUT"
+          
       - name: Repack OpenWrt
         id: repack
         if: steps.build.outputs.status == 'success'
