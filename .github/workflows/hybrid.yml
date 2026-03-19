@@ -3,6 +3,14 @@ name: Build FRDMX Hybrid (v25.12.1 Stable)
 on:
   workflow_dispatch:
     inputs:
+      release_branch:
+        description: "Pilih Versi OpenWrt"
+        required: true
+        default: "openwrt:25.12.1"
+        type: choice
+        options:
+          - "openwrt:25.12.1"
+          - "immortalwrt:25.12.1"
       target:
         description: "Pilih Target Hardware"
         required: true
@@ -12,7 +20,7 @@ on:
           - X86-64
           - Amlogic-TVBox
       board:
-        description: "Pilih Board Amlogic (Khusus Amlogic)"
+        description: "Pilih Board Amlogic"
         required: true
         default: "s905x"
         type: choice
@@ -22,7 +30,7 @@ on:
         required: true
         default: "6.12.y"
         type: choice
-        options: ["6.12.y", "6.6.y", "6.1.y", "5.15.y"]
+        options: ["6.12.y", "6.6.y", "6.1.y"]
       tunnel:
         description: "Pilih Tunnel VPN"
         required: true
@@ -33,8 +41,6 @@ on:
 env:
   TZ: Asia/Jakarta
   WORKING_DIR: imagebuilder
-  # VERSI STABLE 25.12.1
-  VER: "25.12.1"
 
 jobs:
   build:
@@ -47,30 +53,30 @@ jobs:
         run: |
           sudo timedatectl set-timezone "${{ env.TZ }}"
           sudo apt-get update
-          # Menggunakan zstd untuk ekstraksi .tar.zst dan paket python3 terbaru
           sudo apt-get install -y build-essential clang flex bison g++ gawk gettext \
           git libncurses5-dev libssl-dev rsync unzip zlib1g-dev \
           curl tar qemu-utils wget python3-setuptools python3-dev python-is-python3 zstd
 
       - name: Download Image Builder
         run: |
-          # URL Rilis 25.12.1 Stable (Ganti domain ke immortalwrt jika perlu)
+          # Perbaikan Logika: Pisahkan String di dalam Bash run, bukan di ${{ }}
+          INPUT_STR="${{ github.event.inputs.release_branch }}"
+          BASE=$(echo $INPUT_STR | cut -d':' -f1)
+          VER=$(echo $INPUT_STR | cut -d':' -f2)
+          
           if [ "${{ github.event.inputs.target }}" == "X86-64" ]; then
-            URL="https://downloads.openwrt.org{{ env.VER }}/targets/x86/64/openwrt-imagebuilder-${{ env.VER }}-x86-64.Linux-x86_64.tar.zst"
+            URL="https://downloads.${BASE}.org/releases/${VER}/targets/x86/64/${BASE}-imagebuilder-${VER}-x86-64.Linux-x86_64.tar.zst"
           else
-            # ArmVirt tetap yang terbaik untuk repack Amlogic
-            URL="https://downloads.openwrt.org{{ env.VER }}/targets/armvirt/64/openwrt-imagebuilder-${{ env.VER }}-armvirt-64.Linux-x86_64.tar.zst"
+            URL="https://downloads.${BASE}.org/releases/${VER}/targets/armvirt/64/${BASE}-imagebuilder-${VER}-armvirt-64.Linux-x86_64.tar.zst"
           fi
           
-          echo "Downloading Version ${{ env.VER }}: $URL"
+          echo "Downloading: $URL"
           mkdir -p ${{ env.WORKING_DIR }}
-          # Perbaikan cara ekstrak file .tar.zst
           wget -qO- "$URL" | tar --zstd -xf - -C ${{ env.WORKING_DIR }} --strip-components=1
 
       - name: Build Rootfs/Image (Hybrid Mode)
         run: |
           mkdir -p compiled_images
-          # Memberi izin eksekusi ke folder scripts di repo Anda
           chmod +x scripts/*.sh
           
           cd ${{ env.WORKING_DIR }}
@@ -80,20 +86,19 @@ jobs:
             bash ../scripts/aml-x86.sh "default" "${{ github.event.inputs.tunnel }}"
           fi
           
-          # Mengambil hasil build (biasanya di bin/targets/...)
+          # Ambil hasil rootfs (.tar.gz) atau image (.img.gz)
           find bin/targets/ -type f \( -name "*.tar.gz" -o -name "*.img.gz" \) -exec cp {} ../compiled_images/ \; 2>/dev/null || true
 
       - name: Repack Amlogic (Hanya jika Target Amlogic)
         if: github.event.inputs.target == 'Amlogic-TVBox'
         run: |
-          # Menjalankan script repack eksternal (pastikan file ini ada di folder scripts/)
           chmod +x scripts/REPACK25.sh
           ./scripts/REPACK25.sh "ophub" "${{ github.event.inputs.board }}" "${{ github.event.inputs.kernel }}" "${{ github.event.inputs.tunnel }}"
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: FRDMX-v${{ env.VER }}-${{ github.event.inputs.target }}-${{ github.event.inputs.board }}
+          name: FRDMX-${{ github.event.inputs.target }}-${{ github.event.inputs.board }}
           path: |
             compiled_images/*.tar.gz
             compiled_images/*.img.gz
