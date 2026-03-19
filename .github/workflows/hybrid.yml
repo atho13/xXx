@@ -1,5 +1,8 @@
 name: Build FRDMX (Manual URL Mode)
 
+permissions:
+  contents: write
+
 on:
   workflow_dispatch:
     inputs:
@@ -111,6 +114,27 @@ jobs:
         with:
           name: FRDMX-Manual-Build
           path: |
+            compiled_images/*.tar.gz
+            compiled_images/*.img.gz
+            out/*.img
+            *.img
+
+      - name: Generate Tag & Release Name
+        id: tag
+        run: |
+          echo "release_tag=$(date +'%Y.%m.%d-%H%M')" >> $GITHUB_OUTPUT
+          echo "release_date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: success()
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          name: FRDMX Build - ${{ steps.tag.outputs.release_date }}
+          draft: false
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: |
             compiled_images/*.tar.gz
             compiled_images/*.img.gz
             out/*.img
