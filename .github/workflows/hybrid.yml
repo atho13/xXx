@@ -9,7 +9,7 @@ on:
       custom_url:
         description: "URL Image Builder (.tar.zst)"
         required: true
-        default: "https://downloads.openwrt.org"
+        default: ""
       target:
         description: "Pilih Target Hardware"
         required: true
