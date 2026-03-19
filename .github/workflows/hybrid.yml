@@ -20,9 +20,9 @@ on:
       kernel:
         description: "Pilih Versi Kernel Amlogic"
         required: true
-        default: "6.6.y"
+        default: "6.18.y"
         type: choice
-        options: ["6.6.y", "6.12.y", "6.1.y"]
+        options: ["6.18.y" "6.6.y", "6.12.y", "6.1.y"]
       tunnel:
         description: "Pilih Tunnel VPN"
         required: true
@@ -56,9 +56,9 @@ jobs:
         run: |
           # Logika URL lengkap untuk Image Builder
           if [ "${{ github.event.inputs.target }}" == "X86-64" ]; then
-            URL="https://downloads.openwrt.org{{ env.VER }}/targets/x86/64/openwrt-imagebuilder-${{ env.VER }}-x86-64.Linux-x86_64.tar.xz"
+            URL="https://downloads.openwrt.org/releases/25.12.1/targets/x86/generic/openwrt-imagebuilder-25.12.1-x86-generic.Linux-x86_64.tar.zst"
           else
-            URL="https://downloads.openwrt.org{{ env.VER }}/targets/armvirt/64/openwrt-imagebuilder-${{ env.VER }}-armvirt-64.Linux-x86_64.tar.xz"
+            URL="https://downloads.openwrt.org/releases/25.12.1/targets/armsr/armv8/openwrt-imagebuilder-25.12.1-armsr-armv8.Linux-x86_64.tar.zst"
           fi
           
           echo "Downloading: $URL"
