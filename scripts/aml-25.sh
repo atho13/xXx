@@ -67,18 +67,24 @@ rebuild_firmware() {
 
     # Paket Driver WiFi, USB LAN, Modem, dan Tool Sistem
     my_packages="\
-        base-files ca-bundle dnsmasq-full -dnsmasq dropbear firewall4 nftables \
-        kmod-nft-offload kmod-amazon-ena kmod-amd-xgbe kmod-bnx2 kmod-dwmac-intel \
-        kmod-e1000e kmod-e1000 kmod-igb kmod-igc kmod-ixgbe kmod-r8169 kmod-tg3 \
-        kmod-brcmfmac brcmfmac-firmware-43430-sdio brcmfmac-firmware-43455-sdio \
-        kmod-rtl8xxxu rtl8188eu-firmware kmod-rtw88 kmod-usb-net-rtl8150 \
-        kmod-usb-net-rtl8152 kmod-usb-net-asix kmod-usb-net-asix-ax88179 kmod-mii \
-        kmod-usb-storage kmod-usb-net-rndis luci luci-compat luci-lib-base \
-        luci-mod-admin-full luci-mod-network luci-mod-status luci-mod-system \
-        luci-app-ttyd ttyd bash wget-ssl htop jq tar zstd luci-app-cpufreq \
-        irqbalance btrfs-progs e2fsprogs f2fs-tools xfsprogs unzip coreutils-sleep \
-        python3-pip python3-setuptools coremark apk \
-        -wpad-basic wpad-basic-mbedtls iw iwinfo hostapd-common"
+        base-files ca-bundle dnsmasq-full dropbear e2fsprogs firewall4 fstools \
+        kmod-button-hotplug kmod-nft-offload libc libgcc libustream-mbedtls logd \
+        mkf2fs mtd netifd nftables odhcp6c odhcpd-ipv6only partx-utils ppp ppp-mod-pppoe procd-ujail \
+        uci uclient-fetch urandom-seed urngd luci luci-compat luci-lib-base kmod-usb-net-huawei-cdc-ncm \
+        kmod-usb-net kmod-usb-net-rndis luci-lib-ip luci-lib-jsonc luci-lib-nixio luci-mod-admin-full \
+        luci-mod-network kmod-usb-net-rtl8150 kmod-usb-net-rtl8152 kmod-usb-net-asix kmod-usb-net-asix-ax88179 \
+        kmod-mii luci-mod-status luci-mod-system luci-proto-3g luci-proto-mbim mbim-utils picocom minicom \
+        luci-proto-ncm luci-proto-ppp luci-proto-qmi screen kmod-tun ttyd kmod-usb-atm kmod-macvlan \
+        kmod-usb-net-cdc-ncm kmod-usb-net-cdc-mbim luci-proto-modemmanager modemmanager modemmanager-rpcd \
+        libqmi libmbim glib2 ipset libcap libcap-bin ruby ruby-yaml kmod-inet-diag kmod-nft-tproxy \
+        ip-full php8 haproxy tcpdump UDPspeeder irqbalance kmod-dummy bc uhttpd uhttpd-mod-ubus unzip \
+        uqmi usb-modeswitch uuidgen zstd wwan ziptool zoneinfo-asia zoneinfo-core zram-swap bash \
+        openssh-sftp-server adb wget-ssl httping htop jq tar coreutils-sleep coreutils-stat \
+        kmod-nls-utf8 kmod-usb-storage cgi-io chattr comgt comgt-ncm coremark coreutils coreutils-base64 \
+        coreutils-nohup kmod-usb-net-sierrawireless kmod-usb-serial-qualcomm kmod-usb-serial-sierrawireless \
+        luci-app-ttyd luci-theme-material wpad-openssl iw iwinfo wireless-regdb netdata vnstat2 vnstati2 \
+        php8-cli php8-fastcgi php8-fpm php8-mod-session php8-mod-ctype php8-mod-fileinfo php8-mod-zip php8-mod-iconv \
+        php8-mod-mbstring luci-theme-material wpad-basic-mbedtls iw iwinfo hostapd-common"
 
     # EKSEKUSI DENGAN FAKEROOT (Untuk Izin Root 0:0)
     fakeroot make image PROFILE="generic" PACKAGES="${my_packages}" FILES="files" V=s
