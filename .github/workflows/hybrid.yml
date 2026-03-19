@@ -6,7 +6,8 @@ on:
       custom_url:
         #description: "https://downloads.openwrt.org/releases/25.12.1/targets/x86/generic/openwrt-imagebuilder-25.12.1-x86-generic.Linux-x86_64.tar.zst"
         description: "https://downloads.openwrt.org/releases/25.12.1/targets/armsr/armv8/openwrt-imagebuilder-25.12.1-armsr-armv8.Linux-x86_64.tar.zst"
-        default: "https://downloads.openwrt.org"
+        #default: "https://downloads.openwrt.org"
+        default: "https://downloads.openwrt.org/releases/25.12.1/targets/armsr/armv8/openwrt-imagebuilder-25.12.1-armsr-armv8.Linux-x86_64.tar.zst"
       target:
         description: "Pilih Target Hardware (Sesuaikan dengan isi URL)"
         required: true
@@ -57,15 +58,30 @@ jobs:
       - name: Download Manual Image Builder
         run: |
           URL="${{ github.event.inputs.custom_url }}"
+          
+          # Proteksi jika user lupa mengganti URL default
+          if [[ "$URL" == "https://downloads.openwrt.org" ]]; then
+            echo "ERROR: Anda harus memasukkan URL lengkap sampai nama file .tar.zst!"
+            exit 1
+          fi
+
           echo "Processing Manual URL: $URL"
           mkdir -p ${{ env.WORKING_DIR }}
           
-          # Download dengan pengecekan ekstensi
+          # Gunakan wget dengan retry dan cek status 
+          # -O- mengirim data ke pipe (|), tar mengekstraknya
           if [[ "$URL" == *.zst ]]; then
             wget -qO- "$URL" | tar --zstd -xf - -C ${{ env.WORKING_DIR }} --strip-components=1
           else
             wget -qO- "$URL" | tar -xJ -C ${{ env.WORKING_DIR }} --strip-components=1
           fi
+          
+          # Cek apakah folder hasil ekstrak kosong (artinya download gagal)
+          if [ -z "$(ls -A ${{ env.WORKING_DIR }})" ]; then
+             echo "ERROR: Download gagal atau file korup (bukan file tar/zst)."
+             exit 1
+          fi
+
 
       - name: Build Rootfs/Image
         run: |
