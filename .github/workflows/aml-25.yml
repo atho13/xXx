@@ -42,7 +42,7 @@ jobs:
         run: |
           chmod +x scripts/aml-rootfs.sh
           cd ${{ env.WORKING_DIR }}
-          ../scripts/aml-rootfs.sh
+          ../scripts/aml-25.sh
 
       - name: Repack to .img (Ophub Tool)
         run: |
