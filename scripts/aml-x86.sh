@@ -27,11 +27,7 @@ fstrim"
 if [ "$TARGET_TYPE" == "generic" ]; then
     log "INFO: Menambahkan Driver & Optimasi x86_64..."
     DRIVERS_X86="kmod-e1000 kmod-e1000e kmod-igb kmod-ixgbe kmod-r8169 kmod-r8168 kmod-r8125"
-    PACKAGES="$PACKAGES $DRIVERS_X86 $OPTIMASI"
-else
-    log "INFO: Menambahkan Paket Khusus Amlogic TV Box..."
-    # Driver LAN wajib Amlogic agar internet jalan
-    PACKAGES="$PACKAGES luci-app-amlogic kmod-amlogic-meson-gx-mmc kmod-amlogic-meson-gxl-eth"
+    PACKAGES="$PACKAGES $DRIVERS_X86"
 fi
 
 # 3. KONFIGURASI OTOMATIS (IP STATIS & BBR)
