@@ -27,7 +27,6 @@ fstrim"
 if [ "$TARGET_TYPE" == "generic" ]; then
     log "INFO: Menambahkan Driver & Optimasi x86_64..."
     DRIVERS_X86="kmod-e1000 kmod-e1000e kmod-igb kmod-ixgbe kmod-r8169 kmod-r8168 kmod-r8125"
-    OPTIMASI="intel-microcode amd64-microcode kmod-crypto-aesni kmod-tcp-bbr"
     PACKAGES="$PACKAGES $DRIVERS_X86 $OPTIMASI"
 else
     log "INFO: Menambahkan Paket Khusus Amlogic TV Box..."
