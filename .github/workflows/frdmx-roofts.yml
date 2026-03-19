@@ -1,0 +1,79 @@
+name: Build FRDMX Rootfs Only
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      custom_url:
+        description: "URL Image Builder (.tar.zst / .tar.xz)"
+        required: true
+        default: "https://downloads.openwrt.org"
+      tunnel:
+        description: "Pilih Tunnel VPN"
+        required: true
+        default: "no-tunnel"
+        type: choice
+        options: ["no-tunnel", "openclash", "nikki"]
+
+env:
+  TZ: Asia/Jakarta
+  WORKING_DIR: imagebuilder
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Initialization Environment
+        run: |
+          sudo timedatectl set-timezone "${{ env.TZ }}"
+          sudo apt-get update
+          sudo apt-get install -y build-essential clang flex bison g++ gawk gettext \
+          git libncurses5-dev libssl-dev rsync unzip zlib1g-dev \
+          curl tar wget python3-setuptools python3-dev python-is-python3 zstd
+
+      - name: Download Image Builder
+        run: |
+          URL="${{ github.event.inputs.custom_url }}"
+          mkdir -p ${{ env.WORKING_DIR }}
+          echo "Downloading from: $URL"
+          
+          if [[ "$URL" == *.zst ]]; then
+            wget -qO- "$URL" | tar --zstd -xf - -C ${{ env.WORKING_DIR }} --strip-components=1
+          else
+            wget -qO- "$URL" | tar -xJ -C ${{ env.WORKING_DIR }} --strip-components=1
+          fi
+
+      - name: Build Rootfs
+        run: |
+          mkdir -p compiled_images
+          chmod +x scripts/aml-x86.sh
+          cd ${{ env.WORKING_DIR }}
+          
+          # Jalankan script build dengan profil default (ArmVirt)
+          bash ../scripts/aml-x86.sh "default" "${{ github.event.inputs.tunnel }}"
+          
+          # Cari file .tar.gz (Rootfs) dan pindahkan ke folder output
+          find bin/targets/ -type f -name "*.tar.gz" -exec cp {} ../compiled_images/ \;
+
+      - name: Generate Tag & Release
+        id: tag
+        run: |
+          echo "release_tag=rootfs-$(date +'%Y.%m.%d-%H%M')" >> $GITHUB_OUTPUT
+          echo "release_date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          name: Rootfs FRDMX - ${{ steps.tag.outputs.release_date }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: compiled_images/*.tar.gz
+
+      - name: Cleanup
+        if: always()
+        run: rm -rf ${{ env.WORKING_DIR }} compiled_images
