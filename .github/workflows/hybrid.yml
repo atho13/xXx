@@ -113,7 +113,7 @@ jobs:
         with:
           tag_name: ${{ steps.tag.outputs.release_tag }}
           name: FRDMX Build - ${{ steps.tag.outputs.release_date }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASES_TOKEN }}
           files: release_files/*
 
       - name: Cleanup
