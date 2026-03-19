@@ -59,19 +59,21 @@ jobs:
 
       - name: Download Image Builder
         run: |
-          # Perbaikan Logika: Pisahkan String di dalam Bash run, bukan di ${{ }}
+          # SOLUSI: Pisahkan Nama Distro dan Versi menggunakan Bash cut
           INPUT_STR="${{ github.event.inputs.release_branch }}"
           BASE=$(echo $INPUT_STR | cut -d':' -f1)
           VER=$(echo $INPUT_STR | cut -d':' -f2)
           
+          # Tentukan URL berdasarkan Target (x86 atau ArmVirt)
           if [ "${{ github.event.inputs.target }}" == "X86-64" ]; then
             URL="https://downloads.${BASE}.org/releases/${VER}/targets/x86/64/${BASE}-imagebuilder-${VER}-x86-64.Linux-x86_64.tar.zst"
           else
             URL="https://downloads.${BASE}.org/releases/${VER}/targets/armvirt/64/${BASE}-imagebuilder-${VER}-armvirt-64.Linux-x86_64.tar.zst"
           fi
           
-          echo "Downloading: $URL"
+          echo "Downloading from: $URL"
           mkdir -p ${{ env.WORKING_DIR }}
+          # Gunakan --zstd untuk ekstrak file .tar.zst dari versi 25.x
           wget -qO- "$URL" | tar --zstd -xf - -C ${{ env.WORKING_DIR }} --strip-components=1
 
       - name: Build Rootfs/Image (Hybrid Mode)
@@ -80,25 +82,27 @@ jobs:
           chmod +x scripts/*.sh
           
           cd ${{ env.WORKING_DIR }}
+          # Menjalankan build dengan profil sesuai target
           if [ "${{ github.event.inputs.target }}" == "X86-64" ]; then
             bash ../scripts/aml-x86.sh "generic" "${{ github.event.inputs.tunnel }}"
           else
             bash ../scripts/aml-x86.sh "default" "${{ github.event.inputs.tunnel }}"
           fi
           
-          # Ambil hasil rootfs (.tar.gz) atau image (.img.gz)
+          # Salin file hasil build (.tar.gz atau .img.gz)
           find bin/targets/ -type f \( -name "*.tar.gz" -o -name "*.img.gz" \) -exec cp {} ../compiled_images/ \; 2>/dev/null || true
 
       - name: Repack Amlogic (Hanya jika Target Amlogic)
         if: github.event.inputs.target == 'Amlogic-TVBox'
         run: |
           chmod +x scripts/REPACK25.sh
+          # Jalankan skrip repack menggunakan board dan kernel dari input
           ./scripts/REPACK25.sh "ophub" "${{ github.event.inputs.board }}" "${{ github.event.inputs.kernel }}" "${{ github.event.inputs.tunnel }}"
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: FRDMX-${{ github.event.inputs.target }}-${{ github.event.inputs.board }}
+          name: FRDMX-v25.12.1-${{ github.event.inputs.target }}
           path: |
             compiled_images/*.tar.gz
             compiled_images/*.img.gz
