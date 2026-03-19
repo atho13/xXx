@@ -52,7 +52,6 @@ jobs:
         run: |
           sudo timedatectl set-timezone "${{ env.TZ }}"
           sudo apt-get update
-          # Wajib instal zstd untuk menangani file .tar.zst
           sudo apt-get install -y build-essential clang flex bison g++ gawk gettext \
           git libncurses5-dev libssl-dev rsync unzip zlib1g-dev \
           curl tar qemu-utils wget python3-setuptools python3-dev python-is-python3 zstd
@@ -60,64 +59,47 @@ jobs:
       - name: Download Manual Image Builder
         run: |
           URL="${{ github.event.inputs.custom_url }}"
-          
-          # Proteksi jika user lupa mengganti URL default
-          if [[ "$URL" == "https://downloads.openwrt.org" ]]; then
-            echo "ERROR: Anda harus memasukkan URL lengkap sampai nama file .tar.zst!"
-            exit 1
-          fi
-
           echo "Processing Manual URL: $URL"
           mkdir -p ${{ env.WORKING_DIR }}
           
-          # Gunakan wget dengan retry dan cek status 
-          # -O- mengirim data ke pipe (|), tar mengekstraknya
           if [[ "$URL" == *.zst ]]; then
             wget -qO- "$URL" | tar --zstd -xf - -C ${{ env.WORKING_DIR }} --strip-components=1
           else
             wget -qO- "$URL" | tar -xJ -C ${{ env.WORKING_DIR }} --strip-components=1
           fi
-          
-          # Cek apakah folder hasil ekstrak kosong (artinya download gagal)
-          if [ -z "$(ls -A ${{ env.WORKING_DIR }})" ]; then
-             echo "ERROR: Download gagal atau file korup (bukan file tar/zst)."
-             exit 1
-          fi
-
 
       - name: Build Rootfs/Image
         run: |
           mkdir -p compiled_images
-          # Pastikan file script lokal ada dan punya izin eksekusi
           chmod +x scripts/*.sh
-          
           cd ${{ env.WORKING_DIR }}
           
-          # Logika Build berdasarkan Target Input
           if [ "${{ github.event.inputs.target }}" == "X86-64" ]; then
             bash ../scripts/aml-x86.sh "generic" "${{ github.event.inputs.tunnel }}"
           else
             bash ../scripts/aml-x86.sh "default" "${{ github.event.inputs.tunnel }}"
           fi
           
-          # Cari file hasil build (tar.gz atau img.gz)
+          # Kumpulkan hasil build ke folder penampung
           find bin/targets/ -type f \( -name "*.tar.gz" -o -name "*.img.gz" \) -exec cp {} ../compiled_images/ \; 2>/dev/null || true
 
       - name: Repack Amlogic (Conditional)
-        if: github.event.inputs.target == 'Amlogic-TVBox'
+        if: github.event.inputs.target == 'Amlogic'
         run: |
           chmod +x scripts/REPACK25.sh
           ./scripts/REPACK25.sh "ophub" "${{ github.event.inputs.board }}" "${{ github.event.inputs.kernel }}" "${{ github.event.inputs.tunnel }}"
 
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: FRDMX-Manual-Build
-          path: |
-            compiled_images/*.tar.gz
-            compiled_images/*.img.gz
-            out/*.img
-            *.img
+      - name: Organize Files for Release
+        run: |
+          mkdir -p release_files
+          # Pindahkan semua hasil build dan repack ke folder rilis
+          [ -d compiled_images ] && cp compiled_images/* release_files/ 2>/dev/null || true
+          [ -d out ] && cp out/*.img release_files/ 2>/dev/null || true
+          cp *.img release_files/ 2>/dev/null || true
+          
+          # Beri nama unik agar mudah dikenali di Release
+          cd release_files
+          for f in *; do mv "$f" "FRDMX-$(date +%Y%m%d)-$f" 2>/dev/null || true; done
 
       - name: Generate Tag & Release Name
         id: tag
@@ -131,17 +113,11 @@ jobs:
         with:
           tag_name: ${{ steps.tag.outputs.release_tag }}
           name: FRDMX Build - ${{ steps.tag.outputs.release_date }}
-          draft: false
-          prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
-          files: |
-            compiled_images/*.tar.gz
-            compiled_images/*.img.gz
-            out/*.img
-            *.img
+          files: release_files/*
 
       - name: Cleanup
         if: always()
         run: |
           sudo rm -rf ${{ env.WORKING_DIR }}
-          sudo rm -rf compiled_images
+          sudo rm -rf compiled_images release_files out
