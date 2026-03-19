@@ -1,17 +1,14 @@
 #!/bin/bash
 
-# Fungsi Log
 log() {
     echo -e "[ $(date +%H:%M:%S) ] $*"
 }
 
-# Ambil argumen profile
-PROFILE=$1
-[ -z "$PROFILE" ] && PROFILE="default"
+# Ambil input target dari workflow (Amlogic atau X86-64)
+TARGET_TYPE=$1 
 
-# 1. CORE PACKAGES (Sistem Dasar)
-# Pastikan ada spasi di akhir kutip
-CORE_PACKAGES="base-files ca-bundle dnsmasq-full dropbear e2fsprogs firewall4 fstools \
+# 1. DAFTAR PAKET LENGKAP
+PACKAGES="base-files ca-bundle dnsmasq-full dropbear e2fsprogs firewall4 fstools \
 kmod-button-hotplug kmod-nft-offload libc libgcc libustream-mbedtls logd \
 mkf2fs mtd netifd nftables odhcp6c odhcpd-ipv6only partx-utils ppp ppp-mod-pppoe procd-ujail \
 uci uclient-fetch urandom-seed urngd luci luci-compat luci-lib-base \
@@ -24,53 +21,52 @@ uqmi usb-modeswitch uuidgen zstd wwan ziptool zoneinfo-asia zoneinfo-core zram-s
 openssh-sftp-server adb wget-ssl httping htop jq tar coreutils-sleep coreutils-stat \
 kmod-nls-utf8 kmod-usb-storage cgi-io chattr comgt comgt-ncm coremark coreutils coreutils-base64 \
 coreutils-nohup luci-app-ttyd luci-theme-material wpad-openssl iw iwinfo wireless-regdb kmod-cfg80211 \
-fstrim "
+fstrim"
 
-# 2. X86_64 DRIVERS (LAN & WIFI)
-DRIVERS_X86="kmod-e1000 kmod-e1000e kmod-igb kmod-ixgbe kmod-r8169 kmod-r8168 \
-kmod-r8125 kmod-r8101 kmod-tg3 kmod-bnx2 kmod-forcedeth kmod-pcnet32 \
-kmod-sky2 kmod-8139cp kmod-8139too kmod-usb-net-rtl8152 kmod-usb-net-asix-ax88179 \
-kmod-iwlwifi kmod-ath9k kmod-ath10k "
-
-# 3. OPTIMASI X86 (AES-NI & BBR)
-# Catatan: kmod-crypto-aesni adalah nama paket yang benar untuk x86
-X86_OPTIMIZATION="intel-microcode amd64-microcode kmod-crypto-aesni kmod-crypto-authenc \
-kmod-tcp-bbr kmod-sched-cake kmod-sched-core "
-
-# 4. EXTRA APPS
-EXTRAS="luci-app-statistics collectd-mod-cpu collectd-mod-interface collectd-mod-memory "
-
-# 5. LOGIKA PENGGABUNGAN (DIPERBAIKI AGAR TIDAK MENEMPEL)
-PACKAGES="$CORE_PACKAGES"
-
-if [ "$PROFILE" == "generic" ]; then
+# 2. LOGIKA PAKET BERDASARKAN TARGET
+if [ "$TARGET_TYPE" == "generic" ]; then
     log "INFO: Menambahkan Driver & Optimasi x86_64..."
-    PACKAGES="$PACKAGES $DRIVERS_X86 $X86_OPTIMIZATION $EXTRAS"
+    DRIVERS_X86="kmod-e1000 kmod-e1000e kmod-igb kmod-ixgbe kmod-r8169 kmod-r8168 kmod-r8125"
+    OPTIMASI="intel-microcode amd64-microcode kmod-crypto-aesni kmod-tcp-bbr"
+    PACKAGES="$PACKAGES $DRIVERS_X86 $OPTIMASI"
 else
     log "INFO: Menambahkan Paket Khusus Amlogic TV Box..."
-    PACKAGES="$PACKAGES luci-app-amlogic kmod-amlogic-meson-gx-mmc "
+    # Driver LAN wajib Amlogic agar internet jalan
+    PACKAGES="$PACKAGES luci-app-amlogic kmod-amlogic-meson-gx-mmc kmod-amlogic-meson-gxl-eth"
 fi
 
-# 6. SCRIPT AUTOSTART (Aktivasi BBR & SSD Trim)
-# File ini akan disisipkan ke dalam folder /etc/uci-defaults/ di firmware
+# 3. KONFIGURASI OTOMATIS (IP STATIS & BBR)
 mkdir -p files/etc/uci-defaults
 cat <<EOF > files/etc/uci-defaults/99-custom-settings
 #!/bin/sh
-# Aktifkan Google BBR
+# 1. Aktifkan Google BBR
 echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
 echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
 sysctl -p
 
-# Jalankan fstrim sekali saat boot jika x86
+# 2. Pengaturan Network (IP Statis 192.168.1.1)
+# Menghapus jembatan (bridge) jika ada dan mengatur eth0 sebagai LAN utama
+uci set network.lan.device='eth0'
+uci set network.lan.proto='static'
+uci set network.lan.ipaddr='192.168.1.1'
+uci set network.lan.netmask='255.255.255.0'
+uci set network.lan.gateway='192.168.1.1'
+uci set network.lan.dns='8.8.8.8 1.1.1.1'
+
+# Simpan dan terapkan
+uci commit network
+/etc/init.d/network restart
+
+# 3. Jalankan fstrim jika x86
 [ -x /sbin/fstrim ] && /sbin/fstrim -av
 exit 0
 EOF
 chmod +x files/etc/uci-defaults/99-custom-settings
 
-# 7. EKSEKUSI BUILD
-log "INFO: Memulai proses Build Firmware untuk profile: $PROFILE"
+# 4. EKSEKUSI BUILD (PROFILE generic)
+log "INFO: Memulai proses Build Firmware..."
 
-make image PROFILE="$PROFILE" \
+make image PROFILE="generic" \
            PACKAGES="$PACKAGES" \
            FILES="files" \
            CONFIG_TARGET_ROOTFS_TARGZ=y \
@@ -78,8 +74,8 @@ make image PROFILE="$PROFILE" \
            CONFIG_TARGET_ROOTFS_PARTSIZE=1024
 
 if [ $? -eq 0 ]; then
-    log "SUCCESS: Build Firmware Selesai!"
+    log "SUCCESS: Build Selesai!"
 else
-    log "ERROR: Build Gagal. Cek log di atas."
+    log "ERROR: Build Gagal!"
     exit 1
 fi
