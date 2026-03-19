@@ -6,7 +6,7 @@ on:
       target:
         description: "Pilih Target Hardware"
         required: true
-        default: "X86-64"
+        default: "Amlogic-TVBox"
         type: choice
         options:
           - X86-64
@@ -16,40 +16,25 @@ on:
         required: true
         default: "s905x"
         type: choice
-        options:
-          - s905x-b860h
-          - s905x
-          - s905x3
-          - s905x2
-          - s905w
-          - s912
-          - s922x
-          - s905d
-          - n1
+        options: ["s905x-b860h", "s905x", "s905x3", "s905x2", "s905w", "s912", "s922x", "s905d", "n1"]
       kernel:
         description: "Pilih Versi Kernel Amlogic"
         required: true
-        default: "6.18.y"
+        default: "6.6.y"
         type: choice
-        options:
-          - 6.6.y
-          - 6.12.y
-          - 6.18.y
+        options: ["6.6.y", "6.12.y", "6.1.y"]
       tunnel:
         description: "Pilih Tunnel VPN"
         required: true
         default: "no-tunnel"
         type: choice
-        options:
-          - no-tunnel
-          - openclash
-          - nikki
-          
+        options: ["no-tunnel", "openclash", "nikki"]
+
 env:
   TZ: Asia/Jakarta
   WORKING_DIR: imagebuilder
-  # Variabel ARCH_2 untuk memicu logika Hybrid di aml-25.sh
-  ARCH_2: ${{ github.event.inputs.target == 'X86-64' && 'x86_64' || 'armvirt' }}
+  # Ganti VER ke versi OpenWrt/ImmortalWrt yang Anda inginkan
+  VER: "23.05.3" 
 
 jobs:
   build:
@@ -62,51 +47,60 @@ jobs:
         run: |
           sudo timedatectl set-timezone "${{ env.TZ }}"
           sudo apt-get update
+          # Perbaikan: python3-distutils diganti dengan python3-setuptools & python-is-python3
           sudo apt-get install -y build-essential clang flex bison g++ gawk gettext \
-          git libncurses5-dev libssl-dev python3-distutils rsync unzip zlib1g-dev \
-          curl tar qemu-utils
+          git libncurses5-dev libssl-dev rsync unzip zlib1g-dev \
+          curl tar qemu-utils wget python3-setuptools python3-dev python-is-python3
 
       - name: Download Image Builder
         run: |
-          # Logika download berdasarkan Target
+          # Logika URL lengkap untuk Image Builder
           if [ "${{ github.event.inputs.target }}" == "X86-64" ]; then
-            URL="https://downloads.openwrt.org"
+            URL="https://downloads.openwrt.org{{ env.VER }}/targets/x86/64/openwrt-imagebuilder-${{ env.VER }}-x86-64.Linux-x86_64.tar.xz"
           else
-            URL="https://downloads.openwrt.org"
+            URL="https://downloads.openwrt.org{{ env.VER }}/targets/armvirt/64/openwrt-imagebuilder-${{ env.VER }}-armvirt-64.Linux-x86_64.tar.xz"
           fi
-          wget -qO- "$URL" | tar -xJ
-          mv openwrt-imagebuilder-* ${{ env.WORKING_DIR }}
+          
+          echo "Downloading: $URL"
+          mkdir -p ${{ env.WORKING_DIR }}
+          wget -qO- "$URL" | tar -xJ -C ${{ env.WORKING_DIR }} --strip-components=1
 
       - name: Build Rootfs/Image (Hybrid Mode)
-        id: build_base
         run: |
           mkdir -p compiled_images
+          # Pastikan script di folder repo bisa dieksekusi
+          chmod +x scripts/*.sh
+          
           cd ${{ env.WORKING_DIR }}
-          # Salin skrip aml-x86.sh dari repo ke folder kerja
-          cp ../scripts/aml-x86.sh .
-          chmod +x aml-x86.sh
+          # Ambil profile berdasarkan target
+          if [ "${{ github.event.inputs.target }}" == "X86-64" ]; then
+            bash ../scripts/aml-x86.sh "generic" "${{ github.event.inputs.tunnel }}"
+          else
+            bash ../scripts/aml-x86.sh "default" "${{ github.event.inputs.tunnel }}"
+          fi
           
-          # Jalankan skrip Hybrid (Otomatis deteksi ARCH_2)
-          ./aml-x86.sh ${{ github.event.inputs.target == 'X86-64' && 'generic' || 'default' }} ${{ github.event.inputs.tunnel }}
-          
-          # Pindahkan hasil ke folder luar (sejajar root)
-          mv ../compiled_images/* ../compiled_images/ 2>/dev/null || true
+          # Jika script Anda menaruh hasil di bin/, pindahkan ke compiled_images
+          find bin/targets/ -type f -name "*.tar.gz" -exec cp {} ../compiled_images/ \;
+          find bin/targets/ -type f -name "*.img.gz" -exec cp {} ../compiled_images/ \;
 
       - name: Repack Amlogic (Hanya jika Target Amlogic)
         if: github.event.inputs.target == 'Amlogic-TVBox'
         run: |
-          # Memberikan izin ke skrip repack
-          chmod +x ./scripts/REPACK25.sh
-          # Repack menggunakan rootfs yang baru saja dibuat
-          ./scripts/REPACK25.sh "ophub" "s905x" "${{ github.event.inputs.kernel }}" "${{ github.event.inputs.tunnel }}"
+          # Menjalankan repack menggunakan hasil rootfs dari step sebelumnya
+          ./scripts/REPACK25.sh "ophub" "${{ github.event.inputs.board }}" "${{ github.event.inputs.kernel }}" "${{ github.event.inputs.tunnel }}"
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: FRDMX-Firmware-${{ github.event.inputs.target }}
-          path: compiled_images/*
+          name: FRDMX-${{ github.event.inputs.target }}-${{ github.event.inputs.board }}-${{ github.event.inputs.tunnel }}
+          path: |
+            compiled_images/*.img.gz
+            compiled_images/*.tar.gz
+            *.img
+            out/*.img
 
       - name: Cleanup
         if: always()
         run: |
-          sudo rm -rf ${{ env.WORKING_DIR }} compiled_images
+          sudo rm -rf ${{ env.WORKING_DIR }}
+          sudo rm -rf compiled_images
