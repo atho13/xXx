@@ -51,11 +51,11 @@ jobs:
       - name: Build Rootfs
         run: |
           mkdir -p compiled_images
-          chmod +x scripts/aml-x86.sh
+          chmod +x scripts/rootfs.sh
           cd ${{ env.WORKING_DIR }}
           
           # Jalankan script build dengan profil default (ArmVirt)
-          bash ../scripts/aml-x86.sh "default" "${{ github.event.inputs.tunnel }}"
+          bash ../scripts/rootfs.sh "default" "${{ github.event.inputs.tunnel }}"
           
           # Cari file .tar.gz (Rootfs) dan pindahkan ke folder output
           find bin/targets/ -type f -name "*.tar.gz" -exec cp {} ../compiled_images/ \;
