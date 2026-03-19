@@ -6,7 +6,8 @@ KERNEL=$3
 
 ROOT_DIR="${GITHUB_WORKSPACE:-$(pwd)}"
 OUTPUT_DIR="${ROOT_DIR}/compiled_images"
-REPO_URL="https://x-access-token:${GH_TOKEN}@://github.com"
+#REPO_URL="https://x-access-token:${GH_TOKEN}@://github.com"
+REPO_URL="https://github.com/ribel13/amlogic-s9xxx-openwrt/archive/refs/heads/${BRANCH}.zip"
 
 # 1. Clone Builder Privat
 cd "${ROOT_DIR}"
