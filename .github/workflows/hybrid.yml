@@ -1,32 +1,28 @@
-name: Build FRDMX Hybrid (v25.12.1 Stable)
+name: Build FRDMX (Manual URL Mode)
 
 on:
   workflow_dispatch:
     inputs:
-      release_branch:
-        description: "Pilih Versi OpenWrt"
-        required: true
-        default: "openwrt:25.12.1"
-        type: choice
-        options:
-          - "openwrt:25.12.1"
-          - "immortalwrt:25.12.1"
+      custom_url:
+        #description: "https://downloads.openwrt.org/releases/25.12.1/targets/x86/generic/openwrt-imagebuilder-25.12.1-x86-generic.Linux-x86_64.tar.zst"
+        description: "https://downloads.openwrt.org/releases/25.12.1/targets/armsr/armv8/openwrt-imagebuilder-25.12.1-armsr-armv8.Linux-x86_64.tar.zst"
+        default: "https://downloads.openwrt.org"
       target:
-        description: "Pilih Target Hardware"
+        description: "Pilih Target Hardware (Sesuaikan dengan isi URL)"
         required: true
-        default: "Amlogic-TVBox"
+        default: "Amlogic"
         type: choice
         options:
           - X86-64
-          - Amlogic-TVBox
+          - Amlogic
       board:
-        description: "Pilih Board Amlogic"
+        description: "Pilih Board Amlogic (Hanya jika target Amlogic)"
         required: true
         default: "s905x"
         type: choice
         options: ["s905x-b860h", "s905x", "s905x3", "s905x2", "s905w", "s912", "s922x", "s905d", "n1"]
       kernel:
-        description: "Pilih Versi Kernel Amlogic"
+        description: "Pilih Kernel Amlogic"
         required: true
         default: "6.12.y"
         type: choice
@@ -53,56 +49,52 @@ jobs:
         run: |
           sudo timedatectl set-timezone "${{ env.TZ }}"
           sudo apt-get update
+          # Wajib instal zstd untuk menangani file .tar.zst
           sudo apt-get install -y build-essential clang flex bison g++ gawk gettext \
           git libncurses5-dev libssl-dev rsync unzip zlib1g-dev \
           curl tar qemu-utils wget python3-setuptools python3-dev python-is-python3 zstd
 
-      - name: Download Image Builder
+      - name: Download Manual Image Builder
         run: |
-          # SOLUSI: Pisahkan Nama Distro dan Versi menggunakan Bash cut
-          INPUT_STR="${{ github.event.inputs.release_branch }}"
-          BASE=$(echo $INPUT_STR | cut -d':' -f1)
-          VER=$(echo $INPUT_STR | cut -d':' -f2)
-          
-          # Tentukan URL berdasarkan Target (x86 atau ArmVirt)
-          if [ "${{ github.event.inputs.target }}" == "X86-64" ]; then
-            URL="https://downloads.${BASE}.org/releases/${VER}/targets/x86/64/${BASE}-imagebuilder-${VER}-x86-64.Linux-x86_64.tar.zst"
-          else
-            URL="https://downloads.${BASE}.org/releases/${VER}/targets/armvirt/64/${BASE}-imagebuilder-${VER}-armvirt-64.Linux-x86_64.tar.zst"
-          fi
-          
-          echo "Downloading from: $URL"
+          URL="${{ github.event.inputs.custom_url }}"
+          echo "Processing Manual URL: $URL"
           mkdir -p ${{ env.WORKING_DIR }}
-          # Gunakan --zstd untuk ekstrak file .tar.zst dari versi 25.x
-          wget -qO- "$URL" | tar --zstd -xf - -C ${{ env.WORKING_DIR }} --strip-components=1
+          
+          # Download dengan pengecekan ekstensi
+          if [[ "$URL" == *.zst ]]; then
+            wget -qO- "$URL" | tar --zstd -xf - -C ${{ env.WORKING_DIR }} --strip-components=1
+          else
+            wget -qO- "$URL" | tar -xJ -C ${{ env.WORKING_DIR }} --strip-components=1
+          fi
 
-      - name: Build Rootfs/Image (Hybrid Mode)
+      - name: Build Rootfs/Image
         run: |
           mkdir -p compiled_images
+          # Pastikan file script lokal ada dan punya izin eksekusi
           chmod +x scripts/*.sh
           
           cd ${{ env.WORKING_DIR }}
-          # Menjalankan build dengan profil sesuai target
+          
+          # Logika Build berdasarkan Target Input
           if [ "${{ github.event.inputs.target }}" == "X86-64" ]; then
             bash ../scripts/aml-x86.sh "generic" "${{ github.event.inputs.tunnel }}"
           else
             bash ../scripts/aml-x86.sh "default" "${{ github.event.inputs.tunnel }}"
           fi
           
-          # Salin file hasil build (.tar.gz atau .img.gz)
+          # Cari file hasil build (tar.gz atau img.gz)
           find bin/targets/ -type f \( -name "*.tar.gz" -o -name "*.img.gz" \) -exec cp {} ../compiled_images/ \; 2>/dev/null || true
 
-      - name: Repack Amlogic (Hanya jika Target Amlogic)
+      - name: Repack Amlogic (Conditional)
         if: github.event.inputs.target == 'Amlogic-TVBox'
         run: |
           chmod +x scripts/REPACK25.sh
-          # Jalankan skrip repack menggunakan board dan kernel dari input
           ./scripts/REPACK25.sh "ophub" "${{ github.event.inputs.board }}" "${{ github.event.inputs.kernel }}" "${{ github.event.inputs.tunnel }}"
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: FRDMX-v25.12.1-${{ github.event.inputs.target }}
+          name: FRDMX-Manual-Build
           path: |
             compiled_images/*.tar.gz
             compiled_images/*.img.gz
