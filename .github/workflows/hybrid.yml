@@ -1,4 +1,4 @@
-name: Build FRDMX (Manual URL Mode)
+name: Build FRDMX Hybrid (x86 & Amlogic)
 
 permissions:
   contents: write
@@ -7,35 +7,27 @@ on:
   workflow_dispatch:
     inputs:
       custom_url:
-        description: "Tempel URL Image Builder (.tar.zst atau .tar.xz) di sini"
-        #default: "https://downloads.openwrt.org/releases/25.12.1/targets/x86/generic/openwrt-imagebuilder-25.12.1-x86-generic.Linux-x86_64.tar.zst"
-        default: "https://downloads.openwrt.org/releases/25.12.1/targets/armsr/armv8/openwrt-imagebuilder-25.12.1-armsr-armv8.Linux-x86_64.tar.zst"
+        description: "URL Image Builder (.tar.zst)"
+        required: true
+        default: "https://downloads.openwrt.org"
       target:
-        description: "Pilih Target Hardware (Sesuaikan dengan isi URL)"
+        description: "Pilih Target Hardware"
         required: true
         default: "Amlogic"
         type: choice
-        options:
-          - X86-64
-          - Amlogic
+        options: ["X86-64", "Amlogic"]
       board:
-        description: "Pilih Board Amlogic (Hanya jika target Amlogic)"
+        description: "Pilih Board Amlogic (Hanya jika Amlogic)"
         required: true
         default: "s905x"
         type: choice
-        options: ["s905x-b860h", "s905x", "s905x3", "s905x2", "s905w", "s912", "s922x", "s905d", "n1"]
+        options: ["s905x", "s905x-b860h", "s905x3", "s905x2", "s905w", "n1"]
       kernel:
-        description: "Pilih Kernel Amlogic"
+        description: "Versi Kernel (Hanya jika Amlogic)"
         required: true
         default: "6.12.y"
         type: choice
         options: ["6.12.y", "6.6.y", "6.1.y"]
-      tunnel:
-        description: "Pilih Tunnel VPN"
-        required: true
-        default: "no-tunnel"
-        type: choice
-        options: ["no-tunnel", "openclash", "nikki"]
 
 env:
   TZ: Asia/Jakarta
@@ -56,52 +48,39 @@ jobs:
           git libncurses5-dev libssl-dev rsync unzip zlib1g-dev \
           curl tar qemu-utils wget python3-setuptools python3-dev python-is-python3 zstd
 
-      - name: Download Manual Image Builder
+      - name: Download Image Builder
         run: |
           URL="${{ github.event.inputs.custom_url }}"
-          echo "Processing Manual URL: $URL"
           mkdir -p ${{ env.WORKING_DIR }}
-          
           if [[ "$URL" == *.zst ]]; then
             wget -qO- "$URL" | tar --zstd -xf - -C ${{ env.WORKING_DIR }} --strip-components=1
           else
             wget -qO- "$URL" | tar -xJ -C ${{ env.WORKING_DIR }} --strip-components=1
           fi
 
-      - name: Build Rootfs/Image
+      - name: Build Firmware
         run: |
           mkdir -p compiled_images
           chmod +x scripts/*.sh
           cd ${{ env.WORKING_DIR }}
-          
+          # Jalankan script build utama
           if [ "${{ github.event.inputs.target }}" == "X86-64" ]; then
-            bash ../scripts/aml-x86.sh "generic" "${{ github.event.inputs.tunnel }}"
+            bash ../scripts/aml-x86.sh "generic"
           else
-            bash ../scripts/aml-x86.sh "default" "${{ github.event.inputs.tunnel }}"
+            bash ../scripts/aml-x86.sh "default"
           fi
-          
-          # Kumpulkan hasil build ke folder penampung
-          find bin/targets/ -type f \( -name "*.tar.gz" -o -name "*.img.gz" \) -exec cp {} ../compiled_images/ \; 2>/dev/null || true
+          # Kumpulkan hasil build
+          find bin/targets/ -type f \( -name "*.tar.gz" -o -name "*.img.gz" \) -exec cp {} ../compiled_images/ \;
 
-      - name: Repack Amlogic (Conditional)
+      - name: Repack Amlogic (Hanya jika Target Amlogic)
         if: github.event.inputs.target == 'Amlogic'
+        env:
+          GH_TOKEN: ${{ secrets.AKSI_TOKEN }}
         run: |
           chmod +x scripts/REPACK25.sh
-          ./scripts/REPACK25.sh "ophub" "${{ github.event.inputs.board }}" "${{ github.event.inputs.kernel }}" "${{ github.event.inputs.tunnel }}"
+          ./scripts/REPACK25.sh "ophub" "${{ github.event.inputs.board }}" "${{ github.event.inputs.kernel }}"
 
-      - name: Organize Files for Release
-        run: |
-          mkdir -p release_files
-          # Pindahkan semua hasil build dan repack ke folder rilis
-          [ -d compiled_images ] && cp compiled_images/* release_files/ 2>/dev/null || true
-          [ -d out ] && cp out/*.img release_files/ 2>/dev/null || true
-          cp *.img release_files/ 2>/dev/null || true
-          
-          # Beri nama unik agar mudah dikenali di Release
-          cd release_files
-          for f in *; do mv "$f" "FRDMX-$(date +%Y%m%d)-$f" 2>/dev/null || true; done
-
-      - name: Generate Tag & Release Name
+      - name: Generate Release Tag
         id: tag
         run: |
           echo "release_tag=$(date +'%Y.%m.%d-%H%M')" >> $GITHUB_OUTPUT
@@ -109,15 +88,11 @@ jobs:
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
-        if: success()
         with:
           tag_name: ${{ steps.tag.outputs.release_tag }}
           name: FRDMX Build - ${{ steps.tag.outputs.release_date }}
-          token: ${{ secrets.RELEASES_TOKEN }}
-          files: release_files/*
-
-      - name: Cleanup
-        if: always()
-        run: |
-          sudo rm -rf ${{ env.WORKING_DIR }}
-          sudo rm -rf compiled_images release_files out
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            compiled_images/*.tar.gz
+            compiled_images/*.img.gz
+            compiled_images/*.img
