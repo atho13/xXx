@@ -128,11 +128,10 @@ mv /www/luci-static/resources/view/status/include/29_ports.js /www/luci-static/r
 
 # System customizations
 echo "Applying system.."
-sed -i -e 's/\[ -f \/etc\/banner \] && cat \/etc\/banner/#&/' -e 's/\[ -n \"\$FAILSAFE\" \] && cat \/etc\/banner.failsafe/& || \/usr\/bin\/chnrot/' /etc/profile
-
-# Execute scripts
-# echo "Running install2 script..."
-# bash /root/install2.sh
+chmod +x /sbin/chnrot
+chmod +x /etc/profile
+sed -i -e 's/\[ -f \/etc\/banner \] && cat \/etc\/banner/#&/' \
+       -e 's/\[ -n \"\$FAILSAFE\" \] && cat \/etc\/banner.failsafe/& || \/sbin\/chnrot/' /etc/profile
 
 # Tunnel
 # Web server
