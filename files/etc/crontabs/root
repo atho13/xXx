@@ -1,3 +1,13 @@
 # =========================================================
-# SCHEDULE TIME
+# SCHEDULE TIME by FRDMX
 # =========================================================
+
+# auto renew ip lease (Mon-Sat 03:30 AM) - Universal Port Detection
+#30 3 * * 1,2,3,4,5,6 for dev in /dev/ttyUSB*; do [ -e "\$dev" ] && echo AT+CFUN=4 | atinout - "\$dev" -; done && sleep 3 && ifdown wan && sleep 3 && for dev in /dev/ttyUSB*; do [ -e "\$dev" ] && echo AT+CFUN=1 | atinout - "\$dev" -; done && sleep 3 && ifup wan
+
+# auto restart modem (Sunday 03:30 AM)
+#30 3 * * 0 for dev in /dev/ttyUSB*; do [ -e "\$dev" ] && echo AT^RESET | atinout - "\$dev" -; done && sleep 20 && ifdown wan && ifup wan
+
+# JADWAL AKTIF
+0 * * * * /sbin/free.sh >/dev/null 2>&1
+*/5 * * * * /www/vnstati/vnstati.sh >/dev/null 2>&1
