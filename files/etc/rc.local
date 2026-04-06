@@ -1,5 +1,3 @@
 # Put your custom commands here that should be executed once
-bash /etc/custom_service/start_service.sh
-/usr/sbin/bhled -r
-# /usr/sbin/hgled -r
+bash /etc/custom_service/start_service.sh &
 exit 0
