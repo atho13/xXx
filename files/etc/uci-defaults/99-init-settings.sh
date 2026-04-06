@@ -1,6 +1,6 @@
 #!/bin/sh
 
-exec > "/root/setup-xidzswrt.log" 2>&1
+#exec > "/root/setup-xidzswrt.log" 2>&1
 
 echo "$(date)"
 
