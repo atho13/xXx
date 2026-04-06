@@ -691,54 +691,49 @@ jobs:
           ls -la compiled_images/
           echo "status=success" >> "$GITHUB_OUTPUT"
 
-      - name: Archive and Upload RootFS
+      - name: Archive and Prepare RootFS
+        id: archive_step
         run: |
-          RESULT_DIR="bin/targets"
+          # Pastikan folder tujuan ada
           mkdir -p ${{ github.workspace }}/rootfs_archive
-
-          echo "Mencari file RootFS di $RESULT_DIR..."
-          ROOTFS_FILE=$(find $RESULT_DIR -type f \( -name "*rootfs.tar.gz" -o -name "*rootfs.tar.zst" \) | head -n 1)
+          
+          # Cari di folder compiled_images (sesuai step build sebelumnya)
+          # Jika script build-mu tidak memindahkannya, ganti ke ${{ env.WORKING_DIR }}/bin/targets
+          SEARCH_DIR="${{ env.WORKING_DIR }}/compiled_images"
+          
+          echo "Mencari file RootFS di $SEARCH_DIR..."
+          ROOTFS_FILE=$(find "$SEARCH_DIR" -type f \( -name "*rootfs.tar.gz" -o -name "*rootfs.tar.zst" \) | head -n 1)
 
           if [ -n "$ROOTFS_FILE" ]; then
             EXT="${ROOTFS_FILE##*.}"
-            FILENAME=$(basename "$ROOTFS_FILE")
-            TARGET_NAME="${{ matrix.target }}"
-            # Bersihkan nama target dari spasi untuk nama file
-            SAFE_TARGET=$(echo $TARGET_NAME | tr ' ' '_')
+            # Gunakan variabel NAMA_MODIFIED yang sudah kamu buat di step sebelumnya
+            SAFE_TARGET="${{ env.NAMA_MODIFIED }}"
             
-            echo "Menemukan RootFS: $FILENAME"
+            echo "Menemukan RootFS: $(basename "$ROOTFS_FILE")"
 
             if [[ "$EXT" == "zst" ]]; then
-              echo "Mengonversi .zst ke .tar.gz untuk arsip..."
+              echo "Mengonversi .zst ke .tar.gz..."
               zstd -d -c "$ROOTFS_FILE" | gzip > "${{ github.workspace }}/rootfs_archive/${SAFE_TARGET}-rootfs.tar.gz"
             else
               cp "$ROOTFS_FILE" "${{ github.workspace }}/rootfs_archive/${SAFE_TARGET}-rootfs.tar.gz"
             fi
-            echo "Arsip RootFS siap: ${SAFE_TARGET}-rootfs.tar.gz"
+            
+            echo "Arsip siap di: ${{ github.workspace }}/rootfs_archive/"
+            echo "status=success" >> "$GITHUB_OUTPUT"
           else
             echo "Peringatan: File RootFS tidak ditemukan!"
+            echo "status=failed" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Upload RootFS to Release
         uses: softprops/action-gh-release@v2
-        if: always()
+        # Hanya jalan jika step archive berhasil
+        if: steps.archive_step.outputs.status == 'success'
         with:
           tag_name: ${{ needs.prebuild.outputs.release_tag }}
           files: ${{ github.workspace }}/rootfs_archive/*.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
-
-      - name: Upload OpenWrt rootfs to Release
-        uses: ncipollo/release-action@main
-        if: ${{ steps.imagebuilder.outputs.status == 'success' && !cancelled() }}
-        with:
-          tag: ${{ env.build_tag }}
-          artifacts: output/*
-          allowUpdates: true
-          removeArtifacts: false
-          replacesArtifacts: true
-          makeLatest: true
-          token: ${{ secrets.RELEASES_TOKEN }} 
 
       - name: Repack OpenWrt
         id: repack
