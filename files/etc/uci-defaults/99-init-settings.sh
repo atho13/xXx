@@ -128,10 +128,10 @@ mv /www/luci-static/resources/view/status/include/29_ports.js /www/luci-static/r
 
 # System customizations
 echo "Applying system.."
-chmod +x /sbin/chnrot
+chmod +x /bin/chnrot
 chmod +x /etc/profile
 sed -i -e 's/\[ -f \/etc\/banner \] && cat \/etc\/banner/#&/' \
-       -e 's/\[ -n \"\$FAILSAFE\" \] && cat \/etc\/banner.failsafe/& || \/sbin\/chnrot/' /etc/profile
+       -e 's/\[ -n \"\$FAILSAFE\" \] && cat \/etc\/banner.failsafe/& || \/bin\/chnrot/' /etc/profile
 
 # Tunnel
 # Web server
