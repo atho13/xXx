@@ -8,6 +8,5 @@
 # auto restart modem (Sunday 03:30 AM)
 #30 3 * * 0 for dev in /dev/ttyUSB*; do [ -e "\$dev" ] && echo AT^RESET | atinout - "\$dev" -; done && sleep 20 && ifdown wan && ifup wan
 
-# JADWAL AKTIF
 0 * * * * /sbin/free.sh >/dev/null 2>&1
 */5 * * * * /www/vnstati/vnstati.sh >/dev/null 2>&1
