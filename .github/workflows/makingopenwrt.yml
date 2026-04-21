@@ -165,7 +165,7 @@ jobs:
           if [ -d "amlogic-s9xxx-openwrt" ]; then
             rm -rf amlogic-s9xxx-openwrt
           fi
-          git clone --depth 1 https://github.com/ribel13/amlogic-s9xxx-openwrt.git
+          git clone --depth 1 https://github.com/atho13/amlogic-s9xxx-openwrt.git
           mkdir -p amlogic-s9xxx-openwrt/openwrt-armsr
     
       - name: Download Rootfs
