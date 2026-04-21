@@ -48,9 +48,9 @@ repackwrt() {
     log "INFO" "Using Branch: $BRANCH"
 
     # Define repo URLs and directories
-    #local OPHUB_REPO="https://github.com/syntax-xidz/amlogic-s9xxx-openwrt/archive/refs/heads/${BRANCH}.zip"
+    local OPHUB_REPO="https://github.com/atho13/amlogic-s9xxx-openwrt/archive/refs/heads/${BRANCH}.zip"
     #local ULO_REPO="https://github.com/syntax-xidz/ULO-Builder/archive/refs/heads/${BRANCH}.zip"
-    local OPHUB_REPO="https://github.com/ribel13/amlogic-s9xxx-openwrt/archive/refs/heads/${BRANCH}.zip"
+    #local OPHUB_REPO="https://github.com/ribel13/amlogic-s9xxx-openwrt/archive/refs/heads/${BRANCH}.zip"
     local ULO_REPO="https://github.com/ribel13/ULO-Builder/archive/refs/heads/${BRANCH}.zip"
     local work_dir="$GITHUB_WORKSPACE/$WORKING_DIR"
     local output_dir="${work_dir}/compiled_images"
