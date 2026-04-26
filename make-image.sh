@@ -18,7 +18,7 @@ EXCLUDED=""
 # CORE SYSTEM
 PACKAGES+=" dnsmasq-full libc block-mount zram-swap zoneinfo-core zoneinfo-asia bash screen \
 uhttpd uhttpd-mod-ubus luci luci-ssl openssh-sftp-server adb curl wget-ssl irqbalance \
-httping htop jq tar unzip coreutils-base64 coreutils-sleep coreutils-stat"
+httping htop jq tar unzip coreutils-base64 coreutils-sleep coreutils-stat kmod-tcp-bbr"
 
 # ETHERNET & MODEM DRIVERS
 PACKAGES+=" kmod-usb-net-rtl8150 kmod-usb-net-rtl8152 kmod-usb-net-asix kmod-usb-net-asix-ax88179"

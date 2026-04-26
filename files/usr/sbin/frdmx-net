@@ -1,0 +1,32 @@
+#!/bin/sh
+# =============================================================
+# FRDMX-Wrt USB Reset & Network Restarter
+# =============================================================
+
+GPIO="/sys/class/gpio"
+TARGET="http://bing.com"
+
+echo 510 > "${GPIO}/export" 2>/dev/null
+if [ -d "${GPIO}/gpio510" ]; then
+    U_PIN="505"
+else
+    U_PIN="516"
+fi
+if [ ! -d "${GPIO}/gpio$U_PIN" ]; then
+    echo "$U_PIN" > "${GPIO}/export" 2>/dev/null
+    sleep 0.1
+    echo out > "${GPIO}/gpio$U_PIN/direction" 2>/dev/null
+fi
+echo 1 > "${GPIO}/gpio${U_PIN}/value"
+while true; do
+  if ! curl -X "HEAD" --connect-timeout 5 -so /dev/null "$TARGET"; then
+    logger -t "FRDMX-RESET" "Internet Error! Melakukan USB Reset..."
+    echo 0 > "${GPIO}/gpio${U_PIN}/value"
+    sleep 5
+    echo 1 > "${GPIO}/gpio${U_PIN}/value"
+    /etc/init.d/network restart
+    sleep 30
+  else
+    sleep 15
+  fi
+done

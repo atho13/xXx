@@ -1,0 +1,177 @@
+{%
+    import { getuid, getspnam } from 'luci.core';
+    const boardinfo = ubus.call('system', 'board');
+    const hostname = striptags(boardinfo?.hostname ?? '?');
+    http.prepare_content('text/html; charset=UTF-8');
+%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{{ hostname }} - LuCI</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)),
+                  url('/luci-static/resources/icons/ui.jpg') center/cover no-repeat fixed;
+    }
+    .login-container {
+      width: 260px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    h2 {
+      margin: 0 0 4px;
+      font-weight: 800;
+      font-size: 18px;
+      color: #f59e0b;
+      letter-spacing: 1px;
+    }
+    .scroll-container {
+      height: 18px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .scroll-list {
+      display: flex;
+      flex-direction: column;
+      animation: rotate-list 7s infinite cubic-bezier(0.65, 0, 0.35, 1);
+    }
+    .scroll-item {
+      height: 18px;
+      line-height: 18px;
+      font-size: 10px;
+      color: #BDFF00;;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    @keyframes rotate-list {
+      0%, 20% { transform: translateY(0); }
+      25%, 45% { transform: translateY(-18px); }
+      50%, 70% { transform: translateY(-36px); }
+      75%, 95% { transform: translateY(-54px); }
+      100% { transform: translateY(0); }
+    }
+    .field {
+      margin: 6px 0;
+      text-align: left;
+    }
+    label {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 0.75rem;
+      color: #f1f5f9;
+    }
+    input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      outline: none;
+      font-size: 13px;
+      background: rgba(255, 255, 255, 0.2); /* Input Transparan */
+      color: #ffffff;
+    }
+    input::placeholder { color: rgba(255,255,255,0.5); }
+    .pwd-wrap { position: relative; }
+    .toggle {
+      position: absolute;
+      right: 8px;
+      top: 25px;
+      border: 0;
+      background: transparent;
+      color: #f1f5f9;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    button[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #d4af37, #f59e0b, #b8860b);
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 14px;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .alert {
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      border-radius: 6px;
+      padding: 6px;
+      margin-bottom: 8px;
+      font-size: 11px;
+    }
+    .footer {
+      margin-top: 15px;
+      font-size: 10px;
+      font-weight: 300;
+      color: #BDFF00;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <center>
+      <img src="/luci-static/resources/icons/boot.gif" style="max-width: 150px; margin-bottom: 5px;">
+    </center>
+    <h2>LOGIN</h2>
+    <div class="scroll-container">
+      <div class="scroll-list">
+        <div class="scroll-item">💥 FRDMX-WRT 💥</div>
+        <div class="scroll-item">
+          <script>document.write(new Date().toLocaleDateString("id-ID", { weekday:"short", day:"numeric", month:"short" }));</script>
+        </div>
+        <div class="scroll-item" id="jam-putar">00:00:00</div>
+      </div>
+    </div>
+    {% if (fuser): %}
+      <div class="alert">⚠ Sandi Salah Bro...</div>
+    {% endif %}
+    <form method="post">
+      <div class="field">
+        <label>User</label>
+        <input type="text" name="luci_username" value="root" readonly style="background:rgba(255,255,255,0.1); cursor:not-allowed; color:#aaa;">
+      </div>
+      <div class="field pwd-wrap">
+        <label>Pass</label>
+        <input id="password" type="password" name="luci_password" placeholder="..." required>
+        <button class="toggle" type="button" onclick="togglePwd()">👀</button>
+      </div>
+      <button type="submit">Masuk</button>
+    </form>
+    <div class="footer">Freedom Internet © <span id="year"></span></div>
+  </div>
+  <script>
+    function updateClock(){
+      const now = new Date();
+      const pad = n => String(n).padStart(2,'0');
+      const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      document.getElementById("jam-putar").textContent = timeStr;
+    }
+    setInterval(updateClock, 1000); updateClock();
+    document.getElementById('year').textContent = new Date().getFullYear();
+    function togglePwd(){
+      const p = document.getElementById('password');
+      p.type = (p.type === 'password') ? 'text' : 'password';
+    }
+    document.getElementById('password').focus();
+  </script>
+</body>
+</html>
