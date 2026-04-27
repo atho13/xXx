@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# ==========================================
+# FRDMX-Wrt Internet LED
+# Lokasi: /bin/frdmx
+# ==========================================
+
+if [ "$(id -u)" != "0" ]; then
+  echo "Harus dijalankan sebagai root" 1>&2
+  exit 1
+fi
+
+GPIO="/sys/class/gpio"
+TARGET="http://bing.com"
+
+P_ON="521"; P_OFF="517"  # Power LED
+L_ON="547"; L_OFF="548"  # LAN LED
+M_PIN="518"              # Mid LED
+
+init_gpio() {
+  for pin in $P_ON $P_OFF $L_ON $L_OFF $M_PIN; do
+    [ ! -d "${GPIO}/gpio$pin" ] && echo "$pin" > "${GPIO}/export" 2>/dev/null
+    echo out > "${GPIO}/gpio$pin/direction" 2>/dev/null
+  done
+}
+
+led_internet_ok() {
+  echo 0 > "${GPIO}/gpio${P_OFF}/value"; echo 1 > "${GPIO}/gpio${P_ON}/value"
+  echo 0 > "${GPIO}/gpio${L_OFF}/value"; echo 1 > "${GPIO}/gpio${L_ON}/value"
+  echo 0 > "${GPIO}/gpio${M_PIN}/value"
+  sleep 0.5
+  echo 0 > "${GPIO}/gpio${P_ON}/value"; echo 0 > "${GPIO}/gpio${P_OFF}/value"
+  echo 0 > "${GPIO}/gpio${L_ON}/value"; echo 0 > "${GPIO}/gpio${L_OFF}/value"
+  echo 1 > "${GPIO}/gpio${M_PIN}/value"
+  sleep 0.5
+}
+
+led_internet_dc() {
+  echo 1 > "${GPIO}/gpio${P_OFF}/value"; echo 0 > "${GPIO}/gpio${P_ON}/value"
+  echo 1 > "${GPIO}/gpio${L_OFF}/value"; echo 0 > "${GPIO}/gpio${L_ON}/value"
+  echo 1 > "${GPIO}/gpio${M_PIN}/value"
+}
+
+loop() {
+  init_gpio
+  echo "FRDMX Internet LED Mode Aktif..."
+  while true; do
+    if curl -X "HEAD" --connect-timeout 3 -so /dev/null "$TARGET"; then
+      led_internet_ok
+    else
+      led_internet_dc
+      sleep 5
+    fi
+  done
+}
+
+case "${1}" in
+  -l) loop ;;
+  -r) screen -AmdS frdmx_service "${0}" -l && echo "Service Started." ;;
+  -s) screen -ls | grep frdmx_service | cut -d. -f1 | xargs kill 2>/dev/null && echo "Service Stopped." ;;
+  *)  echo "Usage: frdmx [-l|-r|-s]" ;;
+esac

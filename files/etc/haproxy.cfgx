@@ -1,0 +1,21 @@
+
+global
+	maxconn 2000
+	uid 0
+	gid 0
+	daemon
+
+defaults
+	mode tcp
+	timeout connect 5s
+	timeout client 50s
+	timeout server 50s
+
+listen tunnel_game
+	bind :1194
+	server srv_game 127.0.0.1:4095 check
+
+listen tunnel_stream
+	bind :1195
+	server srv_stream 127.0.0.1:4096 check
+

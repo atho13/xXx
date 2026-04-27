@@ -1,59 +1,133 @@
 <%+header%>
-<p><br>
-<marquee scrollamount="10"; style="font-size:80px; color:#0C00FF;"><p><strong><h2>✪ Privat Use - Not For Sale ✪<center></marquee>
-
-</script>
-
-<div style="margin:20px 0; font-weight:bold;">
-  <center><p><strong><h1>-ˏˋ⋆ W E L C O M E ⋆ˊˎ-</h1><strong>
-  <center><p><strong>To the OpenWrt Mod Project<strong><p><br>
-  <center><p><strong><h1>OpenWrt 24.10.5</h1></p><br>
-  <center>The OpenWrt Project is a Linux operating system targeting embedded devices. Instead of trying to create a single, static firmware, OpenWrt provides a fully writable 
-  <center>filesystem with package management. This frees you from the application selection and configuration provided by the vendor and allows you to customize the 
-  <center>device through the use of packages to suit any application. For developers, OpenWrt is the framework to build an application without having to build a complete 
-  <center>firmware around it; for users this means the ability for full customization, to use the device in ways never envisioned.<center></p><br>
-</div>
-
-<!-- Container About -->
-<div class="about">
-  <div class="about-item">
-    <a href="" target="_blank" style="display:inline-block;">
-      <center><img src="/luci-static/resources/icons/boot.gif"
-           style="max-width:250px; border:0px solid #ddd; padding:5px; border-radius:8px;"/>
-      </a>
-    </p>
-  </div>
-</div>
-
-<!-- Credit Section -->
-<div class="credit-section">
-  <b>by @ ribel<p>
-  <b>- Freedom Internet -</b>
-  <br/>
-</div>
-
-<hr style="margin:40px 0;">
 
 <style>
-  .about-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 35px;
-    margin: 50px 0;
+  @keyframes tricolor {
+    0%, 100% { color: #007bff; text-shadow: 0 0 15px rgba(0, 123, 255, 0.5); }
+    33%      { color: #B804C7; text-shadow: 0 0 15px rgba(184, 4, 199, 0.5); }
+    66%      { color: #ffc107; text-shadow: 0 0 15px rgba(255, 193, 7, 0.5); }
+  }
+  
+  @keyframes pulse-blink {
+    50% { opacity: 0.4; transform: scale(1.02); }
   }
 
-  .about-item {
-    text-align: center;
+  .privat-use {
+    background-color: #CC0000; 
+    color: #FFFFFF; 
+    font-size: 16px;
+    font-weight: bold; 
+    text-transform: uppercase; 
+    padding: 8px 15px; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
+    display: inline-block;
+    transition: all 0.3s ease;
+    cursor: default;
+    max-width: 90%;
+  }
+  .privat-use:hover { background-color: #ff0000; transform: translateY(-2px); }
+
+  /* Judul Utama */
+  .judul-3-warna {
+    font-weight: 900; 
+    text-transform: uppercase; 
+    font-size: 38px; 
+    letter-spacing: 2px; 
+    margin-bottom: 5px;
+    animation: tricolor 5s linear infinite;
   }
 
-  .credit-section {
-    text-align: center;
-    margin: 20px 0;
-    font-size: 14px;
-    color: green;
-    line-height: 1.8;
+  /* Uptime Value */
+  .uptime-value {
+    color: #CC0000; 
+    font-weight: 900;
+    animation: pulse-blink 2s linear infinite;
+    display: inline-block;
+    font-size: 16px;
+  }
+
+  .desc-box {
+    max-width: 500px; margin: 20px auto; padding: 15px 20px; 
+    background: rgba(0,0,0,0.03); border-radius: 12px; 
+    border: 1px solid rgba(0,0,0,0.05); color: #444; 
+    font-size: 13.5px; line-height: 1.6; text-align: justify;
+  }
+
+  .about-container { display: flex; justify-content: center; margin: 30px 0; }
+  .about-container img { max-width: 220px; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); transition: 0.3s; }
+  .about-container img:hover { transform: scale(1.05); }
+
+  .freedom-text {
+    letter-spacing: 2px; color: #28a745; display: inline-flex; 
+    align-items: center; justify-content: center; gap: 8px; font-weight: bold;
+  }
+
+  @media screen and (max-width: 480px) {
+    .judul-3-warna { font-size: 24px; letter-spacing: 1px; }
+    .privat-use { font-size: 14px; padding: 6px 12px; }
+    .desc-box { width: 90%; font-size: 12.5px; }
+    .about-container img { max-width: 180px; }
   }
 </style>
+
+<div style="text-align: center; padding-top: 20px;">
+    
+    <div style="margin-bottom: 40px;"> 
+        <span class="privat-use">✪ Privat Use - Not For Sale ✪</span>
+    </div>
+
+    <h1 class="judul-3-warna">-ˏˋ⋆ SELAMAT DATANG ⋆ˊˎ-</h1>
+    <p style="font-size: 16px; font-weight: bold; color: #666; margin-bottom: 25px;">Ke Proyek Modifikasi OpenWrt</p>
+
+    <div style="margin: 20px 0;">
+      <span style="background: linear-gradient(145deg, #28a745, #218838); color: white; padding: 10px 25px; border-radius: 50px; font-weight: bold; font-size: 20px; box-shadow: 0 6px 15px rgba(40,167,69,0.3); display: inline-block; border: 1px solid rgba(255,255,255,0.2);">
+        <% 
+          local ver = ""
+          local f_ver = io.open("/etc/openwrt_release", "r")
+          if f_ver then
+            for line in f_ver:lines() do
+              if line:match("DISTRIB_DESCRIPTION") then
+                ver = line:match("=['\"]?([^'\"\n]+)['\"]?")
+                break
+              end
+            end
+            f_ver:close()
+          end
+
+          local up_str = ""
+          local f_up = io.popen("uptime | sed 's/.*up \\([^,]*\\), .*/\\1/'")
+          if f_up then
+            up_str = f_up:read("*a"):gsub("%s+", " ")
+            f_up:close()
+          end
+        %>
+        <i class="fa fa-code-fork"></i> <%=ver or "OpenWrt Version"%>
+      </span>
+      
+      <div style="margin-top: 18px; font-size: 13px; color: #555; font-weight: bold; text-transform: uppercase;">
+          PERANGKAT TELAH AKTIF SELAMA : <br>
+          <span class="uptime-value"><i class="fa fa-clock-o"></i> <%=up_str or "0 min"%></span>
+      </div>
+    </div>
+
+    <!-- Deskripsi Ramping -->
+    <div class="desc-box">
+      "Proyek <b>OpenWrt</b> adalah sistem operasi Linux untuk perangkat tertanam. Alih-alih firmware statis, ia menyediakan sistem file yang dapat ditulis dengan manajemen paket, memberikan kebebasan penuh untuk kustomisasi perangkat Anda."
+    </div>
+
+    <div class="about-container">
+        <img src="/luci-static/resources/icons/boot.gif" alt="Logo"/>
+    </div>
+
+    <!-- Credit Section -->
+    <div class="credit-section" style="text-align: center; margin: 20px 0; text-transform: uppercase;">
+      <b style="font-size: 15px; color: #333;">by @ ribel</b><br>
+      <div class="freedom-text">
+        <i class="fa fa-globe"></i> - FREEDOM INTERNET - <i class="fa fa-paper-plane"></i>
+      </div>
+    </div>
+</div>
+
+<hr style="margin:30px 0; border: 0; border-top: 1px dashed #ccc;">
 
 <%+footer%>

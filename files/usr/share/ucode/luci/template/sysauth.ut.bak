@@ -1,0 +1,154 @@
+{%
+    import { getuid, getspnam } from 'luci.core';
+    const boardinfo = ubus.call('system', 'board');
+    const hostname = striptags(boardinfo?.hostname ?? '?');
+    http.prepare_content('text/html; charset=UTF-8');
+%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{{ hostname }} - LuCI</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)),
+                  url('/luci-static/resources/ui.jpg') center/cover no-repeat fixed;
+    }
+    .login-container {
+      width: 260px; /* Lebar dipersempit lagi */
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 15px; /* Padding minimalis */
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    h2 {
+      margin: 0 0 4px;
+      font-weight: 800;
+      font-size: 18px; /* Font lebih kecil */
+      color: #f59e0b;
+      letter-spacing: 1px;
+    }
+    .subtitle {
+      font-size: 10px;
+      margin-bottom: 12px;
+      color: #f59e0b;
+      opacity: 0.8;
+    }
+    .field {
+      margin: 6px 0; /* Jarak antar input sangat rapat */
+      text-align: left;
+    }
+    label {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 0.75rem;
+      color: #f1f5f9;
+    }
+    input {
+      width: 100%;
+      padding: 8px 10px; /* Input lebih tipis */
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      outline: none;
+      font-size: 13px;
+      background: rgba(255, 255, 255, 0.95);
+      color: #0f172a;
+    }
+    .pwd-wrap { position: relative; }
+    .toggle {
+      position: absolute;
+      right: 8px;
+      top: 25px; /* Disesuaikan */
+      border: 0;
+      background: transparent;
+      color: #475569;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    button[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #d4af37, #f59e0b, #b8860b);
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 14px;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .alert {
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      border-radius: 6px;
+      padding: 6px;
+      margin-bottom: 8px;
+      font-size: 11px;
+    }
+    .footer {
+      margin-top: 10px;
+      font-size: 9px;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <center>
+      <img src="{{ media }}/brand.png" style="max-width: 110px; margin-bottom: 5px;">
+    </center>
+    <h2>LOGIN</h2>
+    <div class="subtitle">
+      <script>
+        document.write(new Date().toLocaleDateString("id-ID", { weekday:"short", day:"numeric", month:"short" }));
+      </script>
+      • <span id="jam"></span>
+    </div>
+
+    {% if (fuser): %}
+      <div class="alert">⚠ Sandi Salah!</div>
+    {% endif %}
+
+    <form method="post">
+      <div class="field">
+        <label>User</label>
+        <input type="text" name="luci_username" value="root" readonly style="background:rgba(255,255,255,0.7); cursor:not-allowed;">
+      </div>
+      <div class="field pwd-wrap">
+        <label>Pass</label>
+        <input id="password" type="password" name="luci_password" placeholder="..." required>
+        <button class="toggle" type="button" onclick="togglePwd()">👁</button>
+      </div>
+      <button type="submit">Masuk</button>
+    </form>
+    <div class="footer">Freedom Internet © <span id="year"></span></div>
+  </div>
+
+  <script>
+    function updateClock(){
+      const now = new Date();
+      const pad = n => String(n).padStart(2,'0');
+      document.getElementById("jam").textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    }
+    setInterval(updateClock, 1000); updateClock();
+    document.getElementById('year').textContent = new Date().getFullYear();
+    function togglePwd(){
+      const p = document.getElementById('password');
+      p.type = (p.type === 'password') ? 'text' : 'password';
+    }
+    document.getElementById('password').focus();
+  </script>
+</body>
+</html>

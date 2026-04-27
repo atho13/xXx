@@ -1,0 +1,19 @@
+{
+	"model": {
+		"id": "zte,b860h",
+		"name": "ZTE B860H"
+	},
+	"network": {
+		"lan": {
+			"ports": [
+				"eth0",
+				"eth1",
+				"usb0",
+				"mm"
+			],
+			"protocol": "static"
+		}
+	},
+	"wlan": {
+	}
+}

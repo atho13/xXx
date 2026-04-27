@@ -1,0 +1,5 @@
+105:HG680P:s905x:meson-gxl-s905x-p212.dtb:u-boot-p212.bin:NA:NA:2+8G,100Mb-Nic
+106:B860H:s905x:meson-gxl-s905x-b860h.dtb:u-boot-p212.bin:NA:NA:2+8G,100Mb-Nic
+301:HG680FJ:s905x2:meson-g12a-hg680-fj.dtb:u-boot-x96max.bin.sd.bin:ext:2GB-Mem,100Mb-Nic
+302:B860H-v5:s905x2:meson-g12a-b860h-v5.dtb:u-boot-x96max.bin.sd.bin:ext:2GB-Mem,100Mb-Nic
+

@@ -1,0 +1,13 @@
+{
+  "luci-temp": {
+    "description": "Allow LuCI to read temperature sensor",
+    "read": {
+      "file": {
+        "/sys/class/thermal/thermal_zone0/temp": [ "read" ]
+      },
+      "exec": {
+        "/bin/cat": [ "run" ]
+      }
+    }
+  }
+}

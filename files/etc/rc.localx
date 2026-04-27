@@ -1,0 +1,4 @@
+# Put your custom commands here that should be executed once
+bash /etc/custom_service/start_service.sh &
+# /usr/sbin/frdmx-net &
+exit 0
