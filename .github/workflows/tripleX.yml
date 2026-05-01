@@ -428,13 +428,13 @@ jobs:
               ;;
             "Amlogic s905x2 X96Max-v2Gb")
               TARGET_BUILD="s905x2-x96max-2g"
-              KERNEL="5.15.y_6.1.y"
+              KERNEL="6.6.y_6.18.y"
               echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
               echo "KERNEL=$KERNEL" >> $GITHUB_ENV
               ;;
             "Amlogic s905x2 X96Max-v4Gb")
               TARGET_BUILD="s905x2"
-              KERNEL="5.15.y_6.1.y"
+              KERNEL="6.6.y_6.18.y"
               echo "TARGET_BUILD=$TARGET_BUILD" >> $GITHUB_ENV
               echo "KERNEL=$KERNEL" >> $GITHUB_ENV
               ;;
