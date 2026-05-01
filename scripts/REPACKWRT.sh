@@ -77,11 +77,11 @@ repackwrt() {
         ZIP_FILE="main.zip"
         if [[ "$builder_type" == "--ophub" ]]; then
             #repo_url="https://github.com/syntax-xidz/amlogic-s9xxx-openwrt/archive/refs/heads/main.zip"
-            repo_url="https://github.com/ribel13/amlogic-s9xxx-openwrt/archive/refs/heads/main.zip"
+            repo_url="https://github.com/athol13/amlogic-s9xxx-openwrt/archive/refs/heads/main.zip"
             builder_dir="${work_dir}/amlogic-s9xxx-openwrt-main"
         else
             #repo_url="https://github.com/syntax-xidz/ULO-Builder/archive/refs/heads/main.zip"
-            repo_url="https://github.com/ribel13/ULO-Builder/archive/refs/heads/main.zip"
+            repo_url="https://github.com/atho13/ULO-Builder/archive/refs/heads/main.zip"
             builder_dir="${work_dir}/ULO-Builder-main"
         fi
         ariadl "${repo_url}" "${ZIP_FILE}" || { error_msg "Download failed"; exit 1; }
