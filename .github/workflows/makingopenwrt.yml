@@ -52,7 +52,7 @@ on:
       kernel_repo:
         description: "Set the kernel repository"
         required: false
-        default: "https://github.com/ribel13/kernel"
+        default: "https://github.com/athol13/kernel"
       rootfs_url:
         description: 'Input Rootfs URL (Wget Only)'
         required: true
